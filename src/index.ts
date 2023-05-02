@@ -1,4 +1,4 @@
-import { sendPayment } from "./payment"
+import { sendPayment } from "./payments"
 import { BUYER_WALLET, MINT_WALLET } from "./wallets"
 
 // Send a Payment

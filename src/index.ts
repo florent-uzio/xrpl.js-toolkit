@@ -1,4 +1,5 @@
 // organize-imports-ignore
+import { convertCurrencyCodeToHex } from "./helpers"
 import { nftAcceptOffer } from "./nft-accept-offer"
 import { nftCancelOffer } from "./nft-cancel-offer"
 import { nftCreateOffer } from "./nft-create-offer"
@@ -17,7 +18,11 @@ import { BUYER_WALLET, MINT_WALLET } from "./wallets"
  * @param {object} wallet - The wallet which will allow to sign the transaction and serve as the initiator of the transaction.
  * @return {void} Show in the terminal the result of that transaction.
  */
-// sendPayment({ wallet: MINT_WALLET, destination: BUYER_WALLET.address, amount: "0.1" })
+// sendPayment({
+//   wallet: MINT_WALLET,
+//   destination: BUYER_WALLET.address,
+//   amount: "1",
+// })
 
 /**
  * ==================================
@@ -87,7 +92,7 @@ import { BUYER_WALLET, MINT_WALLET } from "./wallets"
  * @param {object} wallet - The wallet which will allow to sign the transaction and serve as the initiator of the transaction.
  * @return {void} Show in the terminal the result of that transaction.
  */
-nftCancelOffer({
-  offerIds: ["80AD166C1727AAE674C5F14A5A1F222392FB0B421777371BC5252782ABDB9C0E"],
-  wallet: MINT_WALLET,
-})
+// nftCancelOffer({
+//   offerIds: ["80AD166C1727AAE674C5F14A5A1F222392FB0B421777371BC5252782ABDB9C0E"],
+//   wallet: MINT_WALLET,
+// })

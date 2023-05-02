@@ -14,7 +14,7 @@ export const nftMint = async ({ nftUri, wallet }: NftMintProps) => {
   // Connect to the XRP Ledger
   await xrplClient.connect()
 
-  // Construct the base payment transaction
+  // Construct the base transaction
   const nfTokenMintTxn: xrpl.NFTokenMint = {
     TransactionType: "NFTokenMint",
     Account: wallet.address,
@@ -44,10 +44,10 @@ export const nftMint = async ({ nftUri, wallet }: NftMintProps) => {
   const start = performance.now()
 
   // Submit the transaction to the XRP Ledger and wait for it to be validated
-  const nftMintReponse = await xrplClient.submitAndWait(signedTxn.tx_blob)
+  const response = await xrplClient.submitAndWait(signedTxn.tx_blob)
 
   console.log(color.bold("******* FINAL: Validated Transaction *******"))
-  console.log(nftMintReponse)
+  console.log(response)
   console.log(color.bold("********************************************"))
   console.log("")
 
@@ -56,7 +56,7 @@ export const nftMint = async ({ nftUri, wallet }: NftMintProps) => {
 
   console.log(`Execution time: ${end - start} ms`)
   console.log("")
-  console.log(color.green(`https://test.bithomp.com/nfts/${nftMintReponse.result.Account}`))
+  console.log(color.green(`https://test.bithomp.com/nfts/${response.result.Account}`))
 
   await xrplClient.disconnect()
 }

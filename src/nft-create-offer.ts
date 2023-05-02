@@ -3,14 +3,20 @@ import * as xrpl from "xrpl"
 import { Amount } from "xrpl/dist/npm/models/common"
 import { xrplClient } from "./xrpl-client"
 
-type SendPaymentProps = {
-  destination: string
+type NftCreateOfferProps = {
   amount: Amount
+  tokenId: string
   wallet: xrpl.Wallet
-}
+} & ({ isSell: false; owner: string } | { isSell: true; owner?: never })
 
-export const sendPayment = async ({ destination, amount, wallet }: SendPaymentProps) => {
-  console.log(color.bold("******* LET'S SEND A PAYMENT *******"))
+export const nftCreateOffer = async ({
+  amount,
+  isSell,
+  owner,
+  tokenId,
+  wallet,
+}: NftCreateOfferProps) => {
+  console.log(color.bold("******* LET'S CREATE AN NFT OFFER *******"))
   console.log("")
 
   // Connect to the XRP Ledger
@@ -21,16 +27,21 @@ export const sendPayment = async ({ destination, amount, wallet }: SendPaymentPr
     amount = xrpl.xrpToDrops(amount)
   }
 
-  // Construct the base payment transaction
-  const paymentTxn: xrpl.Payment = {
+  // Construct the base transaction
+  const nfTokenCreateOfferTxn: xrpl.NFTokenCreateOffer = {
     Account: wallet.address,
     Amount: amount,
-    Destination: destination,
-    TransactionType: "Payment",
+    Flags: isSell ? xrpl.NFTokenCreateOfferFlags.tfSellNFToken : undefined,
+    NFTokenID: tokenId,
+    TransactionType: "NFTokenCreateOffer",
+  }
+
+  if (owner) {
+    nfTokenCreateOfferTxn.Owner = owner
   }
 
   // Autofill transaction with additional fields.
-  const preparedTxn = await xrplClient.autofill(paymentTxn)
+  const preparedTxn = await xrplClient.autofill(nfTokenCreateOfferTxn)
 
   console.log(color.bold("******* Prepared Transaction *******"))
   console.log(preparedTxn)
@@ -45,14 +56,14 @@ export const sendPayment = async ({ destination, amount, wallet }: SendPaymentPr
   console.log(color.bold("************************************"))
   console.log("")
 
-  // Start calculating the time to submit and validate this transaction
+  // Start calculating the time to execute this transaction
   const start = performance.now()
 
   // Submit the transaction to the XRP Ledger and wait for it to be validated
-  const paymentReponse = await xrplClient.submitAndWait(signedTxn.tx_blob)
+  const response = await xrplClient.submitAndWait(signedTxn.tx_blob)
 
   console.log(color.bold("******* FINAL: Validated Transaction *******"))
-  console.log(paymentReponse)
+  console.log(response)
   console.log(color.bold("********************************************"))
   console.log("")
 
@@ -61,7 +72,7 @@ export const sendPayment = async ({ destination, amount, wallet }: SendPaymentPr
 
   console.log(`Execution time: ${end - start} ms`)
   console.log("")
-  console.log(`https://test.bithomp.com/${paymentReponse.result.Account}`)
+  console.log(color.green(`https://test.bithomp.com/nfts/${response.result.Account}`))
 
   await xrplClient.disconnect()
 }

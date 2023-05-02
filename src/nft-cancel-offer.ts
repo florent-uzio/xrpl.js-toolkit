@@ -1,36 +1,28 @@
 import color from "colors"
 import * as xrpl from "xrpl"
-import { Amount } from "xrpl/dist/npm/models/common"
 import { xrplClient } from "./xrpl-client"
 
-type SendPaymentProps = {
-  destination: string
-  amount: Amount
+type NftCancelOfferProps = {
+  offerIds: string[]
   wallet: xrpl.Wallet
 }
 
-export const sendPayment = async ({ destination, amount, wallet }: SendPaymentProps) => {
-  console.log(color.bold("******* LET'S SEND A PAYMENT *******"))
+export const nftCancelOffer = async ({ offerIds, wallet }: NftCancelOfferProps) => {
+  console.log(color.bold("******* LET'S CANCEL AN NFT OFFER *******"))
   console.log("")
 
   // Connect to the XRP Ledger
   await xrplClient.connect()
 
-  // Convert the amount to drops (1 drop = .000001 XRP)
-  if (typeof amount === "string") {
-    amount = xrpl.xrpToDrops(amount)
-  }
-
-  // Construct the base payment transaction
-  const paymentTxn: xrpl.Payment = {
+  // Construct the base transaction
+  const nfTokenAcceptOfferTxn: xrpl.NFTokenCancelOffer = {
     Account: wallet.address,
-    Amount: amount,
-    Destination: destination,
-    TransactionType: "Payment",
+    TransactionType: "NFTokenCancelOffer",
+    NFTokenOffers: offerIds,
   }
 
   // Autofill transaction with additional fields.
-  const preparedTxn = await xrplClient.autofill(paymentTxn)
+  const preparedTxn = await xrplClient.autofill(nfTokenAcceptOfferTxn)
 
   console.log(color.bold("******* Prepared Transaction *******"))
   console.log(preparedTxn)
@@ -45,14 +37,14 @@ export const sendPayment = async ({ destination, amount, wallet }: SendPaymentPr
   console.log(color.bold("************************************"))
   console.log("")
 
-  // Start calculating the time to submit and validate this transaction
+  // Start calculating the time to execute this transaction
   const start = performance.now()
 
   // Submit the transaction to the XRP Ledger and wait for it to be validated
-  const paymentReponse = await xrplClient.submitAndWait(signedTxn.tx_blob)
+  const response = await xrplClient.submitAndWait(signedTxn.tx_blob)
 
   console.log(color.bold("******* FINAL: Validated Transaction *******"))
-  console.log(paymentReponse)
+  console.log(response)
   console.log(color.bold("********************************************"))
   console.log("")
 
@@ -61,7 +53,7 @@ export const sendPayment = async ({ destination, amount, wallet }: SendPaymentPr
 
   console.log(`Execution time: ${end - start} ms`)
   console.log("")
-  console.log(`https://test.bithomp.com/${paymentReponse.result.Account}`)
+  console.log(color.green(`https://test.bithomp.com/nfts/${response.result.Account}`))
 
   await xrplClient.disconnect()
 }

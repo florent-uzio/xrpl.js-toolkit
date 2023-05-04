@@ -7,6 +7,8 @@ import { nftMint } from "./nft-mint"
 import { sendPayment } from "./payments"
 import { BUYER_WALLET, MINT_WALLET } from "./wallets"
 
+// Uncomment the functions you want to run.
+
 /**
  * ==================================
  * ========= Send a Payment =========
@@ -21,7 +23,7 @@ import { BUYER_WALLET, MINT_WALLET } from "./wallets"
 // sendPayment({
 //   wallet: MINT_WALLET,
 //   destination: BUYER_WALLET.address,
-//   amount: "1",
+//   amount: "1", // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
 // })
 
 /**

@@ -1,5 +1,5 @@
 {
-  "name": "xrpl-nyu-demo-2",
+  "name": "xrpl.js-demo",
   "version": "1.0.0",
   "description": "Demo for NYU",
   "scripts": {
@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/florent-uzio/xrpl-nyu-demo-2.git"
   },
-  "author": "Florent Uzio",
+  "author": "Florent Uzio (fuzio@ripple.com)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/florent-uzio/xrpl-nyu-demo-2/issues"

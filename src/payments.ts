@@ -1,6 +1,7 @@
 import color from "colors"
 import * as xrpl from "xrpl"
 import { Amount } from "xrpl/dist/npm/models/common"
+import { convertCurrencyCodeToHex } from "./helpers"
 import { xrplClient } from "./xrpl-client"
 
 type SendPaymentProps = {
@@ -19,6 +20,8 @@ export const sendPayment = async ({ destination, amount, wallet }: SendPaymentPr
   // Convert the amount to drops (1 drop = .000001 XRP)
   if (typeof amount === "string") {
     amount = xrpl.xrpToDrops(amount)
+  } else {
+    amount.currency = convertCurrencyCodeToHex(amount.currency)
   }
 
   // Construct the base payment transaction

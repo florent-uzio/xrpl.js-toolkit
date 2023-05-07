@@ -33,7 +33,7 @@ export const hexToString = (hex: string) => {
  * @param currencyCode The currency code to potentially encode to the XRP ledger format.
  * @returns A {@link string}
  */
-export const convertCurrencyCodeToHex = (currencyCode: string): string => {
+export const convertCurrencyCodeToHex = (currencyCode: string) => {
   if (currencyCode.length > 3) {
     return Buffer.from(currencyCode, "ascii")
       .toString("hex")

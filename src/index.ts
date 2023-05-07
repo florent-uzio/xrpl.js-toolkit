@@ -5,6 +5,7 @@ import { nftCancelOffer } from "./nft-cancel-offer"
 import { nftCreateOffer } from "./nft-create-offer"
 import { nftMint } from "./nft-mint"
 import { sendPayment } from "./payments"
+import { createTrustline } from "./trustline"
 import { BUYER_WALLET, MINT_WALLET } from "./wallets"
 
 // Uncomment the functions you want to run.
@@ -23,7 +24,12 @@ import { BUYER_WALLET, MINT_WALLET } from "./wallets"
 // sendPayment({
 //   wallet: MINT_WALLET,
 //   destination: BUYER_WALLET.address,
-//   amount: "1", // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
+//   //   amount: "1", // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
+//   amount: {
+//     value: "10000",
+//     currency: "SOMETHING",
+//     issuer: MINT_WALLET.address,
+//   }, // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
 // })
 
 /**
@@ -98,3 +104,26 @@ import { BUYER_WALLET, MINT_WALLET } from "./wallets"
 //   offerIds: ["80AD166C1727AAE674C5F14A5A1F222392FB0B421777371BC5252782ABDB9C0E"],
 //   wallet: MINT_WALLET,
 // })
+
+/**
+ * ==========================================
+ * ========== Create a Trustline ===========
+ * ==========================================
+ *
+ * Create a trustline to hold an IOU (ERC20 equivalent for Ethereum).
+ *
+ * @param {xrpl.Trustset} props - A list of offer IDs.
+ * @param {object} wallet - The wallet which will allow to sign the transaction and serve as the initiator of the transaction.
+ * @return {void} Show in the terminal the result of that transaction.
+ */
+// createTrustline(
+//   {
+//     LimitAmount: {
+//       issuer: MINT_WALLET.address,
+//       // No need to convert the currency into hex, this is taken care of in the function itself. Just write your currency "DEMO_TOKEN" for example.
+//       currency: "FLOFLO",
+//       value: "1000000000",
+//     },
+//   },
+//   BUYER_WALLET
+// )

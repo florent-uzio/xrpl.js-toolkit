@@ -18,16 +18,16 @@ import { WALLET_2, WALLET_1 } from "./wallets"
 /**
  * Send a Payment
  */
-sendPayment({
-  wallet: WALLET_1,
-  destination: WALLET_2.address,
-  amount: "1", // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
-  //   amount: {
-  //     value: "10000",
-  //     currency: "SOMETHING",
-  //     issuer: WALLET_1.address,
-  //   }, // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
-})
+// sendPayment({
+//   wallet: WALLET_1,
+//   destination: WALLET_2.address,
+//   amount: "1", // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
+//   //   amount: {
+//   //     value: "10000",
+//   //     currency: "SOMETHING",
+//   //     issuer: WALLET_1.address,
+//   //   }, // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
+// })
 
 /**
  * Mint an NFT

@@ -18,7 +18,7 @@ export const createNftOffer = async ({
   wallet,
 }: createNftOfferProps) => {
   console.log(color.bold("******* LET'S CREATE AN NFT OFFER *******"))
-  console.log("")
+  console.log()
 
   // Connect to the XRP Ledger
   await xrplClient.connect()

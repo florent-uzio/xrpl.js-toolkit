@@ -11,23 +11,23 @@ Create two wallets using the [faucets](https://xrpl.org/xrp-testnet-faucet.html)
 
 The Testnet faucet is recommended except if you need to test functionalities in development. In that case you would choose the devnet or another specific network.
 
-Then edit `./src/wallets.ts` and add the seed/secrets that you would have gotten via the faucets.
+Then create a `.env` file with the same structure as the `.env.example` file at the root of this project and paste the seed/secrets that you would have gotten via the faucets.
 
 ```tsx
-const MINT_WALLET_SEED = "place your seed here"
-const BUYER_WALLET_SEED = "place your seed here"
+WALLET_1_SEED=s...
+WALLET_2_SEED=s...
 ```
 
-Then edit `./src/index.ts` by (un)commenting the different functions in the file.
+**Important**: Make sure that no quotes are included for the key values in the `.env` file.
+
+**Wrong**:
+WALLET_1_SEED="s1234"
+
+**Correct**:
+WALLET_1_SEED=s1234
+
+Edit `./src/index.ts` by (un)commenting the different functions in the file.
 
 You can pass different arguments to the available functions.
 
-Then run `npm run start` in your terminal. The content of `index.ts` will be executed.
-
-### Available functions
-
-- sendPayment
-- nftMint
-- nftCreateOffer
-- nftAcceptOffer
-- nftCancelOffer
+Run `npm run start` in your terminal. The content of `index.ts` will be executed.

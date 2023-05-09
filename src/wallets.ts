@@ -1,8 +1,11 @@
+import * as dotenv from "dotenv"
 import { Wallet } from "xrpl"
 
-// https://xrpl.org/xrp-testnet-faucet.html
-const MINT_WALLET_SEED = "" // Enter your seed/secret here (starting with an s)
-const BUYER_WALLET_SEED = "" // Enter your seed/secret here (starting with an s)
+dotenv.config()
 
-export const MINT_WALLET = Wallet.fromSeed(MINT_WALLET_SEED)
-export const BUYER_WALLET = Wallet.fromSeed(BUYER_WALLET_SEED)
+// https://xrpl.org/xrp-testnet-faucet.html
+const WALLET_1_SEED = process.env.WALLET_1_SEED ?? "" // Edit/create a .env file with a WALLET_1_SEED key
+const WALLET_2_SEED = process.env.WALLET_2_SEED ?? "" // Edit/create a .env file with a WALLET_2_SEED key
+
+export const WALLET_1 = Wallet.fromSeed(WALLET_1_SEED)
+export const WALLET_2 = Wallet.fromSeed(WALLET_2_SEED)

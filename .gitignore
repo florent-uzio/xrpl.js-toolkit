@@ -14,3 +14,6 @@ dist/
 # Miscellaneous
 .DS_Store
 Thumbs.db
+
+# Env
+.env

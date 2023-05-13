@@ -8,8 +8,10 @@ import {
   sendPayment,
   createNftOffer,
   createTrustline,
+  createOffer,
 } from "./transactions"
 import { WALLET_2, WALLET_1 } from "./wallets"
+import { getAccountNfts, getAccountOffers } from "./methods"
 
 // Main function calls
 // --------------------------------------------------
@@ -18,12 +20,14 @@ import { WALLET_2, WALLET_1 } from "./wallets"
 
 /**
  * Send a Payment
+ *
+ * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
+ * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
+ * --------------------------------------------------
  */
 // sendPayment(
 //   {
 //     Destination: WALLET_2.address,
-//     // If the Amount is a string, then the Amount currency is XRP.
-//     // If it is an Object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
 //     // Amount: "1",
 //     Amount: {
 //       value: "10000",
@@ -33,6 +37,16 @@ import { WALLET_2, WALLET_1 } from "./wallets"
 //   },
 //   { wallet: WALLET_1 }
 // )
+
+/**
+ * --------------------------------------------------
+ *  _   _ _____ _____
+ * | \ | |  ___|_   _|__
+ * |  \| | |_    | |/ __|
+ * | |\  |  _|   | |\__ \
+ * |_| \_|_|     |_||___/
+ *
+ */
 
 /**
  * Mint an NFT
@@ -45,6 +59,12 @@ import { WALLET_2, WALLET_1 } from "./wallets"
 //   },
 //   { wallet: WALLET_1 }
 // )
+
+/**
+ * Get the NFTs of an account
+ * --------------------------------------------------
+ */
+getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 
 /**
  * Create an NFT offer
@@ -85,6 +105,8 @@ import { WALLET_2, WALLET_1 } from "./wallets"
 
 /**
  * Create a trustline (to be able to hold a different token than XRP).
+ *
+ * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
  * --------------------------------------------------
  */
 // createTrustline(
@@ -99,3 +121,29 @@ import { WALLET_2, WALLET_1 } from "./wallets"
 //   },
 //   { wallet: WALLET_2 }
 // )
+
+/**
+ * Create a DEX offer.
+ *
+ * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
+ * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
+ * --------------------------------------------------
+ */
+// createOffer(
+//   {
+//     OfferSequence: 37764909,
+//     TakerGets: {
+//       issuer: WALLET_1.address,
+//       currency: "CYBERYA",
+//       value: "10",
+//     },
+//     TakerPays: "60",
+//   },
+//   { wallet: WALLET_2 }
+// )
+
+/**
+ * Get DEX offers from an account
+ * --------------------------------------------------
+ */
+// getAccountOffers({ account: WALLET_2.address, command: "account_offers" })

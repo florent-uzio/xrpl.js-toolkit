@@ -6,12 +6,12 @@ import { xrplClient } from "../xrpl-client"
 
 type SendPaymentProps = Omit<xrpl.Payment, "TransactionType" | "Account">
 
-export const sendPayment = async ({ Amount, ...rest }: SendPaymentProps, opts: TxnOptions) => {
+export const sendPayment = async (
+  { Amount, ...rest }: SendPaymentProps,
+  { wallet }: TxnOptions
+) => {
   console.log(color.bold("******* LET'S SEND A PAYMENT *******"))
   console.log()
-
-  // Destructure the wallet from the transaction options. https://www.w3schools.com/react/react_es6_destructuring.asp
-  const { wallet } = opts
 
   // Connect to the XRP Ledger
   await xrplClient.connect()
@@ -24,7 +24,7 @@ export const sendPayment = async ({ Amount, ...rest }: SendPaymentProps, opts: T
   }
 
   // Construct the base payment transaction
-  const paymentTxn: xrpl.Payment = {
+  const transaction: xrpl.Payment = {
     Account: wallet.address,
     Amount,
     TransactionType: "Payment",
@@ -32,7 +32,7 @@ export const sendPayment = async ({ Amount, ...rest }: SendPaymentProps, opts: T
   }
 
   // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(paymentTxn, wallet)
+  await prepareSignSubmit(transaction, wallet)
 
   await xrplClient.disconnect()
 }

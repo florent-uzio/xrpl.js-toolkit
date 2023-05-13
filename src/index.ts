@@ -31,6 +31,8 @@ import {
 /**
  * Send a Payment
  *
+ * https://xrpl.org/payment.html
+ *
  * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
  * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
  * --------------------------------------------------
@@ -59,6 +61,8 @@ import {
 
 /**
  * Mint an NFT
+ *
+ * https://xrpl.org/nftokenmint.html
  * --------------------------------------------------
  */
 // mintNft(
@@ -71,6 +75,8 @@ import {
 
 /**
  * Create an NFT offer
+ *
+ * https://xrpl.org/nftokencreateoffer.html
  * --------------------------------------------------
  */
 // createNftOffer(
@@ -85,6 +91,8 @@ import {
 
 /**
  * Accept an NFT offer
+ *
+ * https://xrpl.org/nftokenacceptoffer.html
  * --------------------------------------------------
  */
 // acceptNftOffer(
@@ -97,6 +105,8 @@ import {
 
 /**
  * Cancel an NFT offer
+ *
+ * https://xrpl.org/nftokencanceloffer.html
  * --------------------------------------------------
  */
 // cancelNftOffer(
@@ -116,6 +126,7 @@ import {
 
 /**
  * Create a trustline (to be able to hold a different token than XRP).
+ * https://xrpl.org/trustset.html
  *
  * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
  * --------------------------------------------------
@@ -144,28 +155,23 @@ import {
 /**
  * Create a DEX offer.
  *
+ * https://xrpl.org/offercreate.html#offercreate
+ *
  * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
  * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
  * --------------------------------------------------
  */
 // createOffer(
 //   {
-//     OfferSequence: 37764909,
 //     TakerGets: {
 //       issuer: WALLET_1.address,
-//       currency: "CYBERYA",
+//       currency: "TEST_TOKEN",
 //       value: "10",
 //     },
 //     TakerPays: "60",
 //   },
 //   { wallet: WALLET_2 }
 // )
-
-/**
- * Get DEX offers from an account
- * --------------------------------------------------
- */
-// getAccountOffers({ account: WALLET_2.address, command: "account_offers" })
 
 /**
  *     _                             _
@@ -182,3 +188,5 @@ import {
 // getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 
 // getAccountLines({ account: WALLET_2.address, command: "account_lines" })
+
+// getAccountOffers({ account: WALLET_2.address, command: "account_offers" })

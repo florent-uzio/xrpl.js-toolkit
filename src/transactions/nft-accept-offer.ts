@@ -1,15 +1,17 @@
 import color from "colors"
-import { NFTokenAcceptOffer, Wallet } from "xrpl"
+import { NFTokenAcceptOffer } from "xrpl"
 import { prepareSignSubmit } from "../helpers"
+import { TxnOptions } from "../models"
 import { xrplClient } from "../xrpl-client"
 
-type acceptNftOfferProps = {
-  wallet: Wallet
-} & ({ buyOfferId: string; sellOfferId?: never } | { buyOfferId?: never; sellOfferId: string })
+type AcceptNftOfferProps = Omit<NFTokenAcceptOffer, "TransactionType" | "Account">
 
-export const acceptNftOffer = async ({ buyOfferId, sellOfferId, wallet }: acceptNftOfferProps) => {
+export const acceptNftOffer = async (props: AcceptNftOfferProps, opts: TxnOptions) => {
   console.log(color.bold("******* LET'S ACCEPT AN NFT OFFER *******"))
   console.log()
+
+  // Destructure the wallet from the options. https://www.w3schools.com/react/react_es6_destructuring.asp
+  const { wallet } = opts
 
   // Connect to the XRP Ledger
   await xrplClient.connect()
@@ -18,14 +20,9 @@ export const acceptNftOffer = async ({ buyOfferId, sellOfferId, wallet }: accept
   const transaction: NFTokenAcceptOffer = {
     Account: wallet.address,
     TransactionType: "NFTokenAcceptOffer",
+    ...props,
   }
 
-  if (sellOfferId) {
-    transaction.NFTokenSellOffer = sellOfferId
-  }
-  if (buyOfferId) {
-    transaction.NFTokenBuyOffer = buyOfferId
-  }
   // Autofill transaction with additional fields, sign and submit
   await prepareSignSubmit(transaction, wallet)
 

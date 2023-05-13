@@ -1,16 +1,15 @@
 import color from "colors"
 import * as xrpl from "xrpl"
-import { Amount } from "xrpl/dist/npm/models/common"
 import { convertCurrencyCodeToHex, prepareSignSubmit } from "../helpers"
+import { TxnOptions } from "../models"
 import { xrplClient } from "../xrpl-client"
 
-type SendPaymentProps = {
-  destination: string
-  amount: Amount
-  wallet: xrpl.Wallet
-}
+type SendPaymentProps = Omit<xrpl.Payment, "TransactionType" | "Account">
 
-export const sendPayment = async ({ destination, amount, wallet }: SendPaymentProps) => {
+export const sendPayment = async (
+  { Amount, ...rest }: SendPaymentProps,
+  { wallet }: TxnOptions
+) => {
   console.log(color.bold("******* LET'S SEND A PAYMENT *******"))
   console.log()
 
@@ -18,22 +17,22 @@ export const sendPayment = async ({ destination, amount, wallet }: SendPaymentPr
   await xrplClient.connect()
 
   // Convert the amount to drops (1 drop = .000001 XRP)
-  if (typeof amount === "string") {
-    amount = xrpl.xrpToDrops(amount)
+  if (typeof Amount === "string") {
+    Amount = xrpl.xrpToDrops(Amount)
   } else {
-    amount.currency = convertCurrencyCodeToHex(amount.currency)
+    Amount.currency = convertCurrencyCodeToHex(Amount.currency)
   }
 
   // Construct the base payment transaction
-  const paymentTxn: xrpl.Payment = {
+  const transaction: xrpl.Payment = {
     Account: wallet.address,
-    Amount: amount,
-    Destination: destination,
+    Amount,
     TransactionType: "Payment",
+    ...rest,
   }
 
   // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(paymentTxn, wallet)
+  await prepareSignSubmit(transaction, wallet)
 
   await xrplClient.disconnect()
 }

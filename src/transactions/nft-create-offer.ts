@@ -1,22 +1,19 @@
 import color from "colors"
-import * as xrpl from "xrpl"
-import { Amount } from "xrpl/dist/npm/models/common"
+import { NFTokenCreateOffer, NFTokenCreateOfferFlags, xrpToDrops } from "xrpl"
 import { prepareSignSubmit } from "../helpers"
+import { TxnOptions } from "../models"
 import { xrplClient } from "../xrpl-client"
 
-type createNftOfferProps = {
-  amount: Amount
-  tokenId: string
-  wallet: xrpl.Wallet
-} & ({ isSell: false; owner: string } | { isSell: true; owner?: never })
+type CreateNftOfferProps = Omit<NFTokenCreateOffer, "TransactionType" | "Account"> &
+  (
+    | { Flags: NFTokenCreateOfferFlags.tfSellNFToken; Owner?: never }
+    | { Flags?: undefined; Owner: string }
+  )
 
-export const createNftOffer = async ({
-  amount,
-  isSell,
-  owner,
-  tokenId,
-  wallet,
-}: createNftOfferProps) => {
+export const createNftOffer = async (
+  { Amount, ...rest }: CreateNftOfferProps,
+  { wallet }: TxnOptions
+) => {
   console.log(color.bold("******* LET'S CREATE AN NFT OFFER *******"))
   console.log()
 
@@ -24,21 +21,16 @@ export const createNftOffer = async ({
   await xrplClient.connect()
 
   // Convert the amount to drops (1 drop = .000001 XRP)
-  if (typeof amount === "string") {
-    amount = xrpl.xrpToDrops(amount)
+  if (typeof Amount === "string") {
+    Amount = xrpToDrops(Amount)
   }
 
   // Construct the base transaction
-  const transaction: xrpl.NFTokenCreateOffer = {
+  const transaction: NFTokenCreateOffer = {
     Account: wallet.address,
-    Amount: amount,
-    Flags: isSell ? xrpl.NFTokenCreateOfferFlags.tfSellNFToken : undefined,
-    NFTokenID: tokenId,
+    Amount,
     TransactionType: "NFTokenCreateOffer",
-  }
-
-  if (owner) {
-    transaction.Owner = owner
+    ...rest,
   }
 
   // Autofill transaction with additional fields, sign and submit

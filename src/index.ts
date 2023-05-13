@@ -1,4 +1,5 @@
 // organize-imports-ignore
+import { NFTokenCreateOfferFlags, TrustSetFlags } from "xrpl"
 import { convertCurrencyCodeToHex } from "./helpers"
 import {
   cancelNftOffer,
@@ -7,80 +8,177 @@ import {
   sendPayment,
   createNftOffer,
   createTrustline,
+  createOffer,
 } from "./transactions"
 import { WALLET_2, WALLET_1 } from "./wallets"
+import {
+  getAccountCurrencies,
+  getAccountInfo,
+  getAccountLines,
+  getAccountNfts,
+  getAccountOffers,
+} from "./methods"
 
-// Main function calls
-// --------------------------------------------------
-
-// Uncomment the functions you want to run.
+/**
+ *  ____                                  _
+ * |  _ \ __ _ _   _ _ __ ___   ___ _ __ | |_ ___
+ * | |_) / _` | | | | '_ ` _ \ / _ \ '_ \| __/ __|
+ * |  __/ (_| | |_| | | | | | |  __/ | | | |_\__ \
+ * |_|   \__,_|\__, |_| |_| |_|\___|_| |_|\__|___/
+ *             |___/
+ */
 
 /**
  * Send a Payment
+ *
+ * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
+ * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
+ * --------------------------------------------------
  */
-// sendPayment({
-//   wallet: WALLET_1,
-//   destination: WALLET_2.address,
-//   amount: "1", // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
-//   //   amount: {
-//   //     value: "10000",
-//   //     currency: "SOMETHING",
-//   //     issuer: WALLET_1.address,
-//   //   }, // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
-// })
+// sendPayment(
+//   {
+//     Destination: WALLET_2.address,
+//     // Amount: "1",
+//     Amount: {
+//       value: "10000",
+//       currency: "TEST_TOKEN",
+//       issuer: WALLET_1.address,
+//     },
+//   },
+//   { wallet: WALLET_1 }
+// )
+
+/**
+ *  _   _ _____ _____
+ * | \ | |  ___|_   _|__
+ * |  \| | |_    | |/ __|
+ * | |\  |  _|   | |\__ \
+ * |_| \_|_|     |_||___/
+ *
+ */
 
 /**
  * Mint an NFT
  * --------------------------------------------------
  */
-// mintNft({
-//   nftUri: "https://media.giphy.com/media/rdma0nDFZMR32/giphy.gif",
-//   wallet: WALLET_1,
-// })
+// mintNft(
+//   {
+//     URI: "https://media.giphy.com/media/8vQSQ3cNXuDGo/giphy.gif",
+//     NFTokenTaxon: 0,
+//   },
+//   { wallet: WALLET_1 }
+// )
 
 /**
  * Create an NFT offer
  * --------------------------------------------------
  */
-// createNftOffer({
-//   amount: "9",
-//   isSell: true,
-//   //   owner: "rnDxRRBeWtwT2WpWB3Uht9HxrZusJfH98n",
-//   tokenId: "000800008BB1B316B2292310C98DBD41FE965A5533A318FF2DCBAB9D00000002",
-//   wallet: WALLET_1,
-// })
+// createNftOffer(
+//   {
+//     Amount: "10",
+//     // Flags: NFTokenCreateOfferFlags.tfSellNFToken,
+//     Owner: "r...", // Can also be WALLET_2.address for example.
+//     NFTokenID: "...",
+//   },
+//   { wallet: WALLET_1 }
+// )
 
 /**
  * Accept an NFT offer
  * --------------------------------------------------
  */
-// acceptNftOffer({
-//   buyOfferId: "379AF950F02625C1EEB7EADFEFC6CAF8FBF52A7DCC8D3C304B4D129E91177D0D",
-//   //   sellOfferId: "379AF950F02625C1EEB7EADFEFC6CAF8FBF52A7DCC8D3C304B4D129E91177D0D",
-//   wallet: WALLET_2,
-// })
+// acceptNftOffer(
+//   {
+//     // NFTokenBuyOffer: "...",
+//     NFTokenSellOffer: "...",
+//   },
+//   { wallet: WALLET_2 }
+// )
 
 /**
  * Cancel an NFT offer
  * --------------------------------------------------
  */
-// cancelNftOffer({
-//   offerIds: ["80AD166C1727AAE674C5F14A5A1F222392FB0B421777371BC5252782ABDB9C0E"],
-//   wallet: WALLET_1,
-// })
+// cancelNftOffer(
+//   {
+//     NFTokenOffers: ["..."],
+//   },
+//   { wallet: WALLET_1 }
+// )
 
 /**
- * Create a trustline (to be able to hold a token different than XRP).
+ *  _____               _   _ _
+ * |_   _| __ _   _ ___| |_| (_)_ __   ___  ___
+ *   | || '__| | | / __| __| | | '_ \ / _ \/ __|
+ *   | || |  | |_| \__ \ |_| | | | | |  __/\__ \
+ *   |_||_|   \__,_|___/\__|_|_|_| |_|\___||___/
+ */
+
+/**
+ * Create a trustline (to be able to hold a different token than XRP).
+ *
+ * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
  * --------------------------------------------------
  */
 // createTrustline(
 //   {
+//     Flags: TrustSetFlags.tfSetNoRipple,
 //     LimitAmount: {
 //       issuer: WALLET_1.address,
 //       // No need to convert the currency into hex, this is taken care of in the function itself. Just write your currency "DEMO_TOKEN" for example.
-//       currency: "MY_TOKEN",
+//       currency: "TEST_TOKEN",
 //       value: "1000000000",
 //     },
 //   },
-//   WALLET_2
+//   { wallet: WALLET_2 }
 // )
+
+/**
+ *  ____  _______  __
+ * |  _ \| ____\ \/ /
+ * | | | |  _|  \  /
+ * | |_| | |___ /  \
+ * |____/|_____/_/\_\
+ */
+
+/**
+ * Create a DEX offer.
+ *
+ * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
+ * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
+ * --------------------------------------------------
+ */
+// createOffer(
+//   {
+//     OfferSequence: 37764909,
+//     TakerGets: {
+//       issuer: WALLET_1.address,
+//       currency: "CYBERYA",
+//       value: "10",
+//     },
+//     TakerPays: "60",
+//   },
+//   { wallet: WALLET_2 }
+// )
+
+/**
+ * Get DEX offers from an account
+ * --------------------------------------------------
+ */
+// getAccountOffers({ account: WALLET_2.address, command: "account_offers" })
+
+/**
+ *     _                             _
+ *    / \   ___ ___ ___  _   _ _ __ | |_
+ *   / _ \ / __/ __/ _ \| | | | '_ \| __|
+ *  / ___ \ (_| (_| (_) | |_| | | | | |_
+ * /_/   \_\___\___\___/ \__,_|_| |_|\__|
+ */
+
+// getAccountCurrencies({ account: WALLET_1.address, command: "account_currencies" })
+
+// getAccountInfo({ account: WALLET_1.address, command: "account_info" })
+
+// getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
+
+// getAccountLines({ account: WALLET_2.address, command: "account_lines" })

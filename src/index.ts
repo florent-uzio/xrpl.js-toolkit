@@ -1,4 +1,5 @@
 // organize-imports-ignore
+import { NFTokenCreateOfferFlags, TrustSetFlags } from "xrpl"
 import { convertCurrencyCodeToHex } from "./helpers"
 import {
   cancelNftOffer,
@@ -18,69 +19,83 @@ import { WALLET_2, WALLET_1 } from "./wallets"
 /**
  * Send a Payment
  */
-// sendPayment({
-//   wallet: WALLET_1,
-//   destination: WALLET_2.address,
-//   amount: "1", // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
-//   //   amount: {
-//   //     value: "10000",
-//   //     currency: "SOMETHING",
-//   //     issuer: WALLET_1.address,
-//   //   }, // In XRP if the amount is a string. If it is an object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
-// })
+// sendPayment(
+//   {
+//     Destination: WALLET_2.address,
+//     // If the Amount is a string, then the Amount currency is XRP.
+//     // If it is an Object the amount is defining an IOU. See https://xrpl.org/basic-data-types.html#specifying-currency-amounts
+//     // Amount: "1",
+//     Amount: {
+//       value: "10000",
+//       currency: "TEST_TOKEN",
+//       issuer: WALLET_1.address,
+//     },
+//   },
+//   { wallet: WALLET_1 }
+// )
 
 /**
  * Mint an NFT
  * --------------------------------------------------
  */
-// mintNft({
-//   nftUri: "https://media.giphy.com/media/rdma0nDFZMR32/giphy.gif",
-//   wallet: WALLET_1,
-// })
+// mintNft(
+//   {
+//     URI: "https://media.giphy.com/media/8vQSQ3cNXuDGo/giphy.gif",
+//     NFTokenTaxon: 0,
+//   },
+//   { wallet: WALLET_1 }
+// )
 
 /**
  * Create an NFT offer
  * --------------------------------------------------
  */
-// createNftOffer({
-//   amount: "9",
-//   isSell: true,
-//   //   owner: "rnDxRRBeWtwT2WpWB3Uht9HxrZusJfH98n",
-//   tokenId: "000800008BB1B316B2292310C98DBD41FE965A5533A318FF2DCBAB9D00000002",
-//   wallet: WALLET_1,
-// })
+// createNftOffer(
+//   {
+//     Amount: "10",
+//     // Flags: NFTokenCreateOfferFlags.tfSellNFToken,
+//     Owner: "r...", // Can also be WALLET_2.address for example.
+//     NFTokenID: "...",
+//   },
+//   { wallet: WALLET_1 }
+// )
 
 /**
  * Accept an NFT offer
  * --------------------------------------------------
  */
-// acceptNftOffer({
-//   buyOfferId: "379AF950F02625C1EEB7EADFEFC6CAF8FBF52A7DCC8D3C304B4D129E91177D0D",
-//   //   sellOfferId: "379AF950F02625C1EEB7EADFEFC6CAF8FBF52A7DCC8D3C304B4D129E91177D0D",
-//   wallet: WALLET_2,
-// })
+// acceptNftOffer(
+//   {
+//     // NFTokenBuyOffer: "...",
+//     NFTokenSellOffer: "...",
+//   },
+//   { wallet: WALLET_2 }
+// )
 
 /**
  * Cancel an NFT offer
  * --------------------------------------------------
  */
-// cancelNftOffer({
-//   offerIds: ["80AD166C1727AAE674C5F14A5A1F222392FB0B421777371BC5252782ABDB9C0E"],
-//   wallet: WALLET_1,
-// })
+// cancelNftOffer(
+//   {
+//     NFTokenOffers: ["..."],
+//   },
+//   { wallet: WALLET_1 }
+// )
 
 /**
- * Create a trustline (to be able to hold a token different than XRP).
+ * Create a trustline (to be able to hold a different token than XRP).
  * --------------------------------------------------
  */
 // createTrustline(
 //   {
+//     Flags: TrustSetFlags.tfSetNoRipple,
 //     LimitAmount: {
 //       issuer: WALLET_1.address,
 //       // No need to convert the currency into hex, this is taken care of in the function itself. Just write your currency "DEMO_TOKEN" for example.
-//       currency: "MY_TOKEN",
+//       currency: "TEST_TOKEN",
 //       value: "1000000000",
 //     },
 //   },
-//   WALLET_2
+//   { wallet: WALLET_2 }
 // )

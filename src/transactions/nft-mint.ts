@@ -1,14 +1,12 @@
 import color from "colors"
 import * as xrpl from "xrpl"
 import { prepareSignSubmit } from "../helpers"
+import { TxnOptions } from "../models"
 import { xrplClient } from "../xrpl-client"
 
-type mintNftProps = {
-  nftUri: string
-  wallet: xrpl.Wallet
-}
+type MintNftProps = Omit<xrpl.NFTokenMint, "TransactionType" | "Account">
 
-export const mintNft = async ({ nftUri, wallet }: mintNftProps) => {
+export const mintNft = async ({ URI, Flags, ...rest }: MintNftProps, { wallet }: TxnOptions) => {
   console.log(color.bold("******* LET'S MINT AN NFT *******"))
   console.log()
 
@@ -19,10 +17,9 @@ export const mintNft = async ({ nftUri, wallet }: mintNftProps) => {
   const transaction: xrpl.NFTokenMint = {
     TransactionType: "NFTokenMint",
     Account: wallet.address,
-    // An arbitrary taxon, or shared identifier, for a series or collection of related NFTs. To mint a series of NFTs, give them all the same taxon.
-    NFTokenTaxon: 0,
-    Flags: xrpl.NFTokenMintFlags.tfTransferable,
-    URI: xrpl.convertStringToHex(nftUri),
+    Flags: Flags ?? xrpl.NFTokenMintFlags.tfTransferable,
+    URI: URI ? xrpl.convertStringToHex(URI) : "",
+    ...rest,
   }
 
   // Autofill transaction with additional fields, sign and submit

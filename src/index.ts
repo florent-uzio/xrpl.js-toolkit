@@ -11,12 +11,22 @@ import {
   createOffer,
 } from "./transactions"
 import { WALLET_2, WALLET_1 } from "./wallets"
-import { getAccountNfts, getAccountOffers } from "./methods"
+import {
+  getAccountCurrencies,
+  getAccountInfo,
+  getAccountLines,
+  getAccountNfts,
+  getAccountOffers,
+} from "./methods"
 
-// Main function calls
-// --------------------------------------------------
-
-// Uncomment the functions you want to run.
+/**
+ *  ____                                  _
+ * |  _ \ __ _ _   _ _ __ ___   ___ _ __ | |_ ___
+ * | |_) / _` | | | | '_ ` _ \ / _ \ '_ \| __/ __|
+ * |  __/ (_| | |_| | | | | | |  __/ | | | |_\__ \
+ * |_|   \__,_|\__, |_| |_| |_|\___|_| |_|\__|___/
+ *             |___/
+ */
 
 /**
  * Send a Payment
@@ -39,7 +49,6 @@ import { getAccountNfts, getAccountOffers } from "./methods"
 // )
 
 /**
- * --------------------------------------------------
  *  _   _ _____ _____
  * | \ | |  ___|_   _|__
  * |  \| | |_    | |/ __|
@@ -59,12 +68,6 @@ import { getAccountNfts, getAccountOffers } from "./methods"
 //   },
 //   { wallet: WALLET_1 }
 // )
-
-/**
- * Get the NFTs of an account
- * --------------------------------------------------
- */
-getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 
 /**
  * Create an NFT offer
@@ -104,6 +107,14 @@ getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 // )
 
 /**
+ *  _____               _   _ _
+ * |_   _| __ _   _ ___| |_| (_)_ __   ___  ___
+ *   | || '__| | | / __| __| | | '_ \ / _ \/ __|
+ *   | || |  | |_| \__ \ |_| | | | | |  __/\__ \
+ *   |_||_|   \__,_|___/\__|_|_|_| |_|\___||___/
+ */
+
+/**
  * Create a trustline (to be able to hold a different token than XRP).
  *
  * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
@@ -121,6 +132,14 @@ getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 //   },
 //   { wallet: WALLET_2 }
 // )
+
+/**
+ *  ____  _______  __
+ * |  _ \| ____\ \/ /
+ * | | | |  _|  \  /
+ * | |_| | |___ /  \
+ * |____/|_____/_/\_\
+ */
 
 /**
  * Create a DEX offer.
@@ -147,3 +166,19 @@ getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
  * --------------------------------------------------
  */
 // getAccountOffers({ account: WALLET_2.address, command: "account_offers" })
+
+/**
+ *     _                             _
+ *    / \   ___ ___ ___  _   _ _ __ | |_
+ *   / _ \ / __/ __/ _ \| | | | '_ \| __|
+ *  / ___ \ (_| (_| (_) | |_| | | | | |_
+ * /_/   \_\___\___\___/ \__,_|_| |_|\__|
+ */
+
+// getAccountCurrencies({ account: WALLET_1.address, command: "account_currencies" })
+
+// getAccountInfo({ account: WALLET_1.address, command: "account_info" })
+
+// getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
+
+// getAccountLines({ account: WALLET_2.address, command: "account_lines" })

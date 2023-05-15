@@ -1,3 +1,3 @@
 import * as xrpl from "xrpl"
 
-export type TxnOptions = { wallet: xrpl.Wallet }
+export type TxnOptions = { wallet: xrpl.Wallet; showLogs?: boolean }

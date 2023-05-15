@@ -1,13 +1,10 @@
 import { AccountLinesRequest } from "xrpl"
 import { convertHexCurrencyCodeToString } from "../../helpers"
-import { xrplClient } from "../../xrpl-client"
+import { getXrplClient } from "../../xrpl-client"
 
 export const getAccountLines = async (props: AccountLinesRequest) => {
-  // Connect to the XRP Ledger
-  await xrplClient.connect()
-
   // Send the request
-  const response = await xrplClient.request(props)
+  const response = await getXrplClient().request(props)
 
   // Destructuring
   const { lines } = response.result
@@ -24,6 +21,4 @@ export const getAccountLines = async (props: AccountLinesRequest) => {
   })
 
   console.log(JSON.stringify(response, undefined, 2))
-
-  await xrplClient.disconnect()
 }

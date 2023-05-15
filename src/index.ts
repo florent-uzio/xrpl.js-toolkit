@@ -1,5 +1,5 @@
 // organize-imports-ignore
-import { NFTokenCreateOfferFlags, TrustSetFlags } from "xrpl"
+import { AccountSetAsfFlags, AccountSetTfFlags, NFTokenCreateOfferFlags, TrustSetFlags } from "xrpl"
 import { convertCurrencyCodeToHex } from "./helpers"
 import {
   cancelNftOffer,
@@ -9,6 +9,7 @@ import {
   createNftOffer,
   createTrustline,
   createOffer,
+  accountSet,
 } from "./transactions"
 import { WALLET_2, WALLET_1 } from "./wallets"
 import {
@@ -172,6 +173,16 @@ import {
 //   },
 //   { wallet: WALLET_2 }
 // )
+
+/**
+ *     _                             _   ____       _
+ *    / \   ___ ___ ___  _   _ _ __ | |_/ ___|  ___| |_
+ *   / _ \ / __/ __/ _ \| | | | '_ \| __\___ \ / _ \ __|
+ *  / ___ \ (_| (_| (_) | |_| | | | | |_ ___) |  __/ |_
+ * /_/   \_\___\___\___/ \__,_|_| |_|\__|____/ \___|\__|
+ */
+
+// accountSet({ SetFlag: AccountSetAsfFlags.asfNoFreeze }, { wallet: WALLET_1 })
 
 /**
  *     _                             _

@@ -1,6 +1,6 @@
 import * as xrpl from "xrpl"
 import { TxnOptions } from "../models"
-import { xrplClient } from "../xrpl-client"
+import { getXrplClient } from "../xrpl-client"
 import { log } from "./loggers"
 
 export const prepareSignSubmit = async (
@@ -8,7 +8,7 @@ export const prepareSignSubmit = async (
   { wallet, showLogs = true }: TxnOptions
 ) => {
   // Autofill transaction with additional fields (such as LastLedgerSequence).
-  const preparedTxn = await xrplClient.autofill(transaction)
+  const preparedTxn = await getXrplClient().autofill(transaction)
 
   log("Prepared Transaction", preparedTxn, showLogs)
 
@@ -21,7 +21,7 @@ export const prepareSignSubmit = async (
   const start = performance.now()
 
   // Submit the transaction to the XRP Ledger and wait for it to be validated
-  const response = await xrplClient.submitAndWait(signedTxn.tx_blob)
+  const response = await getXrplClient().submitAndWait(signedTxn.tx_blob)
 
   log("FINAL: Validated Transaction", response, showLogs)
 

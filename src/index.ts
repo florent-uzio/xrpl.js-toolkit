@@ -17,187 +17,215 @@ import {
   getAccountInfo,
   getAccountLines,
   getAccountNfts,
+  getAccountObjects,
   getAccountOffers,
 } from "./methods"
+import * as dotenv from "dotenv"
+import { getXrplClient } from "./xrpl-client"
 
-/**
- *  ____                                  _
- * |  _ \ __ _ _   _ _ __ ___   ___ _ __ | |_ ___
- * | |_) / _` | | | | '_ ` _ \ / _ \ '_ \| __/ __|
- * |  __/ (_| | |_| | | | | | |  __/ | | | |_\__ \
- * |_|   \__,_|\__, |_| |_| |_|\___|_| |_|\__|___/
- *             |___/
- */
+dotenv.config()
 
-/**
- * Send a Payment
- *
- * https://xrpl.org/payment.html
- *
- * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
- * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
- * --------------------------------------------------
- */
-// sendPayment(
-//   {
-//     Destination: WALLET_2.address,
-//     // Amount: "1",
-//     Amount: {
-//       value: "10000",
-//       currency: "TEST_TOKEN",
-//       issuer: WALLET_1.address,
-//     },
-//   },
-//   { wallet: WALLET_1 }
-// )
+// Issued Currency that you want to use in your TrustSet or Payment transactions for example.
+// Create a TOKEN field in your .env file. If TOKEN is not present, it will default to "TEST_TOKEN".
+const TOKEN = process.env.TOKEN ?? "TEST_TOKEN"
 
-/**
- *  _   _ _____ _____
- * | \ | |  ___|_   _|__
- * |  \| | |_    | |/ __|
- * | |\  |  _|   | |\__ \
- * |_| \_|_|     |_||___/
- *
- */
+const main = async () => {
+  // Do not comment
+  await getXrplClient().connect()
 
-/**
- * Mint an NFT
- *
- * https://xrpl.org/nftokenmint.html
- * --------------------------------------------------
- */
-// mintNft(
-//   {
-//     URI: "https://media.giphy.com/media/8vQSQ3cNXuDGo/giphy.gif",
-//     NFTokenTaxon: 0,
-//   },
-//   { wallet: WALLET_1 }
-// )
+  /**
+   *  ____                                  _
+   * |  _ \ __ _ _   _ _ __ ___   ___ _ __ | |_ ___
+   * | |_) / _` | | | | '_ ` _ \ / _ \ '_ \| __/ __|
+   * |  __/ (_| | |_| | | | | | |  __/ | | | |_\__ \
+   * |_|   \__,_|\__, |_| |_| |_|\___|_| |_|\__|___/
+   *             |___/
+   */
 
-/**
- * Create an NFT offer
- *
- * https://xrpl.org/nftokencreateoffer.html
- * --------------------------------------------------
- */
-// createNftOffer(
-//   {
-//     Amount: "10",
-//     // Flags: NFTokenCreateOfferFlags.tfSellNFToken,
-//     Owner: "r...", // Can also be WALLET_2.address for example.
-//     NFTokenID: "...",
-//   },
-//   { wallet: WALLET_1 }
-// )
+  /**
+   * Send a Payment
+   *
+   * https://xrpl.org/payment.html
+   *
+   * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
+   * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
+   * --------------------------------------------------
+   */
+  // sendPayment(
+  //   {
+  //     Destination: WALLET_1.address,
+  //     // Amount: "1",
+  //     Amount: {
+  //       value: "20000",
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
+  //     },
+  //   },
+  //   { wallet: WALLET_2 }
+  // )
 
-/**
- * Accept an NFT offer
- *
- * https://xrpl.org/nftokenacceptoffer.html
- * --------------------------------------------------
- */
-// acceptNftOffer(
-//   {
-//     // NFTokenBuyOffer: "...",
-//     NFTokenSellOffer: "...",
-//   },
-//   { wallet: WALLET_2 }
-// )
+  /**
+   *  _   _ _____ _____
+   * | \ | |  ___|_   _|__
+   * |  \| | |_    | |/ __|
+   * | |\  |  _|   | |\__ \
+   * |_| \_|_|     |_||___/
+   *
+   */
 
-/**
- * Cancel an NFT offer
- *
- * https://xrpl.org/nftokencanceloffer.html
- * --------------------------------------------------
- */
-// cancelNftOffer(
-//   {
-//     NFTokenOffers: ["..."],
-//   },
-//   { wallet: WALLET_1 }
-// )
+  /**
+   * Mint an NFT
+   *
+   * https://xrpl.org/nftokenmint.html
+   * --------------------------------------------------
+   */
+  // mintNft(
+  //   {
+  //     URI: "https://media.giphy.com/media/8vQSQ3cNXuDGo/giphy.gif",
+  //     NFTokenTaxon: 0,
+  //   },
+  //   { wallet: WALLET_1 }
+  // )
 
-/**
- *  _____               _   _ _
- * |_   _| __ _   _ ___| |_| (_)_ __   ___  ___
- *   | || '__| | | / __| __| | | '_ \ / _ \/ __|
- *   | || |  | |_| \__ \ |_| | | | | |  __/\__ \
- *   |_||_|   \__,_|___/\__|_|_|_| |_|\___||___/
- */
+  /**
+   * Create an NFT offer
+   *
+   * https://xrpl.org/nftokencreateoffer.html
+   * --------------------------------------------------
+   */
+  // createNftOffer(
+  //   {
+  //     Amount: "10",
+  //     // Flags: NFTokenCreateOfferFlags.tfSellNFToken,
+  //     Owner: "r...", // Can also be WALLET_2.address for example.
+  //     NFTokenID: "...",
+  //   },
+  //   { wallet: WALLET_1 }
+  // )
 
-/**
- * Create a trustline (to be able to hold a different token than XRP).
- * https://xrpl.org/trustset.html
- *
- * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
- * --------------------------------------------------
- */
-// createTrustline(
-//   {
-//     Flags: TrustSetFlags.tfSetNoRipple,
-//     LimitAmount: {
-//       issuer: WALLET_1.address,
-//       // No need to convert the currency into hex, this is taken care of in the function itself. Just write your currency "DEMO_TOKEN" for example.
-//       currency: "TEST_TOKEN",
-//       value: "1000000000",
-//     },
-//   },
-//   { wallet: WALLET_2 }
-// )
+  /**
+   * Accept an NFT offer
+   *
+   * https://xrpl.org/nftokenacceptoffer.html
+   * --------------------------------------------------
+   */
+  // acceptNftOffer(
+  //   {
+  //     // NFTokenBuyOffer: "...",
+  //     NFTokenSellOffer: "...",
+  //   },
+  //   { wallet: WALLET_2 }
+  // )
 
-/**
- *  ____  _______  __
- * |  _ \| ____\ \/ /
- * | | | |  _|  \  /
- * | |_| | |___ /  \
- * |____/|_____/_/\_\
- */
+  /**
+   * Cancel an NFT offer
+   *
+   * https://xrpl.org/nftokencanceloffer.html
+   * --------------------------------------------------
+   */
+  // cancelNftOffer(
+  //   {
+  //     NFTokenOffers: ["..."],
+  //   },
+  //   { wallet: WALLET_1 }
+  // )
 
-/**
- * Create a DEX offer.
- *
- * https://xrpl.org/offercreate.html#offercreate
- *
- * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
- * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
- * --------------------------------------------------
- */
-// createOffer(
-//   {
-//     TakerGets: {
-//       issuer: WALLET_1.address,
-//       currency: "TEST_TOKEN",
-//       value: "10",
-//     },
-//     TakerPays: "60",
-//   },
-//   { wallet: WALLET_2 }
-// )
+  /**
+   *  _____               _   _ _
+   * |_   _| __ _   _ ___| |_| (_)_ __   ___  ___
+   *   | || '__| | | / __| __| | | '_ \ / _ \/ __|
+   *   | || |  | |_| \__ \ |_| | | | | |  __/\__ \
+   *   |_||_|   \__,_|___/\__|_|_|_| |_|\___||___/
+   */
 
-/**
- *     _                             _   ____       _
- *    / \   ___ ___ ___  _   _ _ __ | |_/ ___|  ___| |_
- *   / _ \ / __/ __/ _ \| | | | '_ \| __\___ \ / _ \ __|
- *  / ___ \ (_| (_| (_) | |_| | | | | |_ ___) |  __/ |_
- * /_/   \_\___\___\___/ \__,_|_| |_|\__|____/ \___|\__|
- */
+  /**
+   * Create a trustline (to be able to hold a different token than XRP).
+   * https://xrpl.org/trustset.html
+   *
+   * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
+   * --------------------------------------------------
+   */
+  // createTrustline(
+  //   {
+  //     Flags: TrustSetFlags.tfSetNoRipple,
+  //     LimitAmount: {
+  //       issuer: WALLET_1.address,
+  //       // No need to convert the currency into hex, this is taken care of in the function itself. Just write your currency "DEMO_TOKEN" for example.
+  //       currency: TOKEN,
+  //       value: "0",
+  //     },
+  //   },
+  //   { wallet: WALLET_2 }
+  // )
 
-// accountSet({ SetFlag: AccountSetAsfFlags.asfNoFreeze }, { wallet: WALLET_1 })
+  /**
+   *  ____  _______  __
+   * |  _ \| ____\ \/ /
+   * | | | |  _|  \  /
+   * | |_| | |___ /  \
+   * |____/|_____/_/\_\
+   */
 
-/**
- *     _                             _
- *    / \   ___ ___ ___  _   _ _ __ | |_
- *   / _ \ / __/ __/ _ \| | | | '_ \| __|
- *  / ___ \ (_| (_| (_) | |_| | | | | |_
- * /_/   \_\___\___\___/ \__,_|_| |_|\__|
- */
+  /**
+   * Create a DEX offer.
+   *
+   * https://xrpl.org/offercreate.html#offercreate
+   *
+   * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
+   * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
+   * --------------------------------------------------
+   */
+  // createOffer(
+  //   {
+  //     TakerGets: {
+  //       issuer: WALLET_1.address,
+  //       currency: "TEST_TOKEN",
+  //       value: "10",
+  //     },
+  //     TakerPays: "60",
+  //   },
+  //   { wallet: WALLET_2 }
+  // )
 
-// getAccountCurrencies({ account: WALLET_1.address, command: "account_currencies" })
+  /**
+   *     _                             _   ____       _
+   *    / \   ___ ___ ___  _   _ _ __ | |_/ ___|  ___| |_
+   *   / _ \ / __/ __/ _ \| | | | '_ \| __\___ \ / _ \ __|
+   *  / ___ \ (_| (_| (_) | |_| | | | | |_ ___) |  __/ |_
+   * /_/   \_\___\___\___/ \__,_|_| |_|\__|____/ \___|\__|
+   */
 
-// getAccountInfo({ account: WALLET_1.address, command: "account_info" })
+  /**
+   * Create an AccountSet.
+   *
+   * https://xrpl.org/accountset.html
+   * --------------------------------------------------
+   */
+  // accountSet({ SetFlag: AccountSetAsfFlags.asfDefaultRipple }, { wallet: WALLET_1 })
 
-// getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
+  /**
+   *     _                             _
+   *    / \   ___ ___ ___  _   _ _ __ | |_
+   *   / _ \ / __/ __/ _ \| | | | '_ \| __|
+   *  / ___ \ (_| (_| (_) | |_| | | | | |_
+   * /_/   \_\___\___\___/ \__,_|_| |_|\__|
+   */
 
-// getAccountLines({ account: WALLET_2.address, command: "account_lines" })
+  // getAccountCurrencies({ account: WALLET_1.address, command: "account_currencies" })
 
-// getAccountOffers({ account: WALLET_2.address, command: "account_offers" })
+  // getAccountInfo({ account: WALLET_1.address, command: "account_info" })
+
+  // getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
+
+  // getAccountLines({ account: WALLET_1.address, command: "account_lines" })
+
+  // getAccountOffers({ account: WALLET_2.address, command: "account_offers" })
+
+  // getAccountObjects({ account: "rDke5cTSm5mzSXJrGr7Am2itruqi2r3PBL", command: "account_objects" })
+
+  // Do not comment, disconnect the client
+  await getXrplClient().disconnect()
+}
+
+// Will run the main function above. Do not comment.
+main()

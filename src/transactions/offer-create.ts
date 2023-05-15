@@ -2,7 +2,6 @@ import color from "colors"
 import * as xrpl from "xrpl"
 import { convertCurrencyCodeToHex, prepareSignSubmit } from "../helpers"
 import { TxnOptions } from "../models"
-import { xrplClient } from "../xrpl-client"
 
 type CreateOfferProps = Omit<xrpl.OfferCreate, "TransactionType" | "Account">
 
@@ -15,9 +14,6 @@ export const createOffer = async (
 ) => {
   console.log(color.bold("******* LET'S CREATE A DEX OFFER *******"))
   console.log()
-
-  // Connect to the XRP Ledger
-  await xrplClient.connect()
 
   //   Convert the amount to drops (1 drop = .000001 XRP) or the currency to HEX
   if (typeof TakerGets === "string") {
@@ -43,6 +39,4 @@ export const createOffer = async (
 
   // Autofill transaction with additional fields, sign and submit
   await prepareSignSubmit(transaction, opts)
-
-  await xrplClient.disconnect()
 }

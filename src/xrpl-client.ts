@@ -1,7 +1,18 @@
 import * as xrpl from "xrpl"
 
 // https://xrpl.org/public-servers.html
-const RIPPLE_TESTNET = "wss://s.altnet.rippletest.net:51233/"
-// const XRPL_LABS_TESTNET = 'wss://testnet.xrpl-labs.com/'
+const networks = {
+  RIPPLE_TESTNET: "wss://s.altnet.rippletest.net:51233",
+  XRPL_LABS_TESTNET: "wss://testnet.xrpl-labs.com",
+}
 
-export const xrplClient = new xrpl.Client(RIPPLE_TESTNET)
+let xrplClient: xrpl.Client
+
+// Initialize the client if it doesn't exist or return it.
+export const getXrplClient = () => {
+  if (!xrplClient) {
+    xrplClient = new xrpl.Client(networks.RIPPLE_TESTNET)
+    return xrplClient
+  }
+  return xrplClient
+}

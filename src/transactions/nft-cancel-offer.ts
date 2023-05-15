@@ -2,7 +2,6 @@ import color from "colors"
 import { NFTokenCancelOffer } from "xrpl"
 import { prepareSignSubmit } from "../helpers"
 import { TxnOptions } from "../models"
-import { xrplClient } from "../xrpl-client"
 
 // type cancelNftOfferProps = {
 //   offerIds: string[]
@@ -15,9 +14,6 @@ export const cancelNftOffer = async (props: CancelNftOfferProps, opts: TxnOption
   console.log(color.bold("******* LET'S CANCEL AN NFT OFFER *******"))
   console.log()
 
-  // Connect to the XRP Ledger
-  await xrplClient.connect()
-
   // Construct the base transaction
   const transaction: NFTokenCancelOffer = {
     Account: opts.wallet.address,
@@ -27,6 +23,4 @@ export const cancelNftOffer = async (props: CancelNftOfferProps, opts: TxnOption
 
   // Autofill transaction with additional fields, sign and submit
   await prepareSignSubmit(transaction, opts)
-
-  await xrplClient.disconnect()
 }

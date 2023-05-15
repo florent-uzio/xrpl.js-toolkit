@@ -11,7 +11,7 @@ type CreateOfferProps = Omit<xrpl.OfferCreate, "TransactionType" | "Account">
  */
 export const createOffer = async (
   { TakerGets, TakerPays, ...rest }: CreateOfferProps,
-  { wallet }: TxnOptions
+  opts: TxnOptions
 ) => {
   console.log(color.bold("******* LET'S CREATE A DEX OFFER *******"))
   console.log()
@@ -34,7 +34,7 @@ export const createOffer = async (
 
   // Construct the base payment transaction
   const transaction: xrpl.OfferCreate = {
-    Account: wallet.address,
+    Account: opts.wallet.address,
     TransactionType: "OfferCreate",
     TakerGets,
     TakerPays,
@@ -42,7 +42,7 @@ export const createOffer = async (
   }
 
   // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, wallet)
+  await prepareSignSubmit(transaction, opts)
 
   await xrplClient.disconnect()
 }

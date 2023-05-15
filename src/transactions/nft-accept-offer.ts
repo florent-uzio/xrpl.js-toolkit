@@ -10,21 +10,18 @@ export const acceptNftOffer = async (props: AcceptNftOfferProps, opts: TxnOption
   console.log(color.bold("******* LET'S ACCEPT AN NFT OFFER *******"))
   console.log()
 
-  // Destructure the wallet from the options. https://www.w3schools.com/react/react_es6_destructuring.asp
-  const { wallet } = opts
-
   // Connect to the XRP Ledger
   await xrplClient.connect()
 
   // Construct the base transaction
   const transaction: NFTokenAcceptOffer = {
-    Account: wallet.address,
+    Account: opts.wallet.address,
     TransactionType: "NFTokenAcceptOffer",
     ...props,
   }
 
   // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, wallet)
+  await prepareSignSubmit(transaction, opts)
 
   await xrplClient.disconnect()
 }

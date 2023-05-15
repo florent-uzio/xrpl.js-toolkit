@@ -11,7 +11,7 @@ import { xrplClient } from "../xrpl-client"
 
 type CancelNftOfferProps = Omit<NFTokenCancelOffer, "TransactionType" | "Account">
 
-export const cancelNftOffer = async (props: CancelNftOfferProps, { wallet }: TxnOptions) => {
+export const cancelNftOffer = async (props: CancelNftOfferProps, opts: TxnOptions) => {
   console.log(color.bold("******* LET'S CANCEL AN NFT OFFER *******"))
   console.log()
 
@@ -20,13 +20,13 @@ export const cancelNftOffer = async (props: CancelNftOfferProps, { wallet }: Txn
 
   // Construct the base transaction
   const transaction: NFTokenCancelOffer = {
-    Account: wallet.address,
+    Account: opts.wallet.address,
     TransactionType: "NFTokenCancelOffer",
     ...props,
   }
 
   // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, wallet)
+  await prepareSignSubmit(transaction, opts)
 
   await xrplClient.disconnect()
 }

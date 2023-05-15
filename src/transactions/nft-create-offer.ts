@@ -12,7 +12,7 @@ type CreateNftOfferProps = Omit<NFTokenCreateOffer, "TransactionType" | "Account
 
 export const createNftOffer = async (
   { Amount, ...rest }: CreateNftOfferProps,
-  { wallet }: TxnOptions
+  opts: TxnOptions
 ) => {
   console.log(color.bold("******* LET'S CREATE AN NFT OFFER *******"))
   console.log()
@@ -27,14 +27,14 @@ export const createNftOffer = async (
 
   // Construct the base transaction
   const transaction: NFTokenCreateOffer = {
-    Account: wallet.address,
+    Account: opts.wallet.address,
     Amount,
     TransactionType: "NFTokenCreateOffer",
     ...rest,
   }
 
   // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, wallet)
+  await prepareSignSubmit(transaction, opts)
 
   await xrplClient.disconnect()
 }

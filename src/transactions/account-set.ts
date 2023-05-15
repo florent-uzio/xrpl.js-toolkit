@@ -4,21 +4,22 @@ import { prepareSignSubmit } from "../helpers"
 import { TxnOptions } from "../models"
 import { xrplClient } from "../xrpl-client"
 
-type MintNftProps = Omit<xrpl.NFTokenMint, "TransactionType" | "Account">
+type AccountSetProps = Omit<xrpl.AccountSet, "TransactionType" | "Account">
 
-export const mintNft = async ({ URI, Flags, ...rest }: MintNftProps, opts: TxnOptions) => {
-  console.log(color.bold("******* LET'S MINT AN NFT *******"))
+/**
+ * Create an Account Set.
+ */
+export const accountSet = async ({ ...rest }: AccountSetProps, opts: TxnOptions) => {
+  console.log(color.bold("******* LET'S CREATE AN ACCOUNT SET *******"))
   console.log()
 
   // Connect to the XRP Ledger
   await xrplClient.connect()
 
   // Construct the base transaction
-  const transaction: xrpl.NFTokenMint = {
-    TransactionType: "NFTokenMint",
+  const transaction: xrpl.AccountSet = {
     Account: opts.wallet.address,
-    Flags: Flags ?? xrpl.NFTokenMintFlags.tfTransferable,
-    URI: URI ? xrpl.convertStringToHex(URI) : "",
+    TransactionType: "AccountSet",
     ...rest,
   }
 

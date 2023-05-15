@@ -8,7 +8,7 @@ type CreateTrustlineProps = Omit<OptionalExceptFor<TrustSet, "LimitAmount">, "Tr
 
 export const createTrustline = async (
   { LimitAmount, ...rest }: CreateTrustlineProps,
-  { wallet }: TxnOptions
+  opts: TxnOptions
 ) => {
   console.log(color.bold("******* LET'S CREATE A TRUSTLINE *******"))
   console.log()
@@ -18,7 +18,7 @@ export const createTrustline = async (
 
   // Construct the base transaction
   const transaction: TrustSet = {
-    Account: wallet.address,
+    Account: opts.wallet.address,
     TransactionType: "TrustSet",
     LimitAmount: {
       ...LimitAmount,
@@ -28,7 +28,7 @@ export const createTrustline = async (
   }
 
   // Autofill transaction with additional fields (such as LastLedgerSequence), sign and submit
-  await prepareSignSubmit(transaction, wallet)
+  await prepareSignSubmit(transaction, opts)
 
   await xrplClient.disconnect()
 }

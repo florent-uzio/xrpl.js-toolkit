@@ -6,10 +6,7 @@ import { xrplClient } from "../xrpl-client"
 
 type SendPaymentProps = Omit<xrpl.Payment, "TransactionType" | "Account">
 
-export const sendPayment = async (
-  { Amount, ...rest }: SendPaymentProps,
-  { wallet }: TxnOptions
-) => {
+export const sendPayment = async ({ Amount, ...rest }: SendPaymentProps, opts: TxnOptions) => {
   console.log(color.bold("******* LET'S SEND A PAYMENT *******"))
   console.log()
 
@@ -25,14 +22,14 @@ export const sendPayment = async (
 
   // Construct the base payment transaction
   const transaction: xrpl.Payment = {
-    Account: wallet.address,
+    Account: opts.wallet.address,
     Amount,
     TransactionType: "Payment",
     ...rest,
   }
 
   // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, wallet)
+  await prepareSignSubmit(transaction, opts)
 
   await xrplClient.disconnect()
 }

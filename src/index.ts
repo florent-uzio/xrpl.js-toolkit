@@ -51,17 +51,17 @@ const main = async () => {
    * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
    * --------------------------------------------------
    */
-  // sendPayment(
+  // await sendPayment(
   //   {
-  //     Destination: WALLET_1.address,
+  //     Destination: WALLET_2.address,
   //     // Amount: "1",
   //     Amount: {
-  //       value: "20000",
+  //       value: "10000",
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
   //   },
-  //   { wallet: WALLET_2 }
+  //   { wallet: WALLET_1 }
   // )
 
   /**
@@ -79,7 +79,7 @@ const main = async () => {
    * https://xrpl.org/nftokenmint.html
    * --------------------------------------------------
    */
-  // mintNft(
+  // await mintNft(
   //   {
   //     URI: "https://media.giphy.com/media/8vQSQ3cNXuDGo/giphy.gif",
   //     NFTokenTaxon: 0,
@@ -93,7 +93,7 @@ const main = async () => {
    * https://xrpl.org/nftokencreateoffer.html
    * --------------------------------------------------
    */
-  // createNftOffer(
+  // await createNftOffer(
   //   {
   //     Amount: "10",
   //     // Flags: NFTokenCreateOfferFlags.tfSellNFToken,
@@ -109,7 +109,7 @@ const main = async () => {
    * https://xrpl.org/nftokenacceptoffer.html
    * --------------------------------------------------
    */
-  // acceptNftOffer(
+  // await acceptNftOffer(
   //   {
   //     // NFTokenBuyOffer: "...",
   //     NFTokenSellOffer: "...",
@@ -123,7 +123,7 @@ const main = async () => {
    * https://xrpl.org/nftokencanceloffer.html
    * --------------------------------------------------
    */
-  // cancelNftOffer(
+  // await cancelNftOffer(
   //   {
   //     NFTokenOffers: ["..."],
   //   },
@@ -145,14 +145,14 @@ const main = async () => {
    * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
    * --------------------------------------------------
    */
-  // createTrustline(
+  // await createTrustline(
   //   {
   //     Flags: TrustSetFlags.tfSetNoRipple,
   //     LimitAmount: {
   //       issuer: WALLET_1.address,
   //       // No need to convert the currency into hex, this is taken care of in the function itself. Just write your currency "DEMO_TOKEN" for example.
   //       currency: TOKEN,
-  //       value: "0",
+  //       value: "1000000",
   //     },
   //   },
   //   { wallet: WALLET_2 }
@@ -175,7 +175,7 @@ const main = async () => {
    * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
    * --------------------------------------------------
    */
-  // createOffer(
+  // await createOffer(
   //   {
   //     TakerGets: {
   //       issuer: WALLET_1.address,
@@ -201,7 +201,7 @@ const main = async () => {
    * https://xrpl.org/accountset.html
    * --------------------------------------------------
    */
-  // accountSet({ SetFlag: AccountSetAsfFlags.asfDefaultRipple }, { wallet: WALLET_1 })
+  // await accountSet({ SetFlag: AccountSetAsfFlags.asfRequireAuth }, { wallet: WALLET_1 })
 
   /**
    *     _                             _
@@ -211,17 +211,17 @@ const main = async () => {
    * /_/   \_\___\___\___/ \__,_|_| |_|\__|
    */
 
-  // getAccountCurrencies({ account: WALLET_1.address, command: "account_currencies" })
+  // await getAccountCurrencies({ account: WALLET_1.address, command: "account_currencies" })
 
-  // getAccountInfo({ account: WALLET_1.address, command: "account_info" })
+  // await getAccountInfo({ account: WALLET_1.address, command: "account_info" })
 
-  // getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
+  // await getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 
-  // getAccountLines({ account: WALLET_1.address, command: "account_lines" })
+  // await getAccountLines({ account: WALLET_1.address, command: "account_lines" })
 
-  // getAccountOffers({ account: WALLET_2.address, command: "account_offers" })
+  // await getAccountOffers({ account: WALLET_1.address, command: "account_offers" })
 
-  // getAccountObjects({ account: "rDke5cTSm5mzSXJrGr7Am2itruqi2r3PBL", command: "account_objects" })
+  // await getAccountObjects({ account: WALLET_1.address, command: "account_objects" })
 
   // Do not comment, disconnect the client
   await getXrplClient().disconnect()

@@ -6,8 +6,9 @@ import {
   AccountSetTfFlags,
   NFTokenCreateOfferFlags,
   TrustSetFlags,
+  isoTimeToRippleTime,
 } from "xrpl"
-import { convertCurrencyCodeToHex } from "./helpers"
+import { convertCurrencyCodeToHex, generateConditionAndFulfillment } from "./helpers"
 import {
   cancelNftOffer,
   acceptNftOffer,
@@ -21,6 +22,9 @@ import {
   bidAMM,
   depositInAMM,
   voteInAMM,
+  createEscrow,
+  finishEscrow,
+  cancelEscrow,
 } from "./transactions"
 import { WALLET_2, WALLET_1, WALLET_3 } from "./wallets"
 import {
@@ -38,6 +42,7 @@ import * as dotenv from "dotenv"
 import { getXrplClient } from "./xrpl-client"
 import { withdrawFromAMM } from "./transactions/amm-withdraw"
 import { Currency } from "xrpl/dist/npm/models/common"
+import dayjs from "dayjs"
 
 dotenv.config()
 
@@ -218,6 +223,42 @@ const main = async () => {
    * --------------------------------------------------
    */
   // await accountSet({ SetFlag: AccountSetAsfFlags.asfRequireAuth }, { wallet: WALLET_1 })
+
+  /**
+   *   _____
+   *  | ____|___  ___ _ __ _____      _____
+   *  |  _| / __|/ __| '__/ _ \ \ /\ / / __|
+   *  | |___\__ \ (__| | | (_) \ V  V /\__ \
+   *  |_____|___/\___|_|  \___/ \_/\_/ |___/
+   */
+
+  // await createEscrow(
+  //   {
+  //     Amount: "5", // in XRP
+  //     // Condition: generateConditionAndFulfillment().condition, // Optional
+  //     Destination: WALLET_2.address,
+  //     FinishAfter: isoTimeToRippleTime(dayjs().add(1, "minute").toDate()),
+  //   },
+  //   { wallet: WALLET_1 }
+  // )
+
+  // await finishEscrow(
+  //   {
+  //     // Condition: "A02580205E2935435865EA7049B17812CFF41EFFCD8B7CD92D1F6FB57D6D61BDF48795AA810120", // Optional
+  //     // Fulfillment: "A0228020E7EE88B735FDFD0578B961B0D7649672124C73912536D4B3902CB38677EE80BF", // Optional
+  //     Owner: WALLET_1.address,
+  //     OfferSequence: 1538416,
+  //   },
+  //   { wallet: WALLET_2 }
+  // )
+
+  // await cancelEscrow(
+  //   {
+  //     Owner: WALLET_1.address,
+  //     OfferSequence: 1538316,
+  //   },
+  //   { wallet: WALLET_1 }
+  // )
 
   /**
    *     _    __  __ __  __

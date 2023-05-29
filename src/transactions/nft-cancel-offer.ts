@@ -3,11 +3,6 @@ import { NFTokenCancelOffer } from "xrpl"
 import { prepareSignSubmit } from "../helpers"
 import { TxnOptions } from "../models"
 
-// type cancelNftOfferProps = {
-//   offerIds: string[]
-//   wallet: xrpl.Wallet
-// }
-
 type CancelNftOfferProps = Omit<NFTokenCancelOffer, "TransactionType" | "Account">
 
 export const cancelNftOffer = async (props: CancelNftOfferProps, opts: TxnOptions) => {

@@ -23,7 +23,9 @@
   },
   "dependencies": {
     "colors": "^1.4.0",
+    "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
+    "five-bells-condition": "^5.0.1",
     "xrpl": "^2.8.0-beta.1"
   }
 }

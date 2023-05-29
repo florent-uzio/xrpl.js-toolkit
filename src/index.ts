@@ -1,5 +1,12 @@
 // organize-imports-ignore
-import { AccountSetAsfFlags, AccountSetTfFlags, NFTokenCreateOfferFlags, TrustSetFlags } from "xrpl"
+import {
+  AMMDepositFlags,
+  AMMWithdrawFlags,
+  AccountSetAsfFlags,
+  AccountSetTfFlags,
+  NFTokenCreateOfferFlags,
+  TrustSetFlags,
+} from "xrpl"
 import { convertCurrencyCodeToHex } from "./helpers"
 import {
   cancelNftOffer,
@@ -10,8 +17,12 @@ import {
   createTrustline,
   createOffer,
   accountSet,
+  createAMM,
+  bidAMM,
+  depositInAMM,
+  voteInAMM,
 } from "./transactions"
-import { WALLET_2, WALLET_1 } from "./wallets"
+import { WALLET_2, WALLET_1, WALLET_3 } from "./wallets"
 import {
   getAccountCurrencies,
   getAccountInfo,
@@ -19,9 +30,14 @@ import {
   getAccountNfts,
   getAccountObjects,
   getAccountOffers,
+  getAMMInfo,
+  getLedgerEntry,
+  getServerState,
 } from "./methods"
 import * as dotenv from "dotenv"
 import { getXrplClient } from "./xrpl-client"
+import { withdrawFromAMM } from "./transactions/amm-withdraw"
+import { Currency } from "xrpl/dist/npm/models/common"
 
 dotenv.config()
 
@@ -53,10 +69,10 @@ const main = async () => {
    */
   // await sendPayment(
   //   {
-  //     Destination: WALLET_2.address,
+  //     Destination: WALLET_3.address,
   //     // Amount: "1",
   //     Amount: {
-  //       value: "10000",
+  //       value: "200000",
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
@@ -152,10 +168,10 @@ const main = async () => {
   //       issuer: WALLET_1.address,
   //       // No need to convert the currency into hex, this is taken care of in the function itself. Just write your currency "DEMO_TOKEN" for example.
   //       currency: TOKEN,
-  //       value: "1000000",
+  //       value: "30000000",
   //     },
   //   },
-  //   { wallet: WALLET_2 }
+  //   { wallet: WALLET_3 }
   // )
 
   /**
@@ -204,24 +220,127 @@ const main = async () => {
   // await accountSet({ SetFlag: AccountSetAsfFlags.asfRequireAuth }, { wallet: WALLET_1 })
 
   /**
-   *     _                             _
-   *    / \   ___ ___ ___  _   _ _ __ | |_
-   *   / _ \ / __/ __/ _ \| | | | '_ \| __|
-   *  / ___ \ (_| (_| (_) | |_| | | | | |_
-   * /_/   \_\___\___\___/ \__,_|_| |_|\__|
+   *     _    __  __ __  __
+   *    / \  |  \/  |  \/  |
+   *   / _ \ | |\/| | |\/| |
+   *  / ___ \| |  | | |  | |
+   * /_/   \_\_|  |_|_|  |_|
+   *
+   * Attention
+   * Automated Market Maker (AMM) functionality is part of the proposed XLS-30d extension to the XRP Ledger protocol.
+   * You can use these functions on AMM test networks, but there isn't an official amendment and they aren't available on the production Mainnet.
    */
 
-  // await getAccountCurrencies({ account: WALLET_1.address, command: "account_currencies" })
+  // Update accordingly
+  const asset: Currency = {
+    currency: "XRP",
+  }
+
+  // Update accordingly
+  const asset2: Currency = {
+    currency: TOKEN,
+    issuer: WALLET_1.address,
+  }
+
+  // await createAMM(
+  //   {
+  //     Amount: "1000",
+  //     Amount2: {
+  //       issuer: WALLET_1.address,
+  //       currency: TOKEN,
+  //       value: "2000",
+  //     },
+  //     TradingFee: 500,
+  //   },
+  //   {
+  //     wallet: WALLET_2,
+  //   }
+  // )
+
+  // await bidAMM(
+  //   {
+  //     Asset: asset,
+  //     Asset2: asset2,
+  //     BidMin: "1000",
+  //   },
+  //   { wallet: WALLET_3 }
+  // )
+
+  // await depositInAMM(
+  //   {
+  //     Asset: asset,
+  //     Amount: {
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
+  //       value: "10000",
+  //     },
+  //     Asset2: asset2,
+  //     Flags: AMMDepositFlags.tfSingleAsset,
+  //   },
+  //   { wallet: WALLET_3 }
+  // )
+
+  // await voteInAMM(
+  //   {
+  //     TradingFee: 600,
+  //     Asset: asset,
+  //     Asset2: asset2,
+  //   },
+  //   { wallet: WALLET_3 }
+  // )
+
+  // await withdrawFromAMM(
+  //   {
+  //     Asset: asset,
+  //     Asset2: asset2,
+  //     Amount: { currency: TOKEN, issuer: WALLET_1.address, value: "10" },
+  //     Flags: AMMWithdrawFlags.tfSingleAsset,
+  //   },
+  //   { wallet: WALLET_3 }
+  // )
+
+  /**
+   *     _                             _       __  __      _   _               _
+   *    / \   ___ ___ ___  _   _ _ __ | |_    |  \/  | ___| |_| |__   ___   __| |___
+   *   / _ \ / __/ __/ _ \| | | | '_ \| __|   | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
+   *  / ___ \ (_| (_| (_) | |_| | | | | |_    | |  | |  __/ |_| | | | (_) | (_| \__ \
+   * /_/   \_\___\___\___/ \__,_|_| |_|\__|   |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
+   */
+
+  // await getAccountCurrencies({ account: WALLET_3.address, command: "account_currencies" })
 
   // await getAccountInfo({ account: WALLET_1.address, command: "account_info" })
 
   // await getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 
-  // await getAccountLines({ account: WALLET_1.address, command: "account_lines" })
+  // await getAccountLines({ account: WALLET_3.address, command: "account_lines" })
 
   // await getAccountOffers({ account: WALLET_1.address, command: "account_offers" })
 
-  // await getAccountObjects({ account: WALLET_1.address, command: "account_objects" })
+  // await getAccountObjects({ account: WALLET_3.address, command: "account_objects" })
+
+  /**
+   *     _    __  __ __  __        __  __      _   _               _
+   *    / \  |  \/  |  \/  |      |  \/  | ___| |_| |__   ___   __| |___
+   *   / _ \ | |\/| | |\/| |      | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
+   *  / ___ \| |  | | |  | |      | |  | |  __/ |_| | | | (_) | (_| \__ \
+   * /_/   \_\_|  |_|_|  |_|      |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
+   */
+  // await getAMMInfo({
+  //   command: "amm_info",
+  //   asset: { currency: "XRP" },
+  //   asset2: { issuer: WALLET_1.address, currency: TOKEN },
+  // })
+
+  /**
+   *  ____                             __  __      _   _               _
+   * / ___|  ___ _ ____   _____ _ __  |  \/  | ___| |_| |__   ___   __| |___
+   * \___ \ / _ \ '__\ \ / / _ \ '__| | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
+   *  ___) |  __/ |   \ V /  __/ |    | |  | |  __/ |_| | | | (_) | (_| \__ \
+   * |____/ \___|_|    \_/ \___|_|    |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
+   */
+
+  // await getServerState()
 
   // Do not comment, disconnect the client
   await getXrplClient().disconnect()

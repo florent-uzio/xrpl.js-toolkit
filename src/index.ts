@@ -43,6 +43,7 @@ import { getXrplClient } from "./xrpl-client"
 import { withdrawFromAMM } from "./transactions/amm-withdraw"
 import { Currency } from "xrpl/dist/npm/models/common"
 import dayjs from "dayjs"
+import { getBookOffers } from "./methods/path-and-order-book"
 
 dotenv.config()
 
@@ -74,10 +75,10 @@ const main = async () => {
    */
   // await sendPayment(
   //   {
-  //     Destination: WALLET_3.address,
+  //     Destination: WALLET_2.address,
   //     // Amount: "1",
   //     Amount: {
-  //       value: "200000",
+  //       value: "2000000",
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
@@ -176,7 +177,7 @@ const main = async () => {
   //       value: "30000000",
   //     },
   //   },
-  //   { wallet: WALLET_3 }
+  //   { wallet: WALLET_2 }
   // )
 
   /**
@@ -196,17 +197,17 @@ const main = async () => {
    * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
    * --------------------------------------------------
    */
-  // await createOffer(
-  //   {
-  //     TakerGets: {
-  //       issuer: WALLET_1.address,
-  //       currency: "TEST_TOKEN",
-  //       value: "10",
-  //     },
-  //     TakerPays: "60",
-  //   },
-  //   { wallet: WALLET_2 }
-  // )
+  await createOffer(
+    {
+      TakerGets: {
+        issuer: WALLET_1.address,
+        currency: TOKEN,
+        value: "1",
+      },
+      TakerPays: "450",
+    },
+    { wallet: WALLET_2 }
+  )
 
   /**
    *     _                             _   ____       _
@@ -354,7 +355,7 @@ const main = async () => {
 
   // await getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 
-  // await getAccountLines({ account: WALLET_3.address, command: "account_lines" })
+  // await getAccountLines({ account: WALLET_2.address, command: "account_lines" })
 
   // await getAccountOffers({ account: WALLET_1.address, command: "account_offers" })
 
@@ -382,6 +383,25 @@ const main = async () => {
    */
 
   // await getServerState()
+
+  /**
+   *  ____              _               __  __
+   * | __ )  ___   ___ | | __     ___  / _|/ _| ___ _ __ ___
+   * |  _ \ / _ \ / _ \| |/ /    / _ \| |_| |_ / _ \ '__/ __|
+   * | |_) | (_) | (_) |   <    | (_) |  _|  _|  __/ |  \__ \
+   * |____/ \___/ \___/|_|\_\    \___/|_| |_|  \___|_|  |___/
+   */
+
+  // await getBookOffers({
+  //   command: "book_offers",
+  //   taker_gets: {
+  //     currency: "XRP",
+  //   },
+  //   taker_pays: {
+  //     currency: TOKEN,
+  //     issuer: WALLET_1.address,
+  //   },
+  // })
 
   // Do not comment, disconnect the client
   await getXrplClient().disconnect()

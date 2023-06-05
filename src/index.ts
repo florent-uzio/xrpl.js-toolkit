@@ -25,6 +25,7 @@ import {
   createEscrow,
   finishEscrow,
   cancelEscrow,
+  cancelOffer,
 } from "./transactions"
 import { WALLET_2, WALLET_1, WALLET_3 } from "./wallets"
 import {
@@ -197,17 +198,21 @@ const main = async () => {
    * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
    * --------------------------------------------------
    */
-  await createOffer(
-    {
-      TakerGets: {
-        issuer: WALLET_1.address,
-        currency: TOKEN,
-        value: "1",
-      },
-      TakerPays: "450",
-    },
-    { wallet: WALLET_2 }
-  )
+  // await createOffer(
+  //   {
+  // // This is what the account accepting the offer will pay the `wallet` address (2nd argument to this createOffer).
+  //     TakerPays: {
+  //       issuer: WALLET_1.address,
+  //       currency: TOKEN,
+  //       value: "1",
+  //     },
+  // // This is what the account accepting the offer will receive by the `wallet` address (2nd argument to this createOffer).
+  //     TakerGets: "2",
+  //   },
+  //   { wallet: WALLET_3 }
+  // )
+
+  // await cancelOffer({ OfferSequence: 38398321 }, { wallet: WALLET_3 })
 
   /**
    *     _                             _   ____       _

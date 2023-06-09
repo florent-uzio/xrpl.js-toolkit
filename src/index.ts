@@ -200,19 +200,19 @@ const main = async () => {
    */
   // await createOffer(
   //   {
-  // // This is what the account accepting the offer will pay the `wallet` address (2nd argument to this createOffer).
+  //     // This is what the account accepting the offer will pay the `wallet` address (2nd argument to this createOffer).
   //     TakerPays: {
   //       issuer: WALLET_1.address,
   //       currency: TOKEN,
   //       value: "1",
   //     },
-  // // This is what the account accepting the offer will receive by the `wallet` address (2nd argument to this createOffer).
+  //     // This is what the account accepting the offer will receive by the `wallet` address (2nd argument to this createOffer).
   //     TakerGets: "2",
   //   },
-  //   { wallet: WALLET_3 }
+  //   { wallet: WALLET_2 }
   // )
 
-  // await cancelOffer({ OfferSequence: 38398321 }, { wallet: WALLET_3 })
+  // await cancelOffer({ OfferSequence: 38398319 }, { wallet: WALLET_2 })
 
   /**
    *     _                             _   ____       _

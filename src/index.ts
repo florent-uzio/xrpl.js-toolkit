@@ -8,7 +8,13 @@ import {
   TrustSetFlags,
   isoTimeToRippleTime,
 } from "xrpl"
-import { convertCurrencyCodeToHex, generateConditionAndFulfillment } from "./helpers"
+import {
+  convertCurrencyCodeToHex,
+  generateConditionAndFulfillment,
+  getBuyQuote,
+  getSellQuote,
+  lookupOffers,
+} from "./helpers"
 import {
   cancelNftOffer,
   acceptNftOffer,
@@ -26,6 +32,7 @@ import {
   finishEscrow,
   cancelEscrow,
   cancelOffer,
+  withdrawFromAMM,
 } from "./transactions"
 import { WALLET_2, WALLET_1, WALLET_3 } from "./wallets"
 import {
@@ -38,13 +45,12 @@ import {
   getAMMInfo,
   getLedgerEntry,
   getServerState,
+  getBookOffers,
 } from "./methods"
 import * as dotenv from "dotenv"
 import { getXrplClient } from "./xrpl-client"
-import { withdrawFromAMM } from "./transactions/amm-withdraw"
 import { Currency } from "xrpl/dist/npm/models/common"
 import dayjs from "dayjs"
-import { getBookOffers } from "./methods/path-and-order-book"
 
 dotenv.config()
 
@@ -79,7 +85,7 @@ const main = async () => {
   //     Destination: WALLET_2.address,
   //     // Amount: "1",
   //     Amount: {
-  //       value: "2000000",
+  //       value: "100",
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
@@ -198,18 +204,59 @@ const main = async () => {
    * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
    * --------------------------------------------------
    */
+
+  // await lookupOffers(
+  //   {
+  //     weWant: { currency: TOKEN, issuer: WALLET_1.address },
+  //     weWantAmount: "1000000000000",
+  //     weSpend: { currency: "XRP" },
+  //     weSpendAmount: "70",
+  //   },
+  //   { wallet: WALLET_3, showLogs: false }
+  // )
+
+  // await getBuyQuote(
+  //   {
+  //     weWant: {
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
+  //     },
+  //     weWantAmountOfToken: "170",
+  //     counterCurrency: {
+  //       currency: "XRP",
+  //     },
+  //     taker: WALLET_3.address,
+  //   },
+  //   { showLogs: false }
+  // )
+
+  // await getSellQuote(
+  //   {
+  //     weSell: {
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
+  //     },
+  //     weSellAmount: "94",
+  //     counterCurrency: {
+  //       currency: "XRP",
+  //     },
+  //     taker: WALLET_3.address,
+  //   },
+  //   { showLogs: false }
+  // )
+
   // await createOffer(
   //   {
   //     // This is what the account accepting the offer will pay the `wallet` address (2nd argument to this createOffer).
   //     TakerPays: {
   //       issuer: WALLET_1.address,
   //       currency: TOKEN,
-  //       value: "1",
+  //       value: "50",
   //     },
   //     // This is what the account accepting the offer will receive by the `wallet` address (2nd argument to this createOffer).
-  //     TakerGets: "2",
+  //     TakerGets: "36.9",
   //   },
-  //   { wallet: WALLET_2 }
+  //   { wallet: WALLET_3 }
   // )
 
   // await cancelOffer({ OfferSequence: 38398319 }, { wallet: WALLET_2 })

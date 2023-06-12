@@ -80,7 +80,7 @@ const main = async () => {
   //     Destination: WALLET_2.address,
   //     // Amount: "1",
   //     Amount: {
-  //       value: "100",
+  //       value: "100000",
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
@@ -203,12 +203,13 @@ const main = async () => {
   // await getBuyQuote(
   //   {
   //     weWant: {
-  //       currency: TOKEN,
+  //       currency: "DEX_TOKEN",
   //       issuer: WALLET_1.address,
   //     },
-  //     weWantAmountOfToken: 170,
+  //     weWantAmountOfToken: 89,
   //     counterCurrency: {
-  //       currency: "XRP",
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
   //     },
   //     taker: WALLET_3.address,
   //   },
@@ -221,9 +222,10 @@ const main = async () => {
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
-  //     weSellAmountOfTokens: 94,
+  //     weSellAmountOfTokens: 50,
   //     counterCurrency: {
-  //       currency: "XRP",
+  //       currency: "DEX_TOKEN",
+  //       issuer: WALLET_1.address,
   //     },
   //     taker: WALLET_3.address,
   //   },
@@ -239,9 +241,13 @@ const main = async () => {
   //       value: "50",
   //     },
   //     // This is what the account accepting the offer will receive by the `wallet` address (2nd argument to this createOffer).
-  //     TakerGets: "36.9",
+  //     TakerGets: {
+  //       issuer: WALLET_1.address,
+  //       currency: "DEX_TOKEN",
+  //       value: "89",
+  //     },
   //   },
-  //   { wallet: WALLET_3 }
+  //   { wallet: WALLET_2 }
   // )
 
   // await cancelOffer({ OfferSequence: 38398319 }, { wallet: WALLET_2 })

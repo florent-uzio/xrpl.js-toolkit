@@ -5,7 +5,7 @@ import { convertAmount, convertHexCurrencyCodeToString, isString } from "../help
 import { getBookOffers } from "../methods"
 import { MethodOptions } from "../models"
 
-type GetBuyQuoteProps = Pick<BookOffersRequest, "taker"> & {
+type GetBuyQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "command"> & {
   /**
    * The currency we want to buy.
    * If the currency is an IOU, the issuer needs to be mentioned.
@@ -32,7 +32,7 @@ type GetBuyQuoteProps = Pick<BookOffersRequest, "taker"> & {
  * @returns void, display a message regarding the result of the quote.
  */
 export const getBuyQuote = async (
-  { weWant, weWantAmountOfToken, counterCurrency, taker }: GetBuyQuoteProps,
+  { weWant, weWantAmountOfToken, counterCurrency, ...rest }: GetBuyQuoteProps,
   { showLogs }: MethodOptions = {}
 ): Promise<number> => {
   console.log(color.bold("******* LET'S GET A BUY QUOTE *******"))
@@ -43,7 +43,7 @@ export const getBuyQuote = async (
       command: "book_offers",
       taker_gets: weWant,
       taker_pays: counterCurrency,
-      taker,
+      ...rest,
     },
     { showLogs }
   )
@@ -87,15 +87,16 @@ export const getBuyQuote = async (
   }
 
   const currencyReadable = convertHexCurrencyCodeToString(weWant.currency)
+  const counterCurrencyReadable = convertHexCurrencyCodeToString(counterCurrency.currency)
 
   console.log(
-    `You need to sell at least ${total} ${counterCurrency.currency} to buy ${weWantAmountOfToken} ${currencyReadable}`
+    `You need to sell at least ${total} ${counterCurrencyReadable} to buy ${weWantAmountOfToken} ${currencyReadable}`
   )
 
   return total
 }
 
-type GetSellQuoteProps = Pick<BookOffersRequest, "taker"> & {
+type GetSellQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "command"> & {
   /**
    * The currency we want to sell.
    * If the currency is an IOU, the issuer needs to be mentioned.
@@ -123,7 +124,7 @@ type GetSellQuoteProps = Pick<BookOffersRequest, "taker"> & {
  * @returns void, display a message regarding the result of the quote.
  */
 export const getSellQuote = async (
-  { weSell, weSellAmountOfTokens, counterCurrency, taker }: GetSellQuoteProps,
+  { weSell, weSellAmountOfTokens, counterCurrency, ...rest }: GetSellQuoteProps,
   { showLogs }: MethodOptions = {}
 ): Promise<number> => {
   console.log(color.bold("******* LET'S GET A SELL QUOTE *******"))
@@ -134,7 +135,7 @@ export const getSellQuote = async (
       command: "book_offers",
       taker_gets: counterCurrency,
       taker_pays: weSell,
-      taker,
+      ...rest,
     },
     { showLogs }
   )
@@ -178,13 +179,14 @@ export const getSellQuote = async (
 
   // Convert the total from drops to XRP if the counter currency is XRP
   if (counterCurrency.currency.toUpperCase() === "XRP") {
-    total = +dropsToXrp(total)
+    total = +convertAmount({ amount: total.toString(), to: "xrp" })
   }
 
   const currencyReadable = convertHexCurrencyCodeToString(weSell.currency)
+  const counterCurrencyReadable = convertHexCurrencyCodeToString(counterCurrency.currency)
 
   console.log(
-    `You will get ${total} ${counterCurrency.currency} if you sell ${weSellAmountOfTokens} ${currencyReadable}`
+    `You will get ${total} ${counterCurrencyReadable} if you sell ${weSellAmountOfTokens} ${currencyReadable}`
   )
 
   return total

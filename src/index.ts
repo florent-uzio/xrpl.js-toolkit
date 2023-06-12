@@ -8,7 +8,7 @@ import {
   TrustSetFlags,
   isoTimeToRippleTime,
 } from "xrpl"
-import { convertCurrencyCodeToHex, generateConditionAndFulfillment } from "./helpers"
+import { convertCurrencyCodeToHex, generateConditionAndFulfillment, lookupOffers } from "./helpers"
 import {
   cancelNftOffer,
   acceptNftOffer,
@@ -26,6 +26,7 @@ import {
   finishEscrow,
   cancelEscrow,
   cancelOffer,
+  withdrawFromAMM,
 } from "./transactions"
 import { WALLET_2, WALLET_1, WALLET_3 } from "./wallets"
 import {
@@ -38,13 +39,13 @@ import {
   getAMMInfo,
   getLedgerEntry,
   getServerState,
+  getBookOffers,
 } from "./methods"
 import * as dotenv from "dotenv"
 import { getXrplClient } from "./xrpl-client"
-import { withdrawFromAMM } from "./transactions/amm-withdraw"
 import { Currency } from "xrpl/dist/npm/models/common"
 import dayjs from "dayjs"
-import { getBookOffers } from "./methods/path-and-order-book"
+import { getBuyQuote, getSellQuote } from "./experimentals"
 
 dotenv.config()
 
@@ -79,7 +80,7 @@ const main = async () => {
   //     Destination: WALLET_2.address,
   //     // Amount: "1",
   //     Amount: {
-  //       value: "2000000",
+  //       value: "100000",
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
@@ -189,30 +190,67 @@ const main = async () => {
    * |____/|_____/_/\_\
    */
 
-  /**
-   * Create a DEX offer.
-   *
-   * https://xrpl.org/offercreate.html#offercreate
-   *
-   * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
-   * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
-   * --------------------------------------------------
-   */
+  // await lookupOffers(
+  //   {
+  //     weWant: { currency: TOKEN, issuer: WALLET_1.address },
+  //     weWantAmount: "1000000000000",
+  //     weSpend: { currency: "XRP" },
+  //     weSpendAmount: "70",
+  //   },
+  //   { wallet: WALLET_3, showLogs: false }
+  // )
+
+  // await getBuyQuote(
+  //   {
+  //     weWant: {
+  //       currency: "DEX_TOKEN",
+  //       issuer: WALLET_1.address,
+  //     },
+  //     weWantAmountOfToken: 89,
+  //     counterCurrency: {
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
+  //     },
+  //     taker: WALLET_3.address,
+  //   },
+  //   { showLogs: false }
+  // )
+
+  // await getSellQuote(
+  //   {
+  //     weSell: {
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
+  //     },
+  //     weSellAmountOfTokens: 50,
+  //     counterCurrency: {
+  //       currency: "DEX_TOKEN",
+  //       issuer: WALLET_1.address,
+  //     },
+  //     taker: WALLET_3.address,
+  //   },
+  //   { showLogs: false }
+  // )
+
   // await createOffer(
   //   {
-  // // This is what the account accepting the offer will pay the `wallet` address (2nd argument to this createOffer).
+  //     // This is what the account accepting the offer will pay the `wallet` address (2nd argument to this createOffer).
   //     TakerPays: {
   //       issuer: WALLET_1.address,
   //       currency: TOKEN,
-  //       value: "1",
+  //       value: "50",
   //     },
-  // // This is what the account accepting the offer will receive by the `wallet` address (2nd argument to this createOffer).
-  //     TakerGets: "2",
+  //     // This is what the account accepting the offer will receive by the `wallet` address (2nd argument to this createOffer).
+  //     TakerGets: {
+  //       issuer: WALLET_1.address,
+  //       currency: "DEX_TOKEN",
+  //       value: "89",
+  //     },
   //   },
-  //   { wallet: WALLET_3 }
+  //   { wallet: WALLET_2 }
   // )
 
-  // await cancelOffer({ OfferSequence: 38398321 }, { wallet: WALLET_3 })
+  // await cancelOffer({ OfferSequence: 38398319 }, { wallet: WALLET_2 })
 
   /**
    *     _                             _   ____       _

@@ -45,7 +45,7 @@ import * as dotenv from "dotenv"
 import { getXrplClient } from "./xrpl-client"
 import { Currency } from "xrpl/dist/npm/models/common"
 import dayjs from "dayjs"
-import { getBuyQuote, getSellQuote } from "./experimentals"
+import { getBuyQuote, getSellQuote } from "./experimental"
 
 dotenv.config()
 

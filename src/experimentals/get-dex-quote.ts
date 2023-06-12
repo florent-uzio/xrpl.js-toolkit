@@ -1,10 +1,9 @@
+import color from "colors"
 import { dropsToXrp } from "xrpl"
 import { BookOffersRequest, TakerAmount } from "xrpl/dist/npm/models/methods/bookOffers"
+import { convertAmount, convertHexCurrencyCodeToString, isString } from "../helpers"
 import { getBookOffers } from "../methods"
 import { MethodOptions } from "../models"
-import { convertAmount } from "./amounts.helpers"
-import { convertHexCurrencyCodeToString } from "./currency-code.helpers"
-import { isString } from "./typeof-fns"
 
 type GetBuyQuoteProps = Pick<BookOffersRequest, "taker"> & {
   /**
@@ -36,6 +35,9 @@ export const getBuyQuote = async (
   { weWant, weWantAmountOfToken, counterCurrency, taker }: GetBuyQuoteProps,
   { showLogs }: MethodOptions = {}
 ): Promise<number> => {
+  console.log(color.bold("******* LET'S GET A BUY QUOTE *******"))
+  console.log()
+
   const offers = await getBookOffers(
     {
       command: "book_offers",
@@ -124,6 +126,9 @@ export const getSellQuote = async (
   { weSell, weSellAmountOfTokens, counterCurrency, taker }: GetSellQuoteProps,
   { showLogs }: MethodOptions = {}
 ): Promise<number> => {
+  console.log(color.bold("******* LET'S GET A SELL QUOTE *******"))
+  console.log()
+
   const offers = await getBookOffers(
     {
       command: "book_offers",

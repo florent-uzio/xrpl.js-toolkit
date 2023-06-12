@@ -1,9 +1,8 @@
 import color from "colors"
 import { TakerAmount } from "xrpl/dist/npm/models/methods/bookOffers"
+import { convertAmount, convertHexCurrencyCodeToString } from "../helpers"
 import { getBookOffers } from "../methods"
 import { TxnOptions } from "../models"
-import { convertAmount } from "./amounts.helpers"
-import { convertHexCurrencyCodeToString } from "./currency-code.helpers"
 
 type LookupOffersProps = {
   weWant: TakerAmount
@@ -12,6 +11,9 @@ type LookupOffersProps = {
   weSpendAmount: string
 }
 
+/**
+ * Converts the function described in https://xrpl.org/trade-in-the-decentralized-exchange.html#trade-in-the-decentralized-exchange to typescript.
+ */
 export const lookupOffers = async (
   { weSpend, weSpendAmount, weWant, weWantAmount }: LookupOffersProps,
   { wallet, showLogs }: TxnOptions

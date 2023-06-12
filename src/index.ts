@@ -8,13 +8,7 @@ import {
   TrustSetFlags,
   isoTimeToRippleTime,
 } from "xrpl"
-import {
-  convertCurrencyCodeToHex,
-  generateConditionAndFulfillment,
-  getBuyQuote,
-  getSellQuote,
-  lookupOffers,
-} from "./helpers"
+import { convertCurrencyCodeToHex, generateConditionAndFulfillment, lookupOffers } from "./helpers"
 import {
   cancelNftOffer,
   acceptNftOffer,
@@ -51,6 +45,7 @@ import * as dotenv from "dotenv"
 import { getXrplClient } from "./xrpl-client"
 import { Currency } from "xrpl/dist/npm/models/common"
 import dayjs from "dayjs"
+import { getBuyQuote, getSellQuote } from "./experimentals"
 
 dotenv.config()
 
@@ -195,16 +190,6 @@ const main = async () => {
    * |____/|_____/_/\_\
    */
 
-  /**
-   * Create a DEX offer.
-   *
-   * https://xrpl.org/offercreate.html#offercreate
-   *
-   * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
-   * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
-   * --------------------------------------------------
-   */
-
   // await lookupOffers(
   //   {
   //     weWant: { currency: TOKEN, issuer: WALLET_1.address },
@@ -221,7 +206,7 @@ const main = async () => {
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
-  //     weWantAmountOfToken: "170",
+  //     weWantAmountOfToken: 170,
   //     counterCurrency: {
   //       currency: "XRP",
   //     },
@@ -236,7 +221,7 @@ const main = async () => {
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
-  //     weSellAmount: "94",
+  //     weSellAmountOfTokens: 94,
   //     counterCurrency: {
   //       currency: "XRP",
   //     },

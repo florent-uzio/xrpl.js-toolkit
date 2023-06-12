@@ -7,6 +7,8 @@ type CreateOfferProps = Omit<xrpl.OfferCreate, "TransactionType" | "Account">
 
 /**
  * Create a DEX offer.
+ *
+ * https://xrpl.org/offercreate.html#offercreate
  */
 export const createOffer = async (
   { TakerGets, TakerPays, ...rest }: CreateOfferProps,

@@ -1,11 +1,9 @@
-import color from "colors"
 import { dropsToXrp } from "xrpl"
 import { BookOffersRequest, TakerAmount } from "xrpl/dist/npm/models/methods/bookOffers"
 import { getBookOffers } from "../methods"
 import { MethodOptions } from "../models"
 import { convertAmount } from "./amounts.helpers"
 import { convertHexCurrencyCodeToString } from "./currency-code.helpers"
-import { DataTable, createDataTable } from "./loggers"
 import { isString } from "./typeof-fns"
 
 type GetBuyQuoteProps = Pick<BookOffersRequest, "taker"> & {
@@ -17,13 +15,23 @@ type GetBuyQuoteProps = Pick<BookOffersRequest, "taker"> & {
   /**
    * The amount of token we want to buy.
    */
-  weWantAmountOfToken: string
+  weWantAmountOfToken: number
   /**
    * The counter currency.
    */
   counterCurrency: TakerAmount
 }
 
+/**
+ * Function to get a quote of a token to buy.
+ *
+ * @param {Object} props The props to pass to the function.
+ * @param {TakerAmount} props.weWant The token we want to acquire. Specify the currency and optionaly the issuer (if the currency is not XRP).
+ * @param {number} props.weWantAmountOfToken The amount of token we want to acquire.
+ * @param {string} props.taker (Optional) The Address of an account to use as a perspective. The response includes this account's Offers even if they are unfunded.
+ * @param {TakerAmount} props.counterCurrency The counter currency.
+ * @returns void, display a message regarding the result of the quote.
+ */
 export const getBuyQuote = async (
   { weWant, weWantAmountOfToken, counterCurrency, taker }: GetBuyQuoteProps,
   { showLogs }: MethodOptions = {}
@@ -39,24 +47,10 @@ export const getBuyQuote = async (
   )
 
   // Amount of remaining token we want to buy.
-  let remaining = +weWantAmountOfToken
+  let remaining = weWantAmountOfToken
 
   // Total amount of the opposite token we will sell.
   let total = 0
-
-  const currencyWeWantReadable = convertHexCurrencyCodeToString(weWant.currency)
-  const counterCurrencyReadable = convertHexCurrencyCodeToString(counterCurrency.currency)
-
-  const header1 = "Offer Sequence"
-  const header2 = `${currencyWeWantReadable} ready to be sold in that offer`
-  const header3 = `Amount of ${currencyWeWantReadable} we still need to buy`
-  const header4 = `Amount of ${counterCurrencyReadable} to sell for that purchase`
-
-  // to display info in the console
-  const dataTable: DataTable = createDataTable([header1, header2, header3, header4])
-
-  // index to update the data table later
-  let rowIndex = 0
 
   for (const offer of offers.result.offers) {
     if (!offer.quality) break
@@ -69,64 +63,31 @@ export const getBuyQuote = async (
       ? +dropsToXrp(offer.TakerGets)
       : +offer.TakerGets.value
 
-    // Information to display in the console
-    dataTable.addRow({
-      [header1]: offer.Sequence,
-      [header2]: available,
-      [header3]: remaining,
-      [header4]: "",
-    })
-
     // If the available amount is more than what we want to exchange, add the corresponding total to our total.
     if (available > remaining) {
       const amountOfTokens = remaining * offerPrice
-
-      dataTable.updateCellValue(
-        rowIndex,
-        header4,
-        counterCurrencyReadable.toUpperCase() === "XRP"
-          ? +convertAmount({ amount: amountOfTokens.toString(), to: "xrp" })
-          : amountOfTokens
-      )
 
       total += amountOfTokens
       break
     }
     // Otherwise, add the total amount for this offer to our total and decrease the remaining amount.
     else {
-      // amount of tokens to sell
       const amountOfTokens = available * offerPrice
 
-      dataTable.updateCellValue(
-        rowIndex,
-        header4,
-        counterCurrencyReadable.toUpperCase() === "XRP"
-          ? +convertAmount({ amount: amountOfTokens.toString(), to: "xrp" })
-          : amountOfTokens
-      )
       total += amountOfTokens
 
       remaining -= available
     }
-    rowIndex++
   }
 
   if (counterCurrency.currency.toUpperCase() === "XRP") {
     total = +dropsToXrp(total)
   }
 
-  // Show results in terminal
-  console.log()
-  console.log(`Total amount of ${currencyWeWantReadable} to sell: ${weWantAmountOfToken}`)
-
-  console.log()
-  dataTable.printTable()
-  console.log()
+  const currencyReadable = convertHexCurrencyCodeToString(weWant.currency)
 
   console.log(
-    color.bold(
-      `You need to sell at least ${total} ${counterCurrency.currency} to buy ${weWantAmountOfToken} ${currencyWeWantReadable}`
-    )
+    `You need to sell at least ${total} ${counterCurrency.currency} to buy ${weWantAmountOfToken} ${currencyReadable}`
   )
 
   return total
@@ -141,7 +102,7 @@ type GetSellQuoteProps = Pick<BookOffersRequest, "taker"> & {
   /**
    * The amount of currency we want to sell.
    */
-  weSellAmount: string
+  weSellAmountOfTokens: number
   /**
    * The counter currency.
    */
@@ -149,11 +110,18 @@ type GetSellQuoteProps = Pick<BookOffersRequest, "taker"> & {
 }
 
 /**
- * Function to get a quote when we want to sell a token.
+ * Function to get a quote of a token to sell.
  * The quote will give you the amount of the counter token that you can expect to get from that sell.
+ *
+ * @param {Object} props The props to pass to the function.
+ * @param {TakerAmount} props.weSell The token we want to sell. Specify the currency and optionaly the issuer (if the currency is not XRP).
+ * @param {number} props.weSellAmountOfTokens The amount of token we want to sell.
+ * @param {string} props.taker (Optional) The Address of an account to use as a perspective. The response includes this account's Offers even if they are unfunded.
+ * @param {TakerAmount} props.counterCurrency The counter currency.
+ * @returns void, display a message regarding the result of the quote.
  */
 export const getSellQuote = async (
-  { weSell, weSellAmount, counterCurrency, taker }: GetSellQuoteProps,
+  { weSell, weSellAmountOfTokens, counterCurrency, taker }: GetSellQuoteProps,
   { showLogs }: MethodOptions = {}
 ): Promise<number> => {
   const offers = await getBookOffers(
@@ -167,23 +135,10 @@ export const getSellQuote = async (
   )
 
   /** Amount of remaining token we want to sell. */
-  let remaining = +weSellAmount
+  let remaining = weSellAmountOfTokens
 
   // Total amount of the opposite token we will get.
   let total = 0
-
-  const currencyWeSellReadable = convertHexCurrencyCodeToString(weSell.currency)
-  const counterCurrencyReadable = counterCurrency.currency
-
-  const header1 = "Offer Sequence"
-  const header2 = `${currencyWeSellReadable} ready to be bought in that offer`
-  const header3 = `Amount of ${currencyWeSellReadable} we still need to sell`
-  const header4 = `Amount of ${counterCurrencyReadable} to get with that sell`
-
-  // to display info in the console
-  const dataTable: DataTable = createDataTable([header1, header2, header3, header4])
-
-  let rowIndex = 0
 
   // Loop through the offers
   for (const offer of offers.result.offers) {
@@ -194,28 +149,12 @@ export const getSellQuote = async (
 
     /** The amount of currency this offer is buying. */
     let available = isString(offer.TakerPays)
-      ? +dropsToXrp(offer.TakerPays)
+      ? +convertAmount({ amount: offer.TakerPays, to: "xrp" })
       : +offer.TakerPays.value
-
-    // Information to display in the console
-    dataTable.addRow({
-      [header1]: offer.Sequence,
-      [header2]: available,
-      [header3]: remaining,
-      [header4]: "",
-    })
 
     // If the available amount is more than what we want to exchange, add the corresponding total to our total.
     if (available > remaining) {
       const amountOfTokens = remaining / offerPrice
-
-      dataTable.updateCellValue(
-        rowIndex,
-        header4,
-        counterCurrencyReadable.toUpperCase() === "XRP"
-          ? +dropsToXrp(amountOfTokens)
-          : amountOfTokens
-      )
 
       total += amountOfTokens
 
@@ -226,20 +165,10 @@ export const getSellQuote = async (
       // amount of tokens to acquire
       const amountOfTokens = available / offerPrice
 
-      // For display in the console
-      dataTable.updateCellValue(
-        rowIndex,
-        header4,
-        counterCurrencyReadable.toUpperCase() === "XRP"
-          ? +dropsToXrp(amountOfTokens)
-          : amountOfTokens
-      )
-
       total += amountOfTokens
 
       remaining -= available
     }
-    rowIndex++
   }
 
   // Convert the total from drops to XRP if the counter currency is XRP
@@ -247,22 +176,10 @@ export const getSellQuote = async (
     total = +dropsToXrp(total)
   }
 
-  // Show results in terminal
-  console.log()
-  console.log(
-    `Total amount of ${convertHexCurrencyCodeToString(weSell.currency)} to sell: ${weSellAmount}`
-  )
-
-  console.log()
-  dataTable.printTable()
-  console.log()
+  const currencyReadable = convertHexCurrencyCodeToString(weSell.currency)
 
   console.log(
-    color.bold(
-      `You will get ${total} ${
-        counterCurrency.currency
-      } if you sell ${weSellAmount} ${convertHexCurrencyCodeToString(weSell.currency)}`
-    )
+    `You will get ${total} ${counterCurrency.currency} if you sell ${weSellAmountOfTokens} ${currencyReadable}`
   )
 
   return total

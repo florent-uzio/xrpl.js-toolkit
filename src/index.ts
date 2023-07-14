@@ -1,51 +1,8 @@
-// organize-imports-ignore
-import {
-  AMMDepositFlags,
-  AMMWithdrawFlags,
-  AccountSetAsfFlags,
-  AccountSetTfFlags,
-  NFTokenCreateOfferFlags,
-  TrustSetFlags,
-  isoTimeToRippleTime,
-} from "xrpl"
-import { convertCurrencyCodeToHex, generateConditionAndFulfillment, lookupOffers } from "./helpers"
-import {
-  cancelNftOffer,
-  acceptNftOffer,
-  mintNft,
-  sendPayment,
-  createNftOffer,
-  createTrustline,
-  createOffer,
-  accountSet,
-  createAMM,
-  bidAMM,
-  depositInAMM,
-  voteInAMM,
-  createEscrow,
-  finishEscrow,
-  cancelEscrow,
-  cancelOffer,
-  withdrawFromAMM,
-} from "./transactions"
-import { WALLET_2, WALLET_1, WALLET_3 } from "./wallets"
-import {
-  getAccountCurrencies,
-  getAccountInfo,
-  getAccountLines,
-  getAccountNfts,
-  getAccountObjects,
-  getAccountOffers,
-  getAMMInfo,
-  getLedgerEntry,
-  getServerState,
-  getBookOffers,
-} from "./methods"
 import * as dotenv from "dotenv"
-import { getXrplClient } from "./xrpl-client"
 import { Currency } from "xrpl/dist/npm/models/common"
-import dayjs from "dayjs"
-import { getBuyQuote, getSellQuote } from "./experimental"
+import { getAccountInfo } from "./methods"
+import { WALLET_1 } from "./wallets"
+import { getXrplClient } from "./xrpl-client"
 
 dotenv.config()
 
@@ -394,7 +351,7 @@ const main = async () => {
 
   // await getAccountCurrencies({ account: WALLET_3.address, command: "account_currencies" })
 
-  // await getAccountInfo({ account: WALLET_1.address, command: "account_info" })
+  await getAccountInfo({ account: WALLET_1.address, command: "account_info" })
 
   // await getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 
@@ -426,6 +383,19 @@ const main = async () => {
    */
 
   // await getServerState()
+
+  /**
+   *    ____ _ _         __  __      _   _               _
+   *   / ___| (_) ___   |  \/  | ___| |_| |__   ___   __| |___
+   *  | |   | | |/ _ \  | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
+   *  | |___| | | (_) | | |  | |  __/ |_| | | | (_) | (_| \__ \
+   *   \____|_|_|\___/  |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
+   */
+  // await getNftInfo({ nft_id: "" })
+
+  // await getNftHistory({
+  //   nft_id: "",
+  // })
 
   /**
    *  ____              _               __  __

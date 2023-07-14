@@ -1,13 +1,13 @@
 import color from "colors"
-import { TakerAmount } from "xrpl/dist/npm/models/methods/bookOffers"
+import { BookOfferCurrency } from "xrpl"
 import { convertAmount, convertHexCurrencyCodeToString } from "../helpers"
 import { getBookOffers } from "../methods"
 import { TxnOptions } from "../models"
 
 type LookupOffersProps = {
-  weWant: TakerAmount
+  weWant: BookOfferCurrency
   weWantAmount: string
-  weSpend: TakerAmount
+  weSpend: BookOfferCurrency
   weSpendAmount: string
 }
 

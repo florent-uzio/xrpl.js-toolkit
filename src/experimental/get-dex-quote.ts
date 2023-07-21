@@ -1,6 +1,6 @@
 import color from "colors"
 import { dropsToXrp } from "xrpl"
-import { BookOffersRequest, TakerAmount } from "xrpl/dist/npm/models/methods/bookOffers"
+import { BookOfferCurrency, BookOffersRequest } from "xrpl/dist/npm/models/methods/bookOffers"
 import { convertAmount, convertHexCurrencyCodeToString, isString } from "../helpers"
 import { getBookOffers } from "../methods"
 import { MethodOptions } from "../models"
@@ -10,7 +10,7 @@ type GetBuyQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "c
    * The currency we want to buy.
    * If the currency is an IOU, the issuer needs to be mentioned.
    */
-  weWant: TakerAmount
+  weWant: BookOfferCurrency
   /**
    * The amount of token we want to buy.
    */
@@ -18,7 +18,7 @@ type GetBuyQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "c
   /**
    * The counter currency.
    */
-  counterCurrency: TakerAmount
+  counterCurrency: BookOfferCurrency
 }
 
 /**
@@ -101,7 +101,7 @@ type GetSellQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "
    * The currency we want to sell.
    * If the currency is an IOU, the issuer needs to be mentioned.
    */
-  weSell: TakerAmount
+  weSell: BookOfferCurrency
   /**
    * The amount of currency we want to sell.
    */
@@ -109,7 +109,7 @@ type GetSellQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "
   /**
    * The counter currency.
    */
-  counterCurrency: TakerAmount
+  counterCurrency: BookOfferCurrency
 }
 
 /**

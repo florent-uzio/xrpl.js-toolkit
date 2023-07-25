@@ -138,7 +138,6 @@ export const getSellQuote = async (
     },
     { showLogs }
   )
-  console.log({ offers })
 
   /** Amount of remaining token we want to sell. */
   let remaining = weSellAmountOfTokens
@@ -149,7 +148,7 @@ export const getSellQuote = async (
   // Loop through the offers
   for (const offer of offers.result.offers) {
     if (!offer.quality) break
-    console.log({ offer })
+
     // Get the price for this offer.
     const offerPrice = +offer.quality
 
@@ -161,7 +160,6 @@ export const getSellQuote = async (
     // If the available amount is more than what we want to exchange, add the corresponding total to our total.
     if (available > remaining) {
       const amountOfTokens = remaining / offerPrice
-      console.log({ amountOfTokens, remaining, offerPrice })
       total += amountOfTokens
 
       break

@@ -1,6 +1,5 @@
 import color from "colors"
-import { dropsToXrp } from "xrpl"
-import { BookOfferCurrency, BookOffersRequest } from "xrpl/dist/npm/models/methods/bookOffers"
+import { BookOfferCurrency, BookOffersRequest, dropsToXrp } from "xrpl"
 import { convertAmount, convertHexCurrencyCodeToString, isString } from "../helpers"
 import { getBookOffers } from "../methods"
 import { MethodOptions } from "../models"
@@ -139,6 +138,7 @@ export const getSellQuote = async (
     },
     { showLogs }
   )
+  console.log({ offers })
 
   /** Amount of remaining token we want to sell. */
   let remaining = weSellAmountOfTokens
@@ -149,7 +149,7 @@ export const getSellQuote = async (
   // Loop through the offers
   for (const offer of offers.result.offers) {
     if (!offer.quality) break
-
+    console.log({ offer })
     // Get the price for this offer.
     const offerPrice = +offer.quality
 
@@ -161,7 +161,7 @@ export const getSellQuote = async (
     // If the available amount is more than what we want to exchange, add the corresponding total to our total.
     if (available > remaining) {
       const amountOfTokens = remaining / offerPrice
-
+      console.log({ amountOfTokens, remaining, offerPrice })
       total += amountOfTokens
 
       break
@@ -180,6 +180,11 @@ export const getSellQuote = async (
   // Convert the total from drops to XRP if the counter currency is XRP
   if (counterCurrency.currency.toUpperCase() === "XRP") {
     total = +convertAmount({ amount: total.toString(), to: "xrp" })
+  }
+
+  // Multiply the total by a million to get a correct value
+  if (weSell.currency === "XRP") {
+    total = +convertAmount({ amount: total.toString(), to: "drops" })
   }
 
   const currencyReadable = convertHexCurrencyCodeToString(weSell.currency)

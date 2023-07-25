@@ -1,6 +1,5 @@
 import * as dotenv from "dotenv"
 import { Currency } from "xrpl/dist/npm/models/common"
-import { getAccountInfo } from "./methods"
 import { WALLET_1 } from "./wallets"
 import { getXrplClient } from "./xrpl-client"
 
@@ -176,15 +175,14 @@ const main = async () => {
   // await getSellQuote(
   //   {
   //     weSell: {
-  //       currency: TOKEN,
-  //       issuer: WALLET_1.address,
+  //       currency: "XRP",
   //     },
-  //     weSellAmountOfTokens: 50,
+  //     weSellAmountOfTokens: 100,
   //     counterCurrency: {
-  //       currency: "DEX_TOKEN",
-  //       issuer: WALLET_1.address,
+  //       currency: "USD",
+  //       issuer: "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq", // Gatehub USD issuing address
   //     },
-  //     taker: WALLET_3.address,
+  //     taker: WALLET_2.address,
   //   },
   //   { showLogs: false }
   // )
@@ -351,7 +349,7 @@ const main = async () => {
 
   // await getAccountCurrencies({ account: WALLET_3.address, command: "account_currencies" })
 
-  await getAccountInfo({ account: WALLET_1.address, command: "account_info" })
+  // await getAccountInfo({ account: WALLET_1.address, command: "account_info" })
 
   // await getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 

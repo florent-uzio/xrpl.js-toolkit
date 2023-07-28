@@ -82,7 +82,11 @@ export const getBuyQuote = async (
   }
 
   if (counterCurrency.currency.toUpperCase() === "XRP") {
-    total = +dropsToXrp(total)
+    total = +convertAmount({ amount: total.toString(), to: "xrp" })
+  }
+
+  if (weWant.currency.toUpperCase() === "XRP") {
+    total = +convertAmount({ amount: total.toString(), to: "drops" })
   }
 
   const currencyReadable = convertHexCurrencyCodeToString(weWant.currency)
@@ -181,7 +185,7 @@ export const getSellQuote = async (
   }
 
   // Multiply the total by a million to get a correct value
-  if (weSell.currency === "XRP") {
+  if (weSell.currency.toUpperCase() === "XRP") {
     total = +convertAmount({ amount: total.toString(), to: "drops" })
   }
 

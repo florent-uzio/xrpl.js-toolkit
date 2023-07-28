@@ -22,6 +22,7 @@ type GetBuyQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "c
 
 /**
  * Function to get a quote of a token to buy.
+ * This is an experimental function and must not be used in production without checking it does what you need.
  *
  * @param {Object} props The props to pass to the function.
  * @param {TakerAmount} props.weWant The token we want to acquire. Specify the currency and optionaly the issuer (if the currency is not XRP).
@@ -82,11 +83,11 @@ export const getBuyQuote = async (
   }
 
   if (counterCurrency.currency.toUpperCase() === "XRP") {
-    total = +convertAmount({ amount: total.toString(), to: "xrp" })
+    total = +convertAmount({ amount: total, to: "xrp" })
   }
 
   if (weWant.currency.toUpperCase() === "XRP") {
-    total = +convertAmount({ amount: total.toString(), to: "drops" })
+    total = +convertAmount({ amount: total, to: "drops" })
   }
 
   const currencyReadable = convertHexCurrencyCodeToString(weWant.currency)
@@ -118,6 +119,7 @@ type GetSellQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "
 /**
  * Function to get a quote of a token to sell.
  * The quote will give you the amount of the counter token that you can expect to get from that sell.
+ * This is an experimental function and must not be used in production without checking it does what you need.
  *
  * @param {Object} props The props to pass to the function.
  * @param {TakerAmount} props.weSell The token we want to sell. Specify the currency and optionaly the issuer (if the currency is not XRP).
@@ -181,12 +183,12 @@ export const getSellQuote = async (
 
   // Convert the total from drops to XRP if the counter currency is XRP
   if (counterCurrency.currency.toUpperCase() === "XRP") {
-    total = +convertAmount({ amount: total.toString(), to: "xrp" })
+    total = +convertAmount({ amount: total, to: "xrp" })
   }
 
   // Multiply the total by a million to get a correct value
   if (weSell.currency.toUpperCase() === "XRP") {
-    total = +convertAmount({ amount: total.toString(), to: "drops" })
+    total = +convertAmount({ amount: total, to: "drops" })
   }
 
   const currencyReadable = convertHexCurrencyCodeToString(weSell.currency)

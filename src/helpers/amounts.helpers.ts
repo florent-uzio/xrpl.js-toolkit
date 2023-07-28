@@ -2,7 +2,7 @@ import { dropsToXrp, xrpToDrops } from "xrpl"
 import { ONE_MILLION } from "../constants"
 
 type ConvertAmountProps = {
-  amount: string
+  amount: string | number
   decimals?: number
   to: "drops" | "xrp"
 }

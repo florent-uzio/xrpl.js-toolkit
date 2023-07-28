@@ -159,13 +159,13 @@ const main = async () => {
   // await getBuyQuote(
   //   {
   //     weWant: {
-  //       currency: "DEX_TOKEN",
-  //       issuer: WALLET_1.address,
+  //       currency: "USD",
+  //       issuer: GATEHUB_ISSUER_ADDRESSES.USD, // WALLET_1.address,
   //     },
-  //     weWantAmountOfToken: 89,
+  //     weWantAmountOfToken: 50,
   //     counterCurrency: {
-  //       currency: TOKEN,
-  //       issuer: WALLET_1.address,
+  //       currency: "XRP",
+  //       // issuer: GATEHUB_ISSUER_ADDRESSES.USD,
   //     },
   //     taker: WALLET_3.address,
   //   },
@@ -176,11 +176,12 @@ const main = async () => {
   //   {
   //     weSell: {
   //       currency: "XRP",
+  //       //issuer: GATEHUB_ISSUER_ADDRESSES.USD,
   //     },
-  //     weSellAmountOfTokens: 100,
+  //     weSellAmountOfTokens: 50,
   //     counterCurrency: {
   //       currency: "USD",
-  //       issuer: "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq", // Gatehub USD issuing address
+  //       issuer: GATEHUB_ISSUER_ADDRESSES.USD, // Gatehub USD issuing address
   //     },
   //     taker: WALLET_2.address,
   //   },

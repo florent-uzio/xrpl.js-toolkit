@@ -270,6 +270,8 @@ const main = async () => {
    * Attention
    * Automated Market Maker (AMM) functionality is part of the proposed XLS-30d extension to the XRP Ledger protocol.
    * You can use these functions on AMM test networks, but there isn't an official amendment and they aren't available on the production Mainnet.
+   *
+   * WARNING: The AMM types are not part of xrpl.js 2.10.0. Thus the AMM functions below don't work.
    */
 
   // Update accordingly

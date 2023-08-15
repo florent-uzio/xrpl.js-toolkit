@@ -34,14 +34,14 @@ const main = async () => {
   // await sendPayment(
   //   {
   //     Destination: WALLET_2.address,
-  //     // Amount: "1",
-  //     Amount: {
-  //       value: "100000",
-  //       currency: TOKEN,
-  //       issuer: WALLET_1.address,
-  //     },
+  //     Amount: "1",
+  //     // Amount: {
+  //     //   value: "10",
+  //     //   currency: TOKEN,
+  //     //   issuer: WALLET_1.address,
+  //     // },
   //   },
-  //   { wallet: WALLET_1 }
+  //   { wallet: WALLET_1 },
   // )
 
   /**
@@ -340,6 +340,23 @@ const main = async () => {
   //     Flags: AMMWithdrawFlags.tfSingleAsset,
   //   },
   //   { wallet: WALLET_3 }
+  // )
+
+  /**
+   *   ____       _      _
+   *  |  _ \  ___| | ___| |_ ___
+   *  | | | |/ _ \ |/ _ \ __/ _ \
+   *  | |_| |  __/ |  __/ ||  __/
+   *  |____/ \___|_|\___|\__\___|
+   */
+
+  // await deleteAccount(
+  //   {
+  //     Destination: WALLET_2.address,
+  //   },
+  //   {
+  //     wallet: WALLET_1,
+  //   },
   // )
 
   /**

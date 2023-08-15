@@ -17,7 +17,7 @@ let xrplClient: Client
 // Initialize the client if it doesn't exist or return it.
 export const getXrplClient = () => {
   if (!xrplClient) {
-    xrplClient = new Client(networks.RIPPLE_CLIO_TESTNET)
+    xrplClient = new Client(networks.RIPPLE_TESTNET)
   }
 
   return xrplClient

@@ -379,6 +379,8 @@ const main = async () => {
 
   // await getAccountObjects({ account: WALLET_3.address, command: "account_objects" })
 
+  // await getAccountTx({ account: "", command: "account_tx" })
+
   /**
    *     _    __  __ __  __        __  __      _   _               _
    *    / \  |  \/  |  \/  |      |  \/  | ___| |_| |__   ___   __| |___

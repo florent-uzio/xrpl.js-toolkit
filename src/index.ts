@@ -436,6 +436,16 @@ const main = async () => {
   //   },
   // })
 
+  /**
+   *   ___  _   _
+   *  / _ \| |_| |__   ___ _ __ ___
+   * | | | | __| '_ \ / _ \ '__/ __|
+   * | |_| | |_| | | |  __/ |  \__ \
+   *  \___/ \__|_| |_|\___|_|  |___/
+   */
+
+  // await showBalanceChanges("")
+
   // Do not comment, disconnect the client
   await getXrplClient().disconnect()
 }

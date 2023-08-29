@@ -1,6 +1,5 @@
 import * as dotenv from "dotenv"
 import { Currency } from "xrpl/dist/npm/models/common"
-import { showBalanceChanges } from "./experimental"
 import { WALLET_1 } from "./wallets"
 import { getXrplClient } from "./xrpl-client"
 
@@ -380,9 +379,7 @@ const main = async () => {
 
   // await getAccountObjects({ account: WALLET_3.address, command: "account_objects" })
 
-  // await getAccountTx({ account: "rHsNo6Xka7d8wXyhHiqcQ3oEqqDhVQB1gZ", command: "account_tx" })
-
-  await showBalanceChanges("rEtejZirGa1KKAZ2qu2q1kALEKwWp5NZe3")
+  // await getAccountTx({ account: "", command: "account_tx" })
 
   /**
    *     _    __  __ __  __        __  __      _   _               _
@@ -438,6 +435,16 @@ const main = async () => {
   //     issuer: WALLET_1.address,
   //   },
   // })
+
+  /**
+   *   ___  _   _
+   *  / _ \| |_| |__   ___ _ __ ___
+   * | | | | __| '_ \ / _ \ '__/ __|
+   * | |_| | |_| | | |  __/ |  \__ \
+   *  \___/ \__|_| |_|\___|_|  |___/
+   */
+
+  // await showBalanceChanges("")
 
   // Do not comment, disconnect the client
   await getXrplClient().disconnect()

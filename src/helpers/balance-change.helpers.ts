@@ -1,7 +1,12 @@
 import { getBalanceChanges } from "xrpl"
-import { isString } from "../helpers"
+import { isString } from "."
 import { getAccountTx } from "../methods"
 
+/**
+ * https://xrpl.org/blog/2015/calculating-balance-changes-for-a-transaction.html#calculating-balance-changes-for-a-transaction
+ *
+ * @param address The xrpl account address
+ */
 export const showBalanceChanges = async (address: string) => {
   const txns = await getAccountTx({ account: address, command: "account_tx" })
 

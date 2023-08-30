@@ -34,12 +34,12 @@ const main = async () => {
   // await sendPayment(
   //   {
   //     Destination: WALLET_2.address,
-  //     Amount: "1",
-  //     // Amount: {
-  //     //   value: "10",
-  //     //   currency: TOKEN,
-  //     //   issuer: WALLET_1.address,
-  //     // },
+  //     // Amount: "1",
+  //     Amount: {
+  //       value: "10000",
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
+  //     },
   //   },
   //   { wallet: WALLET_1 },
   // )
@@ -135,7 +135,7 @@ const main = async () => {
   //       value: "30000000",
   //     },
   //   },
-  //   { wallet: WALLET_2 }
+  //   { wallet: WALLET_2 },
   // )
 
   /**
@@ -222,7 +222,7 @@ const main = async () => {
    * https://xrpl.org/accountset.html
    * --------------------------------------------------
    */
-  // await accountSet({ SetFlag: AccountSetAsfFlags.asfRequireAuth }, { wallet: WALLET_1 })
+  // await accountSet({ SetFlag: AccountSetAsfFlags.asfAllowTrustLineClawback }, { wallet: WALLET_1 })
 
   /**
    *   _____
@@ -357,6 +357,27 @@ const main = async () => {
   //   {
   //     wallet: WALLET_1,
   //   },
+  // )
+
+  /**
+   *    ____ _                _                _
+   *  / ___| | __ ___      _| |__   __ _  ___| | __
+   * | |   | |/ _` \ \ /\ / / '_ \ / _` |/ __| |/ /
+   * | |___| | (_| |\ V  V /| |_) | (_| | (__|   <
+   *  \____|_|\__,_| \_/\_/ |_.__/ \__,_|\___|_|\_\
+   *
+   */
+
+  // /!\ Only available on Devnet as of 30th of August 2023
+  // await clawback(
+  //   {
+  //     Amount: {
+  //       issuer: WALLET_2.address,
+  //       currency: TOKEN,
+  //       value: "10",
+  //     },
+  //   },
+  //   { wallet: WALLET_1 },
   // )
 
   /**

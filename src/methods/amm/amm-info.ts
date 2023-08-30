@@ -1,5 +1,5 @@
+import { AMMInfoRequest } from "xrpl"
 import { convertCurrencyCodeToHex } from "../../helpers"
-import { AMMInfoRequest } from "../../models"
 import { getXrplClient } from "../../xrpl-client"
 
 export const getAMMInfo = async ({ asset, asset2, ...rest }: AMMInfoRequest) => {

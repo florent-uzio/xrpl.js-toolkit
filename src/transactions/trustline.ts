@@ -1,28 +1,32 @@
 import color from "colors"
 import { TrustSet } from "xrpl"
-import { OptionalExceptFor, convertCurrencyCodeToHex, prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { convertCurrencyCodeToHex, multiSignAndSubmit, prepareSignSubmit } from "../helpers"
+import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../models"
 
-type CreateTrustlineProps = Omit<OptionalExceptFor<TrustSet, "LimitAmount">, "TransactionType">
+type CreateTrustlineProps = TransactionPropsForMultiSign | TransactionPropsForSingleSign<TrustSet>
 
-export const createTrustline = async (
-  { LimitAmount, ...rest }: CreateTrustlineProps,
-  opts: TxnOptions
-) => {
+export const createTrustline = async (props: CreateTrustlineProps) => {
   console.log(color.bold("******* LET'S CREATE A TRUSTLINE *******"))
   console.log()
 
-  // Construct the base transaction
-  const transaction: TrustSet = {
-    Account: opts.wallet.address,
-    TransactionType: "TrustSet",
-    LimitAmount: {
-      ...LimitAmount,
-      currency: convertCurrencyCodeToHex(LimitAmount.currency),
-    },
-    ...rest,
-  }
+  if (props.isMultisign) {
+    await multiSignAndSubmit(props.signatures)
+  } else {
+    const { LimitAmount, ...rest } = props.txn
+    const { wallet, showLogs, signatures } = props
 
-  // Autofill transaction with additional fields (such as LastLedgerSequence), sign and submit
-  await prepareSignSubmit(transaction, opts)
+    // Construct the base transaction
+    const transaction: TrustSet = {
+      Account: props.wallet.address,
+      TransactionType: "TrustSet",
+      LimitAmount: {
+        ...LimitAmount,
+        currency: convertCurrencyCodeToHex(LimitAmount.currency),
+      },
+      ...rest,
+    }
+
+    // Autofill transaction with additional fields (such as LastLedgerSequence), sign and submit
+    await prepareSignSubmit(transaction, { signatures, wallet, showLogs })
+  }
 }

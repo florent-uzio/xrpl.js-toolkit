@@ -125,8 +125,8 @@ const main = async () => {
    * IMPORTANT: Write the IOU currency as a string, for example "MY_TOKEN", no need to convert it to HEX (it will be done in the function directly).
    * --------------------------------------------------
    */
-  // await createTrustline(
-  //   {
+  // await createTrustline({
+  //   txn: {
   //     Flags: TrustSetFlags.tfSetNoRipple,
   //     LimitAmount: {
   //       issuer: WALLET_1.address,
@@ -135,8 +135,8 @@ const main = async () => {
   //       value: "30000000",
   //     },
   //   },
-  //   { wallet: WALLET_2 },
-  // )
+  //   wallet: WALLET_2,
+  // })
 
   /**
    *  ____  _______  __

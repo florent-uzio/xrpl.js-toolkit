@@ -1,3 +1,6 @@
-import * as xrpl from "xrpl"
+import { Wallet } from "xrpl"
 
-export type TxnOptions = { wallet: xrpl.Wallet; showLogs?: boolean; isMultisign?: boolean }
+export type TxnOptions = { wallet: Wallet; showLogs?: boolean } & (
+  | { isMultisign?: true; signatures: string[] }
+  | { isMultisign?: false; signatures?: never }
+)

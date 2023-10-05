@@ -31,8 +31,8 @@ const main = async () => {
    * IMPORTANT 2: Write the XRP amount, not the drop amount. The XRP amount will be automatically converted to drops in the function.
    * --------------------------------------------------
    */
-  // await sendPayment(
-  //   {
+  // await sendPayment({
+  //   txn: {
   //     Destination: WALLET_2.address,
   //     // Amount: "1",
   //     Amount: {
@@ -41,8 +41,8 @@ const main = async () => {
   //       issuer: WALLET_1.address,
   //     },
   //   },
-  //   { wallet: WALLET_1 },
-  // )
+  //   wallet: WALLET_1,
+  // })
 
   /**
    *  _   _ _____ _____
@@ -379,6 +379,58 @@ const main = async () => {
   //   },
   //   { wallet: WALLET_1 },
   // )
+
+  /**
+   *  ____  _                       _     _     _   ____       _
+   * / ___|(_) __ _ _ __   ___ _ __| |   (_)___| |_/ ___|  ___| |_
+   * \___ \| |/ _` | '_ \ / _ \ '__| |   | / __| __\___ \ / _ \ __|
+   *  ___) | | (_| | | | |  __/ |  | |___| \__ \ |_ ___) |  __/ |_
+   * |____/|_|\__, |_| |_|\___|_|  |_____|_|___/\__|____/ \___|\__|
+   *          |___/
+   */
+
+  // Prepare the signers
+  // const signer1: SignerEntry = {
+  //   SignerEntry: {
+  //     Account: WALLET_2.address,
+  //     SignerWeight: 1,
+  //   },
+  // }
+  // const signer2: SignerEntry = {
+  //   SignerEntry: {
+  //     Account: WALLET_3.address,
+  //     SignerWeight: 1,
+  //   },
+  // }
+
+  // Define WALLET_2 and WALLET_3 as signers for WALLET_1
+  // await setSignerList(
+  //   {
+  //     SignerQuorum: 2,
+  //     SignerEntries: [signer1, signer2],
+  //   },
+  //   { wallet: WALLET_1, isMultisign: false },
+  // )
+
+  /**
+   * Multi sign payment example
+   */
+
+  // const payment: Payment = {
+  //   Account: WALLET_1.address,
+  //   Amount: xrpToDrops(1),
+  //   Destination: "rnP5xouWVtZY3epvTp2FnaQhmUNzuaGC4t",
+  //   TransactionType: "Payment",
+  // }
+
+  // const signature1 = (await sign(payment, { wallet: WALLET_2, isMultisign: true }, 2)).tx_blob
+  // const signature2 = (await sign(payment, { wallet: WALLET_3, isMultisign: true }, 2)).tx_blob
+
+  // await sendPayment({
+  //   isMultisign: true,
+  //   wallet: WALLET_1,
+  //   signatures: [signature1, signature2],
+  // })
 
   /**
    *     _                             _       __  __      _   _               _

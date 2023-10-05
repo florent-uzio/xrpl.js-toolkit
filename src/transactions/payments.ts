@@ -1,29 +1,40 @@
 import color from "colors"
-import * as xrpl from "xrpl"
-import { convertCurrencyCodeToHex, prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { Payment, xrpToDrops } from "xrpl"
+import { convertCurrencyCodeToHex, multiSignAndSubmit, prepareSignSubmit } from "../helpers"
+import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../models"
 
-type SendPaymentProps = Omit<xrpl.Payment, "TransactionType" | "Account">
+type SendPaymentProps = TransactionPropsForMultiSign | TransactionPropsForSingleSign<Payment>
 
-export const sendPayment = async ({ Amount, ...rest }: SendPaymentProps, opts: TxnOptions) => {
+/**
+ * Send a payment
+ */
+export const sendPayment = async (props: SendPaymentProps) => {
   console.log(color.bold("******* LET'S SEND A PAYMENT *******"))
   console.log()
 
-  // Convert the amount to drops (1 drop = .000001 XRP)
-  if (typeof Amount === "string") {
-    Amount = xrpl.xrpToDrops(Amount)
+  if (props.isMultisign) {
+    // Handle the multi-sign scenario
+    await multiSignAndSubmit(props.signatures)
   } else {
-    Amount.currency = convertCurrencyCodeToHex(Amount.currency)
-  }
+    let { Amount, ...rest } = props.txn
+    const { wallet, showLogs, signatures } = props
 
-  // Construct the base transaction
-  const transaction: xrpl.Payment = {
-    Account: opts.wallet.address,
-    Amount,
-    TransactionType: "Payment",
-    ...rest,
-  }
+    // Convert the amount to drops (1 drop = .000001 XRP)
+    if (typeof Amount === "string") {
+      Amount = xrpToDrops(Amount)
+    } else {
+      Amount.currency = convertCurrencyCodeToHex(Amount.currency)
+    }
 
-  // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, opts)
+    // Construct the base transaction
+    const transaction: Payment = {
+      Account: wallet.address,
+      Amount,
+      TransactionType: "Payment",
+      ...rest,
+    }
+
+    // Autofill transaction with additional fields, sign and submit
+    await prepareSignSubmit(transaction, { signatures, wallet, showLogs })
+  }
 }

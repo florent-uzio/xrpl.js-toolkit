@@ -1,14 +1,16 @@
-import * as xrpl from "xrpl"
+import { Transaction, multisign } from "xrpl"
 import { TxnOptions } from "../models"
 import { getXrplClient } from "../xrpl-client"
 import { log } from "./loggers"
 
+const client = getXrplClient()
+
 export const prepareSignSubmit = async (
-  transaction: xrpl.Transaction,
-  { wallet, showLogs = true }: TxnOptions
+  transaction: Transaction,
+  { wallet, showLogs = true }: TxnOptions,
 ) => {
   // Autofill transaction with additional fields (such as LastLedgerSequence).
-  const preparedTxn = await getXrplClient().autofill(transaction)
+  const preparedTxn = await client.autofill(transaction)
 
   log("Prepared Transaction", preparedTxn, showLogs)
 
@@ -21,7 +23,7 @@ export const prepareSignSubmit = async (
   const start = performance.now()
 
   // Submit the transaction to the XRP Ledger and wait for it to be validated
-  const response = await getXrplClient().submitAndWait(signedTxn.tx_blob)
+  const response = await client.submitAndWait(signedTxn.tx_blob)
 
   log("FINAL: Validated Transaction", response, showLogs)
 
@@ -35,7 +37,7 @@ export const prepareSignSubmit = async (
   }
 }
 
-const getFinalLogUrl = (transaction: xrpl.Transaction) => {
+const getFinalLogUrl = (transaction: Transaction) => {
   const { TransactionType, Account } = transaction
 
   const isNftTxn =
@@ -45,4 +47,17 @@ const getFinalLogUrl = (transaction: xrpl.Transaction) => {
     TransactionType === "NFTokenCreateOffer"
 
   return `https://test.bithomp.com/${isNftTxn ? `nfts/${Account}` : Account}`
+}
+
+/**
+ * Helper to concatenate the signatures for a multisign transaction and submit the concatenation to the XRPL.
+ *
+ * @param {string[]} signatures All the signatures gathered for the multisign transaction.
+ */
+export const multiSignAndSubmit = async (signatures: string[]) => {
+  const multiSignatures = multisign(signatures)
+
+  const response = await client.submitAndWait(multiSignatures)
+
+  console.log(response)
 }

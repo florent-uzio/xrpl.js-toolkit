@@ -1,18 +1,9 @@
 import color from "colors"
 import { Payment, xrpToDrops } from "xrpl"
 import { convertCurrencyCodeToHex, multiSignAndSubmit, prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../models"
 
-type SendPaymentPropsForMultiSign = TxnOptions & {
-  isMultisign: true
-}
-
-type SendPaymentPropsForSingleSign = TxnOptions & {
-  isMultisign?: false
-  txn: Omit<Payment, "TransactionType" | "Account">
-}
-
-type SendPaymentProps = SendPaymentPropsForMultiSign | SendPaymentPropsForSingleSign
+type SendPaymentProps = TransactionPropsForMultiSign | TransactionPropsForSingleSign<Payment>
 
 /**
  * Send a payment

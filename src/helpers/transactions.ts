@@ -5,7 +5,7 @@ import { log } from "./loggers"
 
 export const prepareSignSubmit = async (
   transaction: xrpl.Transaction,
-  { wallet, showLogs = true }: TxnOptions
+  { wallet, showLogs = true }: TxnOptions,
 ) => {
   // Autofill transaction with additional fields (such as LastLedgerSequence).
   const preparedTxn = await getXrplClient().autofill(transaction)

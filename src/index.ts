@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv"
 import { Currency } from "xrpl/dist/npm/models/common"
+import { deriveXRPSeedFromMnemonic } from "./helpers"
 import { WALLET_1 } from "./wallets"
 import { getXrplClient } from "./xrpl-client"
 
@@ -518,6 +519,12 @@ const main = async () => {
    */
 
   // await showBalanceChanges("")
+
+  // Example
+  const mnemonic = "task chase wrist napkin blade isolate embrace dial gas project summer lemon"
+  deriveXRPSeedFromMnemonic(mnemonic).then((seed) => {
+    console.log("Derived XRP Ledger Seed:", seed)
+  })
 
   // Do not comment, disconnect the client
   await getXrplClient().disconnect()

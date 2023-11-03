@@ -1,7 +1,7 @@
 import color from "colors"
 import * as xrpl from "xrpl"
-import { prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
 type MintNftProps = Omit<xrpl.NFTokenMint, "TransactionType" | "Account">
 

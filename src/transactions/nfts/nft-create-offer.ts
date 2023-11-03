@@ -1,7 +1,7 @@
 import color from "colors"
 import { NFTokenCreateOffer, NFTokenCreateOfferFlags, xrpToDrops } from "xrpl"
-import { prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
 type CreateNftOfferProps = Omit<NFTokenCreateOffer, "TransactionType" | "Account"> &
   (
@@ -11,7 +11,7 @@ type CreateNftOfferProps = Omit<NFTokenCreateOffer, "TransactionType" | "Account
 
 export const createNftOffer = async (
   { Amount, ...rest }: CreateNftOfferProps,
-  opts: TxnOptions
+  opts: TxnOptions,
 ) => {
   console.log(color.bold("******* LET'S CREATE AN NFT OFFER *******"))
   console.log()

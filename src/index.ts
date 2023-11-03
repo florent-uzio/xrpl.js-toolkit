@@ -33,15 +33,16 @@ const main = async () => {
    */
   // await sendPayment({
   //   txn: {
-  //     Destination: WALLET_2.address,
+  //     Flags: PaymentFlags.tfPartialPayment,
+  //     Destination: WALLET_3.address,
   //     // Amount: "1",
   //     Amount: {
-  //       value: "10000",
+  //       value: "15",
   //       currency: TOKEN,
   //       issuer: WALLET_1.address,
   //     },
   //   },
-  //   wallet: WALLET_1,
+  //   wallet: WALLET_2,
   // })
 
   /**
@@ -135,7 +136,7 @@ const main = async () => {
   //       value: "30000000",
   //     },
   //   },
-  //   wallet: WALLET_2,
+  //   wallet: WALLET_3,
   // })
 
   /**
@@ -222,7 +223,7 @@ const main = async () => {
    * https://xrpl.org/accountset.html
    * --------------------------------------------------
    */
-  // await accountSet({ SetFlag: AccountSetAsfFlags.asfAllowTrustLineClawback }, { wallet: WALLET_1 })
+  // await accountSet({ SetFlag: AccountSetAsfFlags.asfDefaultRipple }, { wallet: WALLET_1 })
 
   /**
    *   _____
@@ -433,6 +434,24 @@ const main = async () => {
   // })
 
   /**
+   *  ____                                  _      ____ _                            _
+   * |  _ \ __ _ _   _ _ __ ___   ___ _ __ | |_   / ___| |__   __ _ _ __  _ __   ___| |___
+   * | |_) / _` | | | | '_ ` _ \ / _ \ '_ \| __| | |   | '_ \ / _` | '_ \| '_ \ / _ \ / __|
+   * |  __/ (_| | |_| | | | | | |  __/ | | | |_  | |___| | | | (_| | | | | | | |  __/ \__ \
+   * |_|   \__,_|\__, |_| |_| |_|\___|_| |_|\__|  \____|_| |_|\__,_|_| |_|_| |_|\___|_|___/
+   */
+
+  // await createPaymentChannel({
+  //   txn: {
+  //     Amount: "90",
+  //     SettleDelay: 5,
+  //     Destination: WALLET_2.address,
+  //     PublicKey: WALLET_1.publicKey,
+  //   },
+  //   wallet: WALLET_1,
+  // })
+
+  /**
    *     _                             _       __  __      _   _               _
    *    / \   ___ ___ ___  _   _ _ __ | |_    |  \/  | ___| |_| |__   ___   __| |___
    *   / _ \ / __/ __/ _ \| | | | '_ \| __|   | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
@@ -453,6 +472,8 @@ const main = async () => {
   // await getAccountObjects({ account: WALLET_3.address, command: "account_objects" })
 
   // await getAccountTx({ account: "", command: "account_tx" })
+
+  // await getAccountChannels({ account: WALLET_1.address, command: "account_channels" })
 
   /**
    *     _    __  __ __  __        __  __      _   _               _

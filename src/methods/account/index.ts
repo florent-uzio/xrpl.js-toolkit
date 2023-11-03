@@ -1,3 +1,4 @@
+export * from "./account-channels"
 export * from "./account-currencies"
 export * from "./account-info"
 export * from "./account-lines"

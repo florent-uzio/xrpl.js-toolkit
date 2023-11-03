@@ -11,13 +11,16 @@ import { MethodProps } from "../../models"
 export const getAccountChannels = async ({
   client,
   methodRequest,
+  showLogs = true,
 }: MethodProps<AccountChannelsRequest>) => {
   const response = await client.request({
     command: "account_channels",
     ...methodRequest,
   })
 
-  console.log(JSON.stringify(response, undefined, 2))
+  if (showLogs) {
+    console.log(JSON.stringify(response, undefined, 2))
+  }
 
   return response
 }

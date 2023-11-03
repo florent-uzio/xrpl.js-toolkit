@@ -1,10 +1,17 @@
-import { AccountCurrenciesRequest } from "xrpl"
+import { AccountCurrenciesRequest, AccountCurrenciesResponse } from "xrpl"
 import { convertHexCurrencyCodeToString } from "../../helpers"
-import { getXrplClient } from "../../xrpl-client"
+import { MethodProps } from "../../models"
 
-export const getAccountCurrencies = async (props: AccountCurrenciesRequest) => {
+export const getAccountCurrencies = async ({
+  methodRequest,
+  client,
+  showLogs = true,
+}: MethodProps<AccountCurrenciesRequest>) => {
   // Send the request
-  const response = await getXrplClient().request(props)
+  const response: AccountCurrenciesResponse = await client.request({
+    command: "account_currencies",
+    ...methodRequest,
+  })
 
   // Destructuring
   let { receive_currencies, send_currencies } = response.result
@@ -25,5 +32,7 @@ export const getAccountCurrencies = async (props: AccountCurrenciesRequest) => {
     return currency
   })
 
-  console.log(JSON.stringify(response, undefined, 2))
+  if (showLogs) {
+    console.log(JSON.stringify(response, undefined, 2))
+  }
 }

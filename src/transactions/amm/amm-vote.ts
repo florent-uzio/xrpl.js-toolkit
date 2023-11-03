@@ -1,7 +1,7 @@
 import color from "colors"
 import { AMMVote } from "xrpl"
-import { convertCurrencyCodeToHex, prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { convertCurrencyCodeToHex, prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
 type AMMVoteProps = Omit<AMMVote, "TransactionType" | "Account">
 

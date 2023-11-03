@@ -3,11 +3,11 @@ import { convertCurrencyCodeToHex } from "../../helpers"
 import { getXrplClient } from "../../xrpl-client"
 
 export const getAMMInfo = async ({ asset, asset2, ...rest }: AMMInfoRequest) => {
-  if (asset.currency !== "XRP") {
+  if (asset && asset.currency !== "XRP") {
     asset.currency = convertCurrencyCodeToHex(asset.currency)
   }
 
-  if (asset2.currency !== "XRP") {
+  if (asset2 && asset2.currency !== "XRP") {
     asset2.currency = convertCurrencyCodeToHex(asset2.currency)
   }
 

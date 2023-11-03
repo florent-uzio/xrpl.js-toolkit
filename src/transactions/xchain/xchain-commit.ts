@@ -1,13 +1,11 @@
-import { XChainAccountCreateCommit } from "xrpl"
+import { XChainCommit } from "xrpl"
 import { multiSignAndSubmit } from "../../helpers"
 import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../../models"
 
-type XChainAccountCreateCommitProps =
-  | TransactionPropsForSingleSign<XChainAccountCreateCommit>
-  | TransactionPropsForMultiSign
+type XChainCommitProps = TransactionPropsForSingleSign<XChainCommit> | TransactionPropsForMultiSign
 
-export const xChainAccountCreateCommit = async (props: XChainAccountCreateCommitProps) => {
-  console.log("LET'S CREATE A XCHAIN ACCOUNT COMMIT")
+export const xChainCommit = async (props: XChainCommitProps) => {
+  console.log("LET'S CREATE A XCHAIN COMMIT")
   console.log()
 
   if (props.isMultisign) {
@@ -15,9 +13,9 @@ export const xChainAccountCreateCommit = async (props: XChainAccountCreateCommit
   } else {
     const { client, wallet, txn, showLogs = true } = props
 
-    const transaction: XChainAccountCreateCommit = {
+    const transaction: XChainCommit = {
       Account: wallet.address,
-      TransactionType: "XChainAccountCreateCommit",
+      TransactionType: "XChainCommit",
       ...txn,
     }
 

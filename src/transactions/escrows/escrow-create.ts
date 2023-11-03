@@ -1,7 +1,7 @@
 import color from "colors"
 import { EscrowCreate, xrpToDrops } from "xrpl"
-import { prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
 type CreateEscrowProps = Omit<EscrowCreate, "TransactionType" | "Account"> &
   ({ CancelAfter: number; FinishAfter?: number } | { CancelAfter?: number; FinishAfter: number })

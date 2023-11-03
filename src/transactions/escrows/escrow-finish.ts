@@ -1,7 +1,7 @@
 import color from "colors"
 import { EscrowFinish } from "xrpl"
-import { prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
 type FinishEscrowProps = Omit<EscrowFinish, "TransactionType" | "Account">
 

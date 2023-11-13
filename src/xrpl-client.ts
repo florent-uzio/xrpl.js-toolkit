@@ -13,11 +13,12 @@ export const networks = {
 
 let xrplClient: Client
 
-// Initialize the client if it doesn't exist or return it.
-export const getXrplClient = (network?: string) => {
-  if (!xrplClient) {
-    xrplClient = new Client(network ?? networks.RIPPLE_TESTNET)
-  }
+// // Initialize the client if it doesn't exist or return it.
+// export const getXrplClient = (network = networks.RIPPLE_TESTNET) => {
+//   console.log(network)
+//   if (!xrplClient) {
+//     xrplClient = new Client(network)
+//   }
 
-  return xrplClient
-}
+//   return xrplClient
+// }

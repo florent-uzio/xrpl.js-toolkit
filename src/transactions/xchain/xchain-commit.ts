@@ -5,7 +5,7 @@ import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../
 type XChainCommitProps = TransactionPropsForSingleSign<XChainCommit> | TransactionPropsForMultiSign
 
 export const xChainCommit = async (props: XChainCommitProps) => {
-  console.log("LET'S CREATE A XCHAIN COMMIT")
+  console.log("******* LET'S CREATE A XCHAIN COMMIT *******")
   console.log()
 
   if (props.isMultisign) {

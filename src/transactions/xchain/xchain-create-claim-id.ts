@@ -7,7 +7,7 @@ type XChainCreateClaimIdProps =
   | TransactionPropsForMultiSign
 
 export const xChainCreateClaimId = async (props: XChainCreateClaimIdProps) => {
-  console.log("LET'S CREATE A XCHAIN CLAIM ID")
+  console.log("******* LET'S CREATE A XCHAIN CLAIM ID *******")
   console.log()
 
   if (props.isMultisign) {

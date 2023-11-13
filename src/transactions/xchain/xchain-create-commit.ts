@@ -7,7 +7,7 @@ type XChainAccountCreateCommitProps =
   | TransactionPropsForMultiSign
 
 export const xChainAccountCreateCommit = async (props: XChainAccountCreateCommitProps) => {
-  console.log("LET'S CREATE A XCHAIN ACCOUNT COMMIT")
+  console.log("******* LET'S CREATE A XCHAIN ACCOUNT COMMIT *******")
   console.log()
 
   if (props.isMultisign) {

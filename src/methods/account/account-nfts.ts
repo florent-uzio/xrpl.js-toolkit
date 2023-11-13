@@ -1,8 +1,16 @@
 import { AccountNFTsRequest } from "xrpl"
-import { getXrplClient } from "../../xrpl-client"
+import { MethodProps } from "../../models"
 
-export const getAccountNfts = async (props: AccountNFTsRequest) => {
-  // Send the request
-  const response = await getXrplClient().request(props)
-  console.log(JSON.stringify(response, undefined, 2))
+export const getAccountNfts = async ({
+  client,
+  methodRequest,
+  showLogs = true,
+}: MethodProps<AccountNFTsRequest>) => {
+  const response = await client.request({ command: "account_nfts", ...methodRequest })
+
+  if (showLogs) {
+    console.log(JSON.stringify(response, undefined, 2))
+  }
+
+  return response
 }

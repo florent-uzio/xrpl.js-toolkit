@@ -1,25 +1,28 @@
 import { BookOffersRequest } from "xrpl"
 import { convertCurrencyCodeToHex } from "../../helpers"
-import { MethodOptions } from "../../models"
-import { getXrplClient } from "../../xrpl-client"
+import { MethodProps } from "../../models"
 
 /**
  * https://xrpl.org/book_offers.html
  * @param {Object} props The book offers fields.
  */
-export const getBookOffers = async (
-  { taker_gets, taker_pays, ...rest }: BookOffersRequest,
-  { showLogs = true }: MethodOptions = {}
-) => {
+export const getBookOffers = async ({
+  client,
+  methodRequest,
+  showLogs = true,
+}: MethodProps<BookOffersRequest>) => {
+  const { taker_gets, taker_pays } = methodRequest as BookOffersRequest
+
   // Convert currencies to hex if needed
   taker_gets.currency = convertCurrencyCodeToHex(taker_gets.currency)
   taker_pays.currency = convertCurrencyCodeToHex(taker_pays.currency)
 
   // Send the request
-  const response = await getXrplClient().request({
+  const response = await client.request({
+    command: "book_offers",
     taker_gets,
     taker_pays,
-    ...rest,
+    ...methodRequest,
   })
 
   if (showLogs) {

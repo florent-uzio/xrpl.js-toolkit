@@ -1,8 +1,19 @@
 import { AccountOffersRequest } from "xrpl"
-import { getXrplClient } from "../../xrpl-client"
+import { MethodProps } from "../../models"
 
-export const getAccountOffers = async (props: AccountOffersRequest) => {
-  // Send the request
-  const response = await getXrplClient().request(props)
-  console.log(JSON.stringify(response, undefined, 2))
+export const getAccountOffers = async ({
+  client,
+  methodRequest,
+  showLogs = true,
+}: MethodProps<AccountOffersRequest>) => {
+  const response = await client.request({
+    command: "account_offers",
+    ...methodRequest,
+  })
+
+  if (showLogs) {
+    console.log(JSON.stringify(response, undefined, 2))
+  }
+
+  return response
 }

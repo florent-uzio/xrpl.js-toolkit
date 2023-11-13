@@ -1,11 +1,20 @@
 import { ServerStateRequest } from "xrpl"
-import { getXrplClient } from "../../xrpl-client"
+import { MethodProps } from "../../models"
 
-export const getServerState = async (props?: Omit<ServerStateRequest, "command">) => {
+export const getServerState = async ({
+  client,
+  methodRequest,
+  showLogs = true,
+}: MethodProps<ServerStateRequest>) => {
   // Send the request
-  const response = await getXrplClient().request({
+  const response = await client.request({
     command: "server_state",
-    ...props,
+    ...methodRequest,
   })
-  console.log(JSON.stringify(response, undefined, 2))
+
+  if (showLogs) {
+    console.log(JSON.stringify(response, undefined, 2))
+  }
+
+  return response
 }

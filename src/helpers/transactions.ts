@@ -1,13 +1,10 @@
-import { Transaction, multisign } from "xrpl"
+import { Client, Transaction, multisign } from "xrpl"
 import { TxnOptions } from "../models"
-import { getXrplClient } from "../xrpl-client"
 import { log } from "./loggers"
-
-const client = getXrplClient()
 
 export const prepareSignSubmit = async (
   transaction: Transaction,
-  { wallet, showLogs = true }: TxnOptions,
+  { client, wallet, showLogs = true }: TxnOptions,
 ) => {
   // Autofill transaction with additional fields (such as LastLedgerSequence).
   const preparedTxn = await client.autofill(transaction)
@@ -54,7 +51,7 @@ const getFinalLogUrl = (transaction: Transaction) => {
  *
  * @param {string[]} signatures All the signatures gathered for the multisign transaction.
  */
-export const multiSignAndSubmit = async (signatures: string[]) => {
+export const multiSignAndSubmit = async (signatures: string[], client: Client) => {
   const multiSignatures = multisign(signatures)
 
   const response = await client.submitAndWait(multiSignatures)

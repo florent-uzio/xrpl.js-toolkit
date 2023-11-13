@@ -4,7 +4,7 @@ import { MethodProps } from "../../models"
 export const getAccountInfo = async ({
   client,
   methodRequest,
-  showLogs,
+  showLogs = true,
 }: MethodProps<AccountInfoRequest>) => {
   // Send the request
   const response: AccountInfoResponse = await client.request({

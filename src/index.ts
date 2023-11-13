@@ -9,9 +9,11 @@ dotenv.config()
 // Create a TOKEN field in your .env file. If TOKEN is not present, it will default to "TEST_TOKEN".
 const TOKEN = process.env.TOKEN ?? "TEST_TOKEN"
 
+const client = getXrplClient()
+
 const main = async () => {
   // Do not comment
-  await getXrplClient().connect()
+  await client.connect()
 
   /**
    *  ____                                  _
@@ -452,6 +454,116 @@ const main = async () => {
   // })
 
   /**
+   *  __  ______ _   _    _    ___ _   _
+   *  \ \/ / ___| | | |  / \  |_ _| \ | |
+   *   \  / |   | |_| | / _ \  | ||  \| |
+   *   /  \ |___|  _  |/ ___ \ | || |\  |
+   *  /_/\_\____|_| |_/_/   \_\___|_| \_|
+   */
+
+  // const MAX_LEDGERS_WAITED = 10
+
+  // const sidechainClient = new Client(networks.DEVNET_XRPL_SIDECHAIN)
+  // await sidechainClient.connect()
+
+  // // Step 1 - Get locking account objects
+  // const lockingAccountObjects = await client.request({
+  //   account: LOCKING_CHAIN_DOOR_ACCOUNT_DEVNET,
+  //   command: "account_objects",
+  //   type: "bridge",
+  // })
+  // console.log("lockingAccountObjects", lockingAccountObjects)
+
+  // const bridgeData = lockingAccountObjects.result.account_objects.filter(
+  //   (obj) =>
+  //     obj.LedgerEntryType === "Bridge" && obj.XChainBridge.LockingChainIssue.currency === "XRP",
+  // )[0] as LedgerEntry.Bridge
+
+  // const bridge: XChainBridge = bridgeData.XChainBridge
+
+  // // Step 2 - Creating wallets
+  // // console.log("Creating wallet on the locking chain via the faucet...")
+
+  // // const { wallet: wallet1 } = await client.fundWallet()
+  // // console.log("wallet1", wallet1)
+  // // const wallet2 = Wallet.generate()
+  // // console.log("wallet2", wallet2)
+
+  // // // // Step 3 - Enabling wallet 2 via the bridge transfer
+  // // const fundTx = await xChainAccountCreateCommit({
+  // //   txn: {
+  // //     XChainBridge: bridge,
+  // //     SignatureReward: bridgeData.SignatureReward,
+  // //     Destination: wallet2.classicAddress,
+  // //     Amount: xrpToDrops(20),
+  // //   },
+  // //   wallet: wallet1,
+  // //   client,
+  // // })
+
+  // // Step 4 - Wait on issuing chain to see balance updated
+
+  // // function sleep(ms: number) {
+  // //   return new Promise((resolve) => {
+  // //     setTimeout(resolve, ms)
+  // //   })
+  // // }
+
+  // // let ledgersWaited = 0
+  // // let initialBalance = "0"
+  // // while (ledgersWaited < 10) {
+  // //   await sleep(4000)
+
+  // //   try {
+  // //     initialBalance = await sidechainClient.getXrpBalance(wallet2.classicAddress)
+  // //     console.log(
+  // //       `Wallet ${wallet2.classicAddress} has been funded with a balance of ${initialBalance} XRP`,
+  // //     )
+  // //     break
+  // //   } catch (_error) {
+  // //     ledgersWaited += 1
+  // //     if (ledgersWaited === 10) {
+  // //       // This error should never be hit if the bridge is running
+  // //       throw Error("Destination account creation via the bridge failed.")
+  // //     }
+  // //   }
+  // // }
+
+  // const claimIdResult = await xChainCreateClaimId({
+  //   txn: {
+  //     XChainBridge: bridge,
+  //     SignatureReward: bridgeData.SignatureReward,
+  //     OtherChainSource: WALLET_1.classicAddress,
+  //   },
+  //   wallet: WALLET_2,
+  //   client: sidechainClient,
+  // })
+
+  // const xchainClaimId = getXChainClaimID(claimIdResult?.result.meta)
+
+  // if (xchainClaimId == null) {
+  //   // This shouldn't trigger assuming the transaction succeeded
+  //   throw Error("Could not extract XChainClaimID")
+  // }
+
+  // console.log(`Claim ID for the transfer: ${xchainClaimId}`)
+
+  // console.log("Step 2: Locking the funds on the locking chain with an XChainCommit transaction...")
+
+  // await xChainCommit({
+  //   txn: {
+  //     Amount: xrpToDrops(1.5),
+  //     XChainBridge: bridge,
+  //     XChainClaimID: xchainClaimId,
+  //     OtherChainDestination: WALLET_2.classicAddress,
+  //   },
+  //   wallet: WALLET_1,
+  //   client,
+  // })
+
+  // await sidechainClient.disconnect()
+
+  /**
    *     _                             _       __  __      _   _               _
    *    / \   ___ ___ ___  _   _ _ __ | |_    |  \/  | ___| |_| |__   ___   __| |___
    *   / _ \ / __/ __/ _ \| | | | '_ \| __|   | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
@@ -461,7 +573,7 @@ const main = async () => {
 
   // await getAccountCurrencies({ account: WALLET_3.address, command: "account_currencies" })
 
-  // await getAccountInfo({ account: WALLET_1.address, command: "account_info" })
+  // await getAccountInfo({ methodRequest: { account: WALLET_1.address }, client })
 
   // await getAccountNfts({ account: WALLET_1.address, command: "account_nfts" })
 
@@ -541,7 +653,7 @@ const main = async () => {
   // await showBalanceChanges("")
 
   // Do not comment, disconnect the client
-  await getXrplClient().disconnect()
+  await client.disconnect()
 }
 
 // Will run the main function above. Do not comment.

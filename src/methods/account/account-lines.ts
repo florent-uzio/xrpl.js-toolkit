@@ -1,14 +1,17 @@
-import { AccountLinesRequest } from "xrpl"
+import { AccountLinesRequest, AccountLinesResponse } from "xrpl"
 import { convertHexCurrencyCodeToString } from "../../helpers"
-import { getXrplClient } from "../../xrpl-client"
-import { MethodOptions } from "../../models"
+import { MethodProps } from "../../models"
 
-export const getAccountLines = async (
-  props: AccountLinesRequest,
-  { showLogs = true }: MethodOptions = {},
-) => {
+export const getAccountLines = async ({
+  client,
+  methodRequest,
+  showLogs = true,
+}: MethodProps<AccountLinesRequest>) => {
   // Send the request
-  const response = await getXrplClient().request(props)
+  const response: AccountLinesResponse = await client.request({
+    command: "account_lines",
+    ...methodRequest,
+  })
 
   // Destructuring
   const { lines } = response.result

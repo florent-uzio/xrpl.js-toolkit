@@ -2,7 +2,7 @@ import color from "colors"
 import { BookOfferCurrency, BookOffersRequest, dropsToXrp } from "xrpl"
 import { convertAmount, convertHexCurrencyCodeToString, isString } from "../helpers"
 import { getBookOffers } from "../methods"
-import { MethodOptions } from "../models"
+import { MethodProps } from "../models"
 
 type GetBuyQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "command"> & {
   /**
@@ -33,20 +33,20 @@ type GetBuyQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "c
  */
 export const getBuyQuote = async (
   { weWant, weWantAmountOfToken, counterCurrency, ...rest }: GetBuyQuoteProps,
-  { showLogs }: MethodOptions = {}
+  { client }: Pick<MethodProps<BookOffersRequest>, "client">,
 ): Promise<number> => {
   console.log(color.bold("******* LET'S GET A BUY QUOTE *******"))
   console.log()
 
-  const offers = await getBookOffers(
-    {
+  const offers = await getBookOffers({
+    methodRequest: {
       command: "book_offers",
       taker_gets: weWant,
       taker_pays: counterCurrency,
       ...rest,
     },
-    { showLogs }
-  )
+    client,
+  })
 
   // Amount of remaining token we want to buy.
   let remaining = weWantAmountOfToken
@@ -94,7 +94,7 @@ export const getBuyQuote = async (
   const counterCurrencyReadable = convertHexCurrencyCodeToString(counterCurrency.currency)
 
   console.log(
-    `You need to sell at least ${total} ${counterCurrencyReadable} to buy ${weWantAmountOfToken} ${currencyReadable}`
+    `You need to sell at least ${total} ${counterCurrencyReadable} to buy ${weWantAmountOfToken} ${currencyReadable}`,
   )
 
   return total
@@ -130,20 +130,20 @@ type GetSellQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "
  */
 export const getSellQuote = async (
   { weSell, weSellAmountOfTokens, counterCurrency, ...rest }: GetSellQuoteProps,
-  { showLogs }: MethodOptions = {}
+  { client }: Pick<MethodProps<BookOffersRequest>, "showLogs" | "client">,
 ): Promise<number> => {
   console.log(color.bold("******* LET'S GET A SELL QUOTE *******"))
   console.log()
 
-  const offers = await getBookOffers(
-    {
+  const offers = await getBookOffers({
+    methodRequest: {
       command: "book_offers",
       taker_gets: counterCurrency,
       taker_pays: weSell,
       ...rest,
     },
-    { showLogs }
-  )
+    client,
+  })
 
   /** Amount of remaining token we want to sell. */
   let remaining = weSellAmountOfTokens
@@ -195,7 +195,7 @@ export const getSellQuote = async (
   const counterCurrencyReadable = convertHexCurrencyCodeToString(counterCurrency.currency)
 
   console.log(
-    `You will get ${total} ${counterCurrencyReadable} if you sell ${weSellAmountOfTokens} ${currencyReadable}`
+    `You will get ${total} ${counterCurrencyReadable} if you sell ${weSellAmountOfTokens} ${currencyReadable}`,
   )
 
   return total

@@ -1,7 +1,7 @@
 import color from "colors"
 import { AMMBid } from "xrpl"
-import { convertCurrencyCodeToHex, prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { convertCurrencyCodeToHex, prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
 type AMMBidProps = Omit<AMMBid, "TransactionType" | "Account">
 

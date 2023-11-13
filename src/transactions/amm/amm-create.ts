@@ -1,7 +1,7 @@
 import color from "colors"
 import { AMMCreate, xrpToDrops } from "xrpl"
-import { convertCurrencyCodeToHex, prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { convertCurrencyCodeToHex, prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
 type AMMCreateProps = Omit<AMMCreate, "TransactionType" | "Account">
 

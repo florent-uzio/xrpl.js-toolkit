@@ -1,7 +1,7 @@
 import color from "colors"
 import { NFTokenAcceptOffer } from "xrpl"
-import { prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
 type AcceptNftOfferProps = Omit<NFTokenAcceptOffer, "TransactionType" | "Account">
 

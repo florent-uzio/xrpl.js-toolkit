@@ -1,23 +1,20 @@
 import color from "colors"
-import { AMMDeposit, xrpToDrops } from "xrpl"
-import { convertCurrencyCodeToHex, prepareSignSubmit } from "../helpers"
-import { TxnOptions } from "../models"
+import { AMMWithdraw, xrpToDrops } from "xrpl"
+import { convertCurrencyCodeToHex, prepareSignSubmit } from "../../helpers"
+import { TxnOptions } from "../../models"
 
-type AMMDepositProps = Omit<AMMDeposit, "TransactionType" | "Account">
+type AMMWithdrawProps = Omit<AMMWithdraw, "TransactionType" | "Account">
 
 /**
- * Deposit funds into an Automated Market Maker (AMM) instance and receive the AMM's
- * liquidity provider tokens (LP Tokens) in exchange. You can deposit one or both of the assets in the AMM's pool.
+ * Withdraw assets from an Automated Market Maker (AMM) instance by returning the AMM's liquidity provider tokens (LP Tokens).
  *
- * If successful, this transaction creates a trust line to the AMM Account (limit 0) to hold the LP Tokens.
- *
- * https://opensource.ripple.com/docs/xls-30d-amm/transaction-types/ammdeposit/
+ * https://opensource.ripple.com/docs/xls-30d-amm/transaction-types/ammwithdraw/
  */
-export const depositInAMM = async (
-  { Asset, Asset2, Amount2, Amount, ...rest }: AMMDepositProps,
-  opts: TxnOptions
+export const withdrawFromAMM = async (
+  { Asset, Asset2, Amount, Amount2, ...rest }: AMMWithdrawProps,
+  opts: TxnOptions,
 ) => {
-  console.log(color.bold("******* LET'S DEPOSIT IN AN AMM *******"))
+  console.log(color.bold("******* LET'S WITHDRAW FROM AN AMM *******"))
   console.log()
 
   // Convert the currencies to hex
@@ -28,6 +25,7 @@ export const depositInAMM = async (
   if (typeof Amount === "string") {
     Amount = xrpToDrops(Amount)
   } else if (Amount) {
+    // Or the currency to hex
     Amount.currency = convertCurrencyCodeToHex(Amount.currency)
   }
 
@@ -35,12 +33,13 @@ export const depositInAMM = async (
   if (typeof Amount2 === "string") {
     Amount2 = xrpToDrops(Amount2)
   } else if (Amount2) {
+    // Or the currency to hex
     Amount2.currency = convertCurrencyCodeToHex(Amount2.currency)
   }
 
   // Construct the base transaction
-  const transaction: AMMDeposit = {
-    TransactionType: "AMMDeposit",
+  const transaction: AMMWithdraw = {
+    TransactionType: "AMMWithdraw",
     Account: opts.wallet.address,
     Asset,
     Asset2,

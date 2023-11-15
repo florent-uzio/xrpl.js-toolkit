@@ -1,5 +1,3 @@
-import { Client } from "xrpl"
-
 // https://xrpl.org/public-servers.html
 export const networks = {
   RIPPLE_MAINNET: "wss://s2.ripple.com", // Points to clio server
@@ -9,16 +7,4 @@ export const networks = {
   RIPPLE_AMM_DEVNET: "wss://amm.devnet.rippletest.net:51233/",
   XRPL_MAINNET: "wss://xrplcluster.com/", // XRP Ledger Foundation
   DEVNET_XRPL_SIDECHAIN: "wss://sidechain-net2.devnet.rippletest.net:51233",
-}
-
-let xrplClient: Client
-
-// // Initialize the client if it doesn't exist or return it.
-// export const getXrplClient = (network = networks.RIPPLE_TESTNET) => {
-//   console.log(network)
-//   if (!xrplClient) {
-//     xrplClient = new Client(network)
-//   }
-
-//   return xrplClient
-// }
+} as const

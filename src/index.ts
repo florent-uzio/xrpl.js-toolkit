@@ -1,7 +1,9 @@
 import * as dotenv from "dotenv"
+import { Client } from "xrpl"
 import { Currency } from "xrpl/dist/npm/models/common"
+import { showTxBalanceChanges } from "./helpers"
+import { networks } from "./networks"
 import { WALLET_1 } from "./wallets"
-import { getXrplClient } from "./xrpl-client"
 
 dotenv.config()
 
@@ -9,9 +11,9 @@ dotenv.config()
 // Create a TOKEN field in your .env file. If TOKEN is not present, it will default to "TEST_TOKEN".
 const TOKEN = process.env.TOKEN ?? "TEST_TOKEN"
 
-const client = getXrplClient()
-
 const main = async () => {
+  const client = new Client(networks.RIPPLE_MAINNET)
+
   // Do not comment
   await client.connect()
 
@@ -650,7 +652,12 @@ const main = async () => {
    *  \___/ \__|_| |_|\___|_|  |___/
    */
 
-  // await showBalanceChanges("")
+  // await showAccountBalanceChanges("r3rZHvLMGsGCcd51aG2QfdLZGWBSbxErvq", client)
+  console.log(client)
+  await showTxBalanceChanges(
+    "8821A8EF3E1BC04B59FC2C4056EDC6C8440BF6E40B231D810936C159953A44E4",
+    client,
+  )
 
   // Do not comment, disconnect the client
   await client.disconnect()

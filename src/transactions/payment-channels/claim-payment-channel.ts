@@ -10,9 +10,9 @@ export const claimPaymentChannel = async (props: CreatePaymentChannelProps) => {
   console.log("LET'S CLAIM A PAYMENT CHANNEL")
 
   if (props.isMultisign) {
-    multiSignAndSubmit(props.signatures)
+    multiSignAndSubmit(props.signatures, props.client)
   } else {
-    const { txn, showLogs, wallet, signatures } = props
+    const { client, txn, showLogs, wallet, signatures } = props
     let { Amount, ...rest } = txn
 
     Amount = Amount && xrpToDrops(Amount)
@@ -26,6 +26,6 @@ export const claimPaymentChannel = async (props: CreatePaymentChannelProps) => {
     }
 
     // Autofill transaction with additional fields, sign and submit
-    await prepareSignSubmit(transaction, { signatures, wallet, showLogs })
+    await prepareSignSubmit(transaction, { client, signatures, wallet, showLogs })
   }
 }

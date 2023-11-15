@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Demo for NYU",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "check-types": "tsc -p ./tsconfig.json"
   },
   "repository": {
     "type": "git",

@@ -10,10 +10,9 @@ export const createTrustline = async (props: CreateTrustlineProps) => {
   console.log()
 
   if (props.isMultisign) {
-    await multiSignAndSubmit(props.signatures)
+    await multiSignAndSubmit(props.signatures, props.client)
   } else {
     const { LimitAmount, ...rest } = props.txn
-    const { wallet, showLogs, signatures } = props
 
     // Construct the base transaction
     const transaction: TrustSet = {
@@ -27,6 +26,6 @@ export const createTrustline = async (props: CreateTrustlineProps) => {
     }
 
     // Autofill transaction with additional fields (such as LastLedgerSequence), sign and submit
-    await prepareSignSubmit(transaction, { signatures, wallet, showLogs })
+    await prepareSignSubmit(transaction, props)
   }
 }

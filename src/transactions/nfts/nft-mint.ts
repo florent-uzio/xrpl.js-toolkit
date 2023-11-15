@@ -1,23 +1,32 @@
 import color from "colors"
-import * as xrpl from "xrpl"
-import { prepareSignSubmit } from "../../helpers"
-import { TxnOptions } from "../../models"
+import { NFTokenMint, NFTokenMintFlags, convertStringToHex } from "xrpl"
+import { multiSignAndSubmit, prepareSignSubmit } from "../../helpers"
+import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../../models"
 
-type MintNftProps = Omit<xrpl.NFTokenMint, "TransactionType" | "Account">
+// type MintNftProps = Omit<xrpl.NFTokenMint, "TransactionType" | "Account">
 
-export const mintNft = async ({ URI, Flags, ...rest }: MintNftProps, opts: TxnOptions) => {
+type MintNFTProps = TransactionPropsForMultiSign | TransactionPropsForSingleSign<NFTokenMint>
+
+export const mintNft = async (props: MintNFTProps) => {
   console.log(color.bold("******* LET'S MINT AN NFT *******"))
   console.log()
 
-  // Construct the base transaction
-  const transaction: xrpl.NFTokenMint = {
-    TransactionType: "NFTokenMint",
-    Account: opts.wallet.address,
-    Flags: Flags ?? xrpl.NFTokenMintFlags.tfTransferable,
-    URI: URI ? xrpl.convertStringToHex(URI) : "",
-    ...rest,
-  }
+  if (props.isMultisign) {
+    multiSignAndSubmit(props.signatures, props.client)
+  } else {
+    const { txn, wallet } = props
+    const { Flags, URI, ...rest } = txn
 
-  // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, opts)
+    // Construct the base transaction
+    const transaction: NFTokenMint = {
+      TransactionType: "NFTokenMint",
+      Account: wallet.address,
+      Flags: Flags ?? NFTokenMintFlags.tfTransferable,
+      URI: URI ? convertStringToHex(URI) : "",
+      ...rest,
+    }
+
+    // Autofill transaction with additional fields, sign and submit
+    await prepareSignSubmit(transaction, props)
+  }
 }

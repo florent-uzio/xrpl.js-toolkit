@@ -3,8 +3,6 @@ import { NFTokenMint, NFTokenMintFlags, convertStringToHex } from "xrpl"
 import { multiSignAndSubmit, prepareSignSubmit } from "../../helpers"
 import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../../models"
 
-// type MintNftProps = Omit<xrpl.NFTokenMint, "TransactionType" | "Account">
-
 type MintNFTProps = TransactionPropsForMultiSign | TransactionPropsForSingleSign<NFTokenMint>
 
 export const mintNft = async (props: MintNFTProps) => {
@@ -12,7 +10,7 @@ export const mintNft = async (props: MintNFTProps) => {
   console.log()
 
   if (props.isMultisign) {
-    multiSignAndSubmit(props.signatures, props.client)
+    await multiSignAndSubmit(props.signatures, props.client)
   } else {
     const { txn, wallet } = props
     const { Flags, URI, ...rest } = txn

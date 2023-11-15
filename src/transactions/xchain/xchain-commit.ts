@@ -9,7 +9,7 @@ export const xChainCommit = async (props: XChainCommitProps) => {
   console.log()
 
   if (props.isMultisign) {
-    multiSignAndSubmit(props.signatures)
+    multiSignAndSubmit(props.signatures, props.client)
   } else {
     const { client, wallet, txn, showLogs = true } = props
 

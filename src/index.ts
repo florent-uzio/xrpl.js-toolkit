@@ -653,7 +653,7 @@ const main = async () => {
    */
 
   // await showAccountBalanceChanges("r3rZHvLMGsGCcd51aG2QfdLZGWBSbxErvq", client)
-  console.log(client)
+
   await showTxBalanceChanges(
     "8821A8EF3E1BC04B59FC2C4056EDC6C8440BF6E40B231D810936C159953A44E4",
     client,

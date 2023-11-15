@@ -1,7 +1,8 @@
 import * as dotenv from "dotenv"
+import { Client } from "xrpl"
 import { Currency } from "xrpl/dist/npm/models/common"
+import { networks } from "./networks"
 import { WALLET_1 } from "./wallets"
-import { getXrplClient } from "./xrpl-client"
 
 dotenv.config()
 
@@ -9,9 +10,9 @@ dotenv.config()
 // Create a TOKEN field in your .env file. If TOKEN is not present, it will default to "TEST_TOKEN".
 const TOKEN = process.env.TOKEN ?? "TEST_TOKEN"
 
-const client = getXrplClient()
-
 const main = async () => {
+  const client = new Client(networks.RIPPLE_MAINNET)
+
   // Do not comment
   await client.connect()
 
@@ -34,15 +35,15 @@ const main = async () => {
    * --------------------------------------------------
    */
   // await sendPayment({
+  //   client,
   //   txn: {
-  //     Flags: PaymentFlags.tfPartialPayment,
   //     Destination: WALLET_3.address,
-  //     // Amount: "1",
-  //     Amount: {
-  //       value: "15",
-  //       currency: TOKEN,
-  //       issuer: WALLET_1.address,
-  //     },
+  //     Amount: "0.1",
+  //     // Amount: {
+  //     //   value: "0.1",
+  //     //   currency: TOKEN,
+  //     //   issuer: WALLET_1.address,
+  //     // },
   //   },
   //   wallet: WALLET_2,
   // })
@@ -62,13 +63,14 @@ const main = async () => {
    * https://xrpl.org/nftokenmint.html
    * --------------------------------------------------
    */
-  // await mintNft(
-  //   {
+  // await mintNft({
+  //   client,
+  //   txn: {
   //     URI: "https://media.giphy.com/media/8vQSQ3cNXuDGo/giphy.gif",
   //     NFTokenTaxon: 0,
   //   },
-  //   { wallet: WALLET_1 }
-  // )
+  //   wallet: WALLET_1,
+  // })
 
   /**
    * Create an NFT offer
@@ -76,15 +78,16 @@ const main = async () => {
    * https://xrpl.org/nftokencreateoffer.html
    * --------------------------------------------------
    */
-  // await createNftOffer(
-  //   {
+  // await createNftOffer({
+  //   client,
+  //   txn: {
   //     Amount: "10",
-  //     // Flags: NFTokenCreateOfferFlags.tfSellNFToken,
-  //     Owner: "r...", // Can also be WALLET_2.address for example.
-  //     NFTokenID: "...",
+  //     Flags: NFTokenCreateOfferFlags.tfSellNFToken,
+  //     // Owner: "r...", // Can also be WALLET_2.address for example.
+  //     NFTokenID: "00080000DBE93D25CD8E59B5030D0BC04AB1C75DF71F54960000099B00000000",
   //   },
-  //   { wallet: WALLET_1 }
-  // )
+  //   wallet: WALLET_1,
+  // })
 
   /**
    * Accept an NFT offer
@@ -92,13 +95,14 @@ const main = async () => {
    * https://xrpl.org/nftokenacceptoffer.html
    * --------------------------------------------------
    */
-  // await acceptNftOffer(
-  //   {
+  // await acceptNftOffer({
+  //   client,
+  //   txn: {
   //     // NFTokenBuyOffer: "...",
-  //     NFTokenSellOffer: "...",
+  //     NFTokenSellOffer: "40A363CE7B3808F7E09E6A6DCA28B3AA12724C4D8436CD002A1D158221B2313F",
   //   },
-  //   { wallet: WALLET_2 }
-  // )
+  //   wallet: WALLET_2,
+  // })
 
   /**
    * Cancel an NFT offer
@@ -642,6 +646,13 @@ const main = async () => {
   //   },
   // })
 
+  // await getNftSellOffers({
+  //   client,
+  //   methodRequest: {
+  //     nft_id: "00080000DBE93D25CD8E59B5030D0BC04AB1C75DF71F54960000099B00000000",
+  //   },
+  // })
+
   /**
    *   ___  _   _
    *  / _ \| |_| |__   ___ _ __ ___
@@ -650,10 +661,15 @@ const main = async () => {
    *  \___/ \__|_| |_|\___|_|  |___/
    */
 
-  // await showBalanceChanges("")
+  // await showAccountBalanceChanges("r3rZHvLMGsGCcd51aG2QfdLZGWBSbxErvq", client)
+
+  // await showTxBalanceChanges(
+  //   "8821A8EF3E1BC04B59FC2C4056EDC6C8440BF6E40B231D810936C159953A44E4",
+  //   client,
+  // )
 
   // Do not comment, disconnect the client
-  await client.disconnect()
+  // await client.disconnect()
 }
 
 // Will run the main function above. Do not comment.

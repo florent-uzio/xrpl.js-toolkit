@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Demo for NYU",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "check-types": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,7 @@
   },
   "homepage": "https://github.com/florent-uzio/xrpl-nyu-demo-2#readme",
   "devDependencies": {
+    "@types/node": "^20.9.0",
     "prettier": "^3.0.1",
     "prettier-plugin-organize-imports": "^3.2.3",
     "ts-node": "^10.9.1",

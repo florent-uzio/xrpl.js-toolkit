@@ -1,13 +1,11 @@
-import { NFTokenAcceptOffer } from "xrpl"
+import { NFTokenBurn } from "xrpl"
 import { multiSignAndSubmit, prepareSignSubmit } from "../../helpers"
 import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../../models"
 
-type AcceptNftOfferProps =
-  | TransactionPropsForMultiSign
-  | TransactionPropsForSingleSign<NFTokenAcceptOffer>
+type AcceptNftOfferProps = TransactionPropsForMultiSign | TransactionPropsForSingleSign<NFTokenBurn>
 
-export const acceptNftOffer = async (props: AcceptNftOfferProps) => {
-  console.log("******* LET'S ACCEPT AN NFT OFFER *******")
+export const burnNft = async (props: AcceptNftOfferProps) => {
+  console.log("******* LET'S BURN AN NFT *******")
   console.log()
 
   if (props.isMultisign) {
@@ -16,9 +14,9 @@ export const acceptNftOffer = async (props: AcceptNftOfferProps) => {
     const { txn, wallet } = props
 
     // Construct the base transaction
-    const transaction: NFTokenAcceptOffer = {
+    const transaction: NFTokenBurn = {
       Account: wallet.address,
-      TransactionType: "NFTokenAcceptOffer",
+      TransactionType: "NFTokenBurn",
       ...txn,
     }
 

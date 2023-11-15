@@ -1,34 +1,35 @@
-import color from "colors"
-import { NFTokenCreateOffer, NFTokenCreateOfferFlags, xrpToDrops } from "xrpl"
-import { prepareSignSubmit } from "../../helpers"
-import { TxnOptions } from "../../models"
+import { NFTokenCreateOffer, xrpToDrops } from "xrpl"
+import { isString, multiSignAndSubmit, prepareSignSubmit } from "../../helpers"
+import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../../models"
 
-type CreateNftOfferProps = Omit<NFTokenCreateOffer, "TransactionType" | "Account"> &
-  (
-    | { Flags: NFTokenCreateOfferFlags.tfSellNFToken; Owner?: never }
-    | { Flags?: undefined; Owner: string }
-  )
+type CreateNftOfferProps =
+  | TransactionPropsForMultiSign
+  | TransactionPropsForSingleSign<NFTokenCreateOffer>
 
-export const createNftOffer = async (
-  { Amount, ...rest }: CreateNftOfferProps,
-  opts: TxnOptions,
-) => {
-  console.log(color.bold("******* LET'S CREATE AN NFT OFFER *******"))
+export const createNftOffer = async (props: CreateNftOfferProps) => {
+  console.log("******* LET'S CREATE AN NFT OFFER *******")
   console.log()
 
-  // Convert the amount to drops (1 drop = .000001 XRP)
-  if (typeof Amount === "string") {
-    Amount = xrpToDrops(Amount)
-  }
+  if (props.isMultisign) {
+    await multiSignAndSubmit(props.signatures, props.client)
+  } else {
+    const { txn, wallet } = props
+    let { Amount, ...rest } = txn
 
-  // Construct the base transaction
-  const transaction: NFTokenCreateOffer = {
-    Account: opts.wallet.address,
-    Amount,
-    TransactionType: "NFTokenCreateOffer",
-    ...rest,
-  }
+    // Convert the amount to drops (1 drop = .000001 XRP)
+    if (isString(Amount)) {
+      Amount = xrpToDrops(Amount)
+    }
 
-  // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, opts)
+    // Construct the base transaction
+    const transaction: NFTokenCreateOffer = {
+      Account: wallet.address,
+      Amount,
+      TransactionType: "NFTokenCreateOffer",
+      ...rest,
+    }
+
+    // Autofill transaction with additional fields, sign and submit
+    await prepareSignSubmit(transaction, props)
+  }
 }

@@ -1,8 +1,14 @@
 import { AMMInfoRequest } from "xrpl"
 import { convertCurrencyCodeToHex } from "../../helpers"
-import { getXrplClient } from "../../xrpl-client"
+import { MethodProps } from "../../models"
 
-export const getAMMInfo = async ({ asset, asset2, ...rest }: AMMInfoRequest) => {
+export const getAMMInfo = async ({
+  client,
+  methodRequest,
+  showLogs = true,
+}: MethodProps<AMMInfoRequest>) => {
+  const { asset, asset2, ...rest } = methodRequest as AMMInfoRequest
+
   if (asset && asset.currency !== "XRP") {
     asset.currency = convertCurrencyCodeToHex(asset.currency)
   }
@@ -12,6 +18,11 @@ export const getAMMInfo = async ({ asset, asset2, ...rest }: AMMInfoRequest) => 
   }
 
   // Send the request
-  const response = await getXrplClient().request({ asset, asset2, ...rest })
-  console.log(JSON.stringify(response, undefined, 2))
+  const response = await client.request({ asset, asset2, ...rest })
+
+  if (showLogs) {
+    console.log(JSON.stringify(response, undefined, 2))
+  }
+
+  return response
 }

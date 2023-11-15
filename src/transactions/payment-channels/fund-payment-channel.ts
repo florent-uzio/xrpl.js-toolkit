@@ -1,13 +1,13 @@
-import { PaymentChannelClaim, xrpToDrops } from "xrpl"
+import { PaymentChannelFund, xrpToDrops } from "xrpl"
 import { multiSignAndSubmit, prepareSignSubmit } from "../../helpers"
 import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../../models"
 
 type CreatePaymentChannelProps =
   | TransactionPropsForMultiSign
-  | TransactionPropsForSingleSign<PaymentChannelClaim>
+  | TransactionPropsForSingleSign<PaymentChannelFund>
 
 export const claimPaymentChannel = async (props: CreatePaymentChannelProps) => {
-  console.log("LET'S CLAIM A PAYMENT CHANNEL")
+  console.log("LET'S FUND A PAYMENT CHANNEL")
 
   if (props.isMultisign) {
     multiSignAndSubmit(props.signatures, props.client)
@@ -18,10 +18,10 @@ export const claimPaymentChannel = async (props: CreatePaymentChannelProps) => {
     Amount = Amount && xrpToDrops(Amount)
 
     // Construct the base transaction
-    const transaction: PaymentChannelClaim = {
+    const transaction: PaymentChannelFund = {
       Account: wallet.address,
       Amount,
-      TransactionType: "PaymentChannelClaim",
+      TransactionType: "PaymentChannelFund",
       ...rest,
     }
 

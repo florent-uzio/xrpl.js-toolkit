@@ -1,8 +1,5 @@
 import { Transaction } from "xrpl"
 import { TxnOptions } from "../models"
-import { getXrplClient } from "../xrpl-client"
-
-const client = getXrplClient()
 
 /**
  * Helper to sign a transaction
@@ -14,7 +11,7 @@ const client = getXrplClient()
  */
 export const sign = async (
   transaction: Transaction,
-  { wallet, isMultisign, showLogs }: Omit<TxnOptions, "signatures">,
+  { client, isMultisign, showLogs, wallet }: Omit<TxnOptions, "signatures">,
   signers: number,
 ) => {
   const prepared = await client.autofill(transaction, signers)

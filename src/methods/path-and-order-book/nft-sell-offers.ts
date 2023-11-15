@@ -1,14 +1,18 @@
-import { LedgerEntryRequest } from "xrpl"
+import { NFTSellOffersRequest } from "xrpl"
 import { MethodProps } from "../../models"
 
-export const getLedgerEntry = async ({
+/**
+ * https://xrpl.org/nft_sell_offers.html#nft_sell_offers
+ * @param {Object} props The nft sell offers fields.
+ */
+export const getNftSellOffers = async ({
   client,
   methodRequest,
   showLogs = true,
-}: MethodProps<LedgerEntryRequest>) => {
+}: MethodProps<NFTSellOffersRequest>) => {
   // Send the request
   const response = await client.request({
-    command: "ledger_entry",
+    command: "nft_sell_offers",
     ...methodRequest,
   })
 

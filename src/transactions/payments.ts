@@ -1,6 +1,11 @@
 import color from "colors"
 import { Payment, xrpToDrops } from "xrpl"
-import { convertCurrencyCodeToHex, multiSignAndSubmit, prepareSignSubmit } from "../helpers"
+import {
+  convertCurrencyCodeToHex,
+  isString,
+  multiSignAndSubmit,
+  prepareSignSubmit,
+} from "../helpers"
 import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../models"
 
 type SendPaymentProps = TransactionPropsForMultiSign | TransactionPropsForSingleSign<Payment>
@@ -14,13 +19,12 @@ export const sendPayment = async (props: SendPaymentProps) => {
 
   if (props.isMultisign) {
     // Handle the multi-sign scenario
-    await multiSignAndSubmit(props.signatures)
+    await multiSignAndSubmit(props.signatures, props.client)
   } else {
     let { Amount, ...rest } = props.txn
-    const { wallet, showLogs, signatures } = props
 
     // Convert the amount to drops (1 drop = .000001 XRP)
-    if (typeof Amount === "string") {
+    if (isString(Amount)) {
       Amount = xrpToDrops(Amount)
     } else {
       Amount.currency = convertCurrencyCodeToHex(Amount.currency)
@@ -28,13 +32,13 @@ export const sendPayment = async (props: SendPaymentProps) => {
 
     // Construct the base transaction
     const transaction: Payment = {
-      Account: wallet.address,
+      Account: props.wallet.address,
       Amount,
       TransactionType: "Payment",
       ...rest,
     }
 
     // Autofill transaction with additional fields, sign and submit
-    await prepareSignSubmit(transaction, { signatures, wallet, showLogs })
+    await prepareSignSubmit(transaction, props)
   }
 }

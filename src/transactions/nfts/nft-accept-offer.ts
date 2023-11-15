@@ -1,21 +1,28 @@
-import color from "colors"
 import { NFTokenAcceptOffer } from "xrpl"
-import { prepareSignSubmit } from "../../helpers"
-import { TxnOptions } from "../../models"
+import { multiSignAndSubmit, prepareSignSubmit } from "../../helpers"
+import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../../models"
 
-type AcceptNftOfferProps = Omit<NFTokenAcceptOffer, "TransactionType" | "Account">
+type AcceptNftOfferProps =
+  | TransactionPropsForMultiSign
+  | TransactionPropsForSingleSign<NFTokenAcceptOffer>
 
-export const acceptNftOffer = async (props: AcceptNftOfferProps, opts: TxnOptions) => {
-  console.log(color.bold("******* LET'S ACCEPT AN NFT OFFER *******"))
+export const acceptNftOffer = async (props: AcceptNftOfferProps) => {
+  console.log("******* LET'S ACCEPT AN NFT OFFER *******")
   console.log()
 
-  // Construct the base transaction
-  const transaction: NFTokenAcceptOffer = {
-    Account: opts.wallet.address,
-    TransactionType: "NFTokenAcceptOffer",
-    ...props,
-  }
+  if (props.isMultisign) {
+    await multiSignAndSubmit(props.signatures, props.client)
+  } else {
+    const { txn, wallet } = props
 
-  // Autofill transaction with additional fields, sign and submit
-  await prepareSignSubmit(transaction, opts)
+    // Construct the base transaction
+    const transaction: NFTokenAcceptOffer = {
+      Account: wallet.address,
+      TransactionType: "NFTokenAcceptOffer",
+      ...txn,
+    }
+
+    // Autofill transaction with additional fields, sign and submit
+    await prepareSignSubmit(transaction, props)
+  }
 }

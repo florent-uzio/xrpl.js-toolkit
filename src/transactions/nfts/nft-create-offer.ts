@@ -6,12 +6,6 @@ type CreateNftOfferProps =
   | TransactionPropsForMultiSign
   | TransactionPropsForSingleSign<NFTokenCreateOffer>
 
-// type CreateNftOfferProps = Omit<NFTokenCreateOffer, "TransactionType" | "Account"> &
-//   (
-//     | { Flags: NFTokenCreateOfferFlags.tfSellNFToken; Owner?: never }
-//     | { Flags?: undefined; Owner: string }
-//   )
-
 export const createNftOffer = async (props: CreateNftOfferProps) => {
   console.log("******* LET'S CREATE AN NFT OFFER *******")
   console.log()

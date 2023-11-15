@@ -14,10 +14,10 @@ export const sendPayment = async (props: SendPaymentProps) => {
 
   if (props.isMultisign) {
     // Handle the multi-sign scenario
-    await multiSignAndSubmit(props.signatures)
+    await multiSignAndSubmit(props.signatures, props.client)
   } else {
     let { Amount, ...rest } = props.txn
-    const { wallet, showLogs, signatures } = props
+    const { client, wallet, showLogs, signatures } = props
 
     // Convert the amount to drops (1 drop = .000001 XRP)
     if (typeof Amount === "string") {
@@ -35,6 +35,6 @@ export const sendPayment = async (props: SendPaymentProps) => {
     }
 
     // Autofill transaction with additional fields, sign and submit
-    await prepareSignSubmit(transaction, { signatures, wallet, showLogs })
+    await prepareSignSubmit(transaction, { client, signatures, wallet, showLogs })
   }
 }

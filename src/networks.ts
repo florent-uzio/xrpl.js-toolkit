@@ -2,6 +2,7 @@
 export const networks = {
   RIPPLE_MAINNET: "wss://s2.ripple.com", // Points to clio server
   RIPPLE_TESTNET: "wss://s.altnet.rippletest.net:51233", // Points to clio server
+  RIPPLE_CLIO_TESTNET: "wss://clio.altnet.rippletest.net:51233",
   RIPPLE_DEVNET: "wss://s.devnet.rippletest.net:51233", // Points to clio server
   XRPL_LABS_TESTNET: "wss://testnet.xrpl-labs.com",
   RIPPLE_AMM_DEVNET: "wss://amm.devnet.rippletest.net:51233/",

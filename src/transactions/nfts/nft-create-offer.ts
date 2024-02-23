@@ -1,5 +1,10 @@
 import { NFTokenCreateOffer, xrpToDrops } from "xrpl"
-import { isString, multiSignAndSubmit, prepareSignSubmit } from "../../helpers"
+import {
+  convertCurrencyCodeToHex,
+  isString,
+  multiSignAndSubmit,
+  prepareSignSubmit,
+} from "../../helpers"
 import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../../models"
 
 type CreateNftOfferProps =
@@ -19,6 +24,8 @@ export const createNftOffer = async (props: CreateNftOfferProps) => {
     // Convert the amount to drops (1 drop = .000001 XRP)
     if (isString(Amount)) {
       Amount = xrpToDrops(Amount)
+    } else {
+      Amount.currency = convertCurrencyCodeToHex(Amount.currency)
     }
 
     // Construct the base transaction

@@ -11,7 +11,7 @@ dotenv.config()
 const TOKEN = process.env.TOKEN ?? "TEST_TOKEN"
 
 const main = async () => {
-  const client = new Client(networks.RIPPLE_MAINNET)
+  const client = new Client(networks.RIPPLE_CLIO_TESTNET)
 
   // Do not comment
   await client.connect()
@@ -37,15 +37,15 @@ const main = async () => {
   // await sendPayment({
   //   client,
   //   txn: {
-  //     Destination: WALLET_3.address,
-  //     Amount: "0.1",
-  //     // Amount: {
-  //     //   value: "0.1",
-  //     //   currency: TOKEN,
-  //     //   issuer: WALLET_1.address,
-  //     // },
+  //     Destination: WALLET_2.address,
+  //     // Amount: "100000",
+  //     Amount: {
+  //       value: "100000",
+  //       currency: TOKEN,
+  //       issuer: WALLET_1.address,
+  //     },
   //   },
-  //   wallet: WALLET_2,
+  //   wallet: WALLET_1,
   // })
 
   /**
@@ -81,10 +81,15 @@ const main = async () => {
   // await createNftOffer({
   //   client,
   //   txn: {
-  //     Amount: "10",
+  //     Amount: {
+  //       issuer: WALLET_1.address,
+  //       currency: TOKEN,
+  //       value: "55",
+  //     },
   //     Flags: NFTokenCreateOfferFlags.tfSellNFToken,
+  //     Destination: WALLET_2.address,
   //     // Owner: "r...", // Can also be WALLET_2.address for example.
-  //     NFTokenID: "00080000DBE93D25CD8E59B5030D0BC04AB1C75DF71F54960000099B00000000",
+  //     NFTokenID: "000800000D7F9056E313691478FE952DDD8D0730F953C6673A6DAD8402B86AE9",
   //   },
   //   wallet: WALLET_1,
   // })
@@ -110,12 +115,13 @@ const main = async () => {
    * https://xrpl.org/nftokencanceloffer.html
    * --------------------------------------------------
    */
-  // await cancelNftOffer(
-  //   {
-  //     NFTokenOffers: ["..."],
+  // await cancelNftOffer({
+  //   txn: {
+  //     NFTokenOffers: ["6B1F12A37A8B8CF1CF1FDA1136186F5EE258E8CB68E6C04A34F109700D609846"],
   //   },
-  //   { wallet: WALLET_1 }
-  // )
+  //   wallet: WALLET_1,
+  //   client,
+  // })
 
   /**
    *  _____               _   _ _
@@ -142,7 +148,8 @@ const main = async () => {
   //       value: "30000000",
   //     },
   //   },
-  //   wallet: WALLET_3,
+  //   wallet: WALLET_2,
+  //   client,
   // })
 
   /**
@@ -229,7 +236,7 @@ const main = async () => {
    * https://xrpl.org/accountset.html
    * --------------------------------------------------
    */
-  // await accountSet({ SetFlag: AccountSetAsfFlags.asfDefaultRipple }, { wallet: WALLET_1 })
+  // await accountSet({ SetFlag: AccountSetAsfFlags.asfDefaultRipple }, { wallet: WALLET_1, client })
 
   /**
    *   _____
@@ -669,7 +676,7 @@ const main = async () => {
   // )
 
   // Do not comment, disconnect the client
-  // await client.disconnect()
+  await client.disconnect()
 }
 
 // Will run the main function above. Do not comment.

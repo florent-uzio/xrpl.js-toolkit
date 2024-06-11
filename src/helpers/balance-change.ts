@@ -1,6 +1,6 @@
 import { Client, getBalanceChanges } from "xrpl"
-import { isString } from "."
 import { submitMethod } from "../methods"
+import { isString } from "./typeof-fns"
 
 /**
  * https://xrpl.org/blog/2015/calculating-balance-changes-for-a-transaction.html#calculating-balance-changes-for-a-transaction

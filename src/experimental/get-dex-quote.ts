@@ -1,7 +1,6 @@
-import color from "colors"
 import { BookOfferCurrency, BookOffersRequest, dropsToXrp } from "xrpl"
 import { convertAmount, convertHexCurrencyCodeToString, isString } from "../helpers"
-import { getBookOffers } from "../methods"
+import { submitMethod } from "../methods"
 import { MethodProps } from "../models"
 
 type GetBuyQuoteProps = Omit<BookOffersRequest, "taker_gets" | "taker_pays" | "command"> & {
@@ -35,11 +34,11 @@ export const getBuyQuote = async (
   { weWant, weWantAmountOfToken, counterCurrency, ...rest }: GetBuyQuoteProps,
   { client }: Pick<MethodProps<BookOffersRequest>, "client">,
 ): Promise<number> => {
-  console.log(color.bold("******* LET'S GET A BUY QUOTE *******"))
+  console.log("******* LET'S GET A BUY QUOTE *******")
   console.log()
 
-  const offers = await getBookOffers({
-    methodRequest: {
+  const offers = await submitMethod({
+    request: {
       command: "book_offers",
       taker_gets: weWant,
       taker_pays: counterCurrency,
@@ -132,11 +131,11 @@ export const getSellQuote = async (
   { weSell, weSellAmountOfTokens, counterCurrency, ...rest }: GetSellQuoteProps,
   { client }: Pick<MethodProps<BookOffersRequest>, "showLogs" | "client">,
 ): Promise<number> => {
-  console.log(color.bold("******* LET'S GET A SELL QUOTE *******"))
+  console.log("******* LET'S GET A SELL QUOTE *******")
   console.log()
 
-  const offers = await getBookOffers({
-    methodRequest: {
+  const offers = await submitMethod({
+    request: {
       command: "book_offers",
       taker_gets: counterCurrency,
       taker_pays: weSell,

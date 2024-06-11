@@ -1,5 +1,5 @@
-export * from "./amounts.helpers"
-export * from "./balance-change.helpers"
+export * from "./amounts"
+export * from "./balance-change"
 export * from "./currency-code"
 export * from "./deep-replace"
 export * from "./escrow-conditions"

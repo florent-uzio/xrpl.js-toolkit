@@ -1,17 +1,49 @@
-import { NFTokenCreateOffer, NFTokenCreateOfferFlags, Transaction } from "xrpl"
-import { TxnOptions } from "./txn-options"
+import {
+  Client,
+  DIDSet,
+  EscrowCreate,
+  NFTokenCreateOffer,
+  NFTokenCreateOfferFlags,
+  SubmittableTransaction,
+  Wallet,
+} from "xrpl"
 
-export type TransactionPropsForMultiSign = TxnOptions & {
+export type TxnCommons = { client: Client; showLogs?: boolean } & (
+  | { isMultisign?: true; signatures: string[] }
+  | { isMultisign?: false; signatures?: never }
+)
+
+export type TransactionPropsForMultiSign = TxnCommons & {
   isMultisign: true
 }
 
-export type TransactionPropsForSingleSign<T extends Transaction> = TxnOptions & {
+export type TransactionPropsForSingleSign<T extends SubmittableTransaction> = TxnCommons & {
   isMultisign?: false
   txn: T extends NFTokenCreateOffer
-    ? Omit<T, "TransactionType" | "Account"> &
+    ? T &
         (
           | { Flags: NFTokenCreateOfferFlags.tfSellNFToken; Owner?: never }
           | { Flags?: undefined; Owner: string }
         )
-    : Omit<T, "TransactionType" | "Account">
+    : T extends EscrowCreate
+    ? T &
+        (
+          | ({ CancelAfter: number } & (
+              | { FinishAfter: number; Condition?: string }
+              | { FinishAfter?: number; Condition: string }
+            ))
+          | ({ FinishAfter: number } & (
+              | { CancelAfter: number; Condition?: string }
+              | { CancelAfter?: number; Condition: string }
+            ))
+        )
+    : T extends DIDSet
+    ? T &
+        // One of the three props below must be present in a DIDSet
+        (| { Data: string; DIDDocument?: string; URI?: string }
+          | { Data?: string; DIDDocument: string; URI?: string }
+          | { Data?: string; DIDDocument?: string; URI: string }
+        )
+    : T
+  wallet: Wallet
 }

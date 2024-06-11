@@ -1,10 +1,9 @@
-import color from "colors"
 import crypto from "crypto"
 // @ts-expect-error no types available
 import cc from "five-bells-condition"
 
 export const generateConditionAndFulfillment = () => {
-  console.log(color.bold("******* LET'S GENERATE A CRYPTO CONDITOON AND FULFILLMENT *******"))
+  console.log("******* LET'S GENERATE A CRYPTO CONDITOON AND FULFILLMENT *******")
   console.log()
 
   // use cryptographically secure random bytes generation

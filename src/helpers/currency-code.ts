@@ -1,4 +1,4 @@
-import { Buffer } from "buffer"
+import { stringToHex } from "@xrplf/isomorphic/utils"
 
 // https://xrpl.org/currency-formats.html#nonstandard-currency-codes
 const NON_STANDARD_CODE_LENGTH = 40
@@ -35,10 +35,7 @@ export const hexToString = (hex: string) => {
  */
 export const convertCurrencyCodeToHex = (currencyCode: string) => {
   if (currencyCode.length > 3) {
-    return Buffer.from(currencyCode, "ascii")
-      .toString("hex")
-      .toUpperCase()
-      .padEnd(NON_STANDARD_CODE_LENGTH, "0")
+    return stringToHex(currencyCode).padEnd(NON_STANDARD_CODE_LENGTH, "0")
   }
   return currencyCode
 }

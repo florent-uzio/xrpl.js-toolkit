@@ -14,7 +14,7 @@ export const submitTxnAndWait = async <T extends SubmittableTransaction>(
   } else {
     const { wallet, client, txn, showLogs = true } = props
 
-    console.log(`LET'S SEND A ${txn.TransactionType}`)
+    console.log(`LET'S SEND: ${txn.TransactionType}`)
     console.log()
 
     // Make sure the originating transaction address is the same as the wallet public address
@@ -23,8 +23,8 @@ export const submitTxnAndWait = async <T extends SubmittableTransaction>(
     }
 
     // Update the currency in case it has more than 3 characters
-    const updatedTxn = deepReplace(txn, "currency", (_, value) => {
-      return convertCurrencyCodeToHex(value)
+    const updatedTxn = deepReplace(txn, "currency", (key, value) => {
+      return { key: convertCurrencyCodeToHex(value) }
     })
 
     // Submit to the XRPL and wait for the response

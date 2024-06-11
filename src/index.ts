@@ -1,8 +1,9 @@
 import * as dotenv from "dotenv"
 import { Client } from "xrpl"
 import { Currency } from "xrpl/dist/npm/models/common"
+import { submitMethod } from "./methods"
 import { networks } from "./networks"
-import { WALLET_1 } from "./wallets"
+import { WALLET_1, WALLET_2 } from "./wallets"
 
 dotenv.config()
 
@@ -15,6 +16,14 @@ const main = async () => {
 
   // Do not comment
   await client.connect()
+
+  await submitMethod({
+    request: {
+      command: "account_currencies",
+      account: WALLET_2.address,
+    },
+    client,
+  })
 
   /**
    *  ____                                  _

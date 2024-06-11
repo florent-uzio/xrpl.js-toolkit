@@ -1,6 +1,6 @@
-import { AccountTxResponse, Client, TxResponse, getBalanceChanges } from "xrpl"
+import { Client, getBalanceChanges } from "xrpl"
 import { isString } from "."
-import { getAccountTx, getTx } from "../methods"
+import { submitMethod } from "../methods"
 
 /**
  * https://xrpl.org/blog/2015/calculating-balance-changes-for-a-transaction.html#calculating-balance-changes-for-a-transaction
@@ -8,10 +8,10 @@ import { getAccountTx, getTx } from "../methods"
  * @param address The xrpl account address
  */
 export const showAccountBalanceChanges = async (address: string, client: Client) => {
-  const txns = (await getAccountTx({
-    methodRequest: { account: address, command: "account_tx" },
+  const txns = await submitMethod({
+    request: { account: address, command: "account_tx" },
     client,
-  })) as AccountTxResponse
+  })
 
   txns.result.transactions.map((txn) => {
     if (!isString(txn.meta)) {
@@ -22,10 +22,10 @@ export const showAccountBalanceChanges = async (address: string, client: Client)
 }
 
 export const showTxBalanceChanges = async (transaction: string, client: Client) => {
-  const txn = (await getTx({
-    methodRequest: { transaction, command: "tx" },
+  const txn = await submitMethod({
+    request: { transaction, command: "tx" },
     client,
-  })) as TxResponse
+  })
 
   if (!txn.result.meta) return
 

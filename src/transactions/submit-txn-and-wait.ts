@@ -24,7 +24,7 @@ export const submitTxnAndWait = async <T extends SubmittableTransaction>(
 
     // Update the currency in case it has more than 3 characters
     const updatedTxn = deepReplace(txn, "currency", (key, value) => {
-      return { key: convertCurrencyCodeToHex(value) }
+      return { [key]: convertCurrencyCodeToHex(value) }
     })
 
     // Submit to the XRPL and wait for the response

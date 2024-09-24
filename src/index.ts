@@ -9,7 +9,7 @@ dotenv.config()
 const TOKEN = process.env.TOKEN ?? "TEST_TOKEN"
 
 const main = async () => {
-  const client = new Client(networks.RIPPLE_CLIO_TESTNET)
+  const client = new Client(networks.testnet.ripple)
 
   // Do not comment
   await client.connect()

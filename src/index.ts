@@ -14,7 +14,7 @@ const main = async () => {
   // Do not comment
   await client.connect()
 
-  // Write your code here
+  // Write your code here...
 
   // Do not comment, disconnect the client
   await client.disconnect()

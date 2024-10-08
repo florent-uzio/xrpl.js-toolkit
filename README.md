@@ -27,13 +27,19 @@ TOKEN=ABCD_TOKEN
 
 **Important 2**: Make sure that all the `WALLET_X_SEED` are defined with a seed value. If you need only two wallets, comment or remove `WALLET_3_SEED`.
 
-**Wrong**:
+**Wrong** ❌:
+
+```
 WALLET_1_SEED="s1234"
 WALLET_2_SEED=
+```
 
-**Correct**:
+**Correct** ✅:
+
+```
 WALLET_1_SEED=s1234
 WALLET_2_SEED=s9234
+```
 
 ### Index.ts
 

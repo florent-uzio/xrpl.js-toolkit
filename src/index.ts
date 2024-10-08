@@ -1,6 +1,8 @@
 import * as dotenv from "dotenv"
 import { Client } from "xrpl"
+import { submitMethod } from "./methods"
 import { networks } from "./networks"
+import { WALLET_1 } from "./wallets"
 
 dotenv.config()
 
@@ -15,6 +17,13 @@ const main = async () => {
   await client.connect()
 
   // Write your code here...
+  await submitMethod({
+    request: {
+      command: "account_info",
+      account: WALLET_1.classicAddress,
+    },
+    client,
+  })
 
   // Do not comment, disconnect the client
   await client.disconnect()

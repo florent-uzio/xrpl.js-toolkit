@@ -31,6 +31,7 @@
     "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "five-bells-condition": "^5.0.1",
+    "listr2": "^8.2.5",
     "xrpl": "^4.0.0"
   }
 }

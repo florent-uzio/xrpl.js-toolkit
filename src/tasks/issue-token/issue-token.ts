@@ -1,0 +1,156 @@
+import { writeFileSync } from "fs"
+import { delay, Listr } from "listr2"
+import path from "path"
+import { Client, Wallet } from "xrpl"
+import { Ticket } from "xrpl/dist/npm/models/ledger"
+import { isUndefined } from "../../helpers"
+import { submitMethod } from "../../methods"
+import { submitTxnAndWait } from "../../transactions"
+import { canCreateTicketsForIssuer } from "../helpers"
+import { IssueTokenContext, IssueTokenProps } from "./issue-token.types"
+import { configureIssuerTasks, createWallets } from "./sub-tasks"
+
+/**
+ * Tasks to issue a token and create several wallets.
+ */
+export const issueTokenTasks = async (props: IssueTokenProps) => {
+  const tasks = new Listr<IssueTokenContext>([], {
+    concurrent: false,
+    rendererOptions: {
+      collapseSubtasks: false,
+    },
+  })
+
+  tasks.add({
+    title: "Initializing the context",
+    task: async (ctx) => {
+      ;(ctx.client = new Client(props.network)),
+        (ctx.issuer = Wallet.generate()),
+        (ctx.operationals = []),
+        (ctx.holders = []),
+        (ctx.issuerTickets = [])
+    },
+  })
+
+  tasks.add({
+    title: `Connect to the XRPL ${props.network}`,
+    task: async (ctx) => {
+      await ctx.client.connect()
+    },
+  })
+
+  tasks.add({
+    title: "Creating wallets",
+    task: async (ctx, task) => {
+      const walletsTasks = createWallets(props)
+      const subtasks = task.newListr<IssueTokenContext>(walletsTasks, {
+        concurrent: true,
+        rendererOptions: { collapseSubtasks: false },
+        exitOnError: false,
+      })
+
+      return subtasks
+    },
+  })
+
+  tasks.add({
+    title: "Creating tickets for the issuer",
+    enabled: canCreateTicketsForIssuer(props.issuerSettings),
+    task: async (ctx, task) => {
+      const numOfTicketsToCreate = calculateIssuerSettings(props.issuerSettings)
+
+      if (numOfTicketsToCreate === 0) return
+
+      await submitTxnAndWait({
+        txn: {
+          Account: ctx.issuer.address,
+          TransactionType: "TicketCreate",
+          TicketCount: numOfTicketsToCreate,
+        },
+        wallet: ctx.issuer,
+        client: ctx.client,
+        showLogs: false,
+      })
+
+      delay(1000)
+
+      // Retrieve the ticket objects
+      const tickets = await submitMethod({
+        request: {
+          command: "account_objects",
+          type: "ticket",
+          account: ctx.issuer.address,
+        },
+        client: ctx.client,
+        showLogs: false,
+      })
+
+      ctx.issuerTickets = tickets.result.account_objects as Ticket[]
+
+      task.output = `Created ${numOfTicketsToCreate} tickets for the issuer`
+    },
+  })
+
+  tasks.add({
+    title: "Configuring the issuer",
+    task: async (ctx, task) => {
+      const issuerTasks = configureIssuerTasks(props.issuerSettings)
+
+      const subtasks = task.newListr<IssueTokenContext>(issuerTasks, {
+        concurrent: canCreateTicketsForIssuer(props.issuerSettings),
+        rendererOptions: { collapseSubtasks: false },
+      })
+
+      return subtasks
+    },
+  })
+
+  tasks.add({
+    title: "Disconnect the client",
+    task: async (ctx) => {
+      await ctx.client.disconnect()
+    },
+  })
+
+  tasks.add({
+    title: "Writing results to a file in the src/tasks/output directory",
+    task: async (ctx) => {
+      const time = new Date().toISOString()
+      const pathFile = path.join(__dirname, "./output/", `results-${time}.json`)
+      const result = {
+        network: props.network,
+        issuer: ctx.issuer,
+        operationals: ctx.operationals,
+        holders: ctx.holders,
+      }
+      writeFileSync(pathFile, JSON.stringify(result, null, 2))
+    },
+  })
+
+  await tasks.run()
+}
+
+const calculateIssuerSettings = (issuerSettings: IssueTokenProps["issuerSettings"]) => {
+  let totalSettings = 0
+
+  const { Domain, TickSize, TransferRate, setFlags, ClearFlag } = issuerSettings ?? {}
+
+  if (Domain || TickSize || TransferRate) totalSettings++
+
+  if (!isUndefined(issuerSettings?.setFlags)) {
+    const setFlags =
+      !isUndefined(issuerSettings?.setFlags) && Array.isArray(issuerSettings?.setFlags)
+        ? issuerSettings?.setFlags
+        : [issuerSettings?.setFlags]
+    totalSettings = totalSettings + setFlags.length
+  }
+
+  if (!isUndefined(issuerSettings?.ClearFlag)) {
+    const clearFlags = Array.isArray(issuerSettings?.ClearFlag)
+      ? issuerSettings?.ClearFlag
+      : [issuerSettings?.ClearFlag]
+    totalSettings = totalSettings + clearFlags.length
+  }
+
+  return totalSettings
+}

@@ -10,7 +10,7 @@ type CreateWalletsProps = Pick<
 /**
  * Create the tasks to create wallets
  */
-export const createWallets = ({
+export const createWalletsTasks = ({
   numOperationalAccounts,
   numHolderAccounts,
   fundingOptions,
@@ -44,7 +44,6 @@ export const createWallets = ({
       enabled: () => !isUndefined(numHolderAccounts) && numHolderAccounts > 0,
       task: async (ctx) => {
         const holderAccounts = Array.from({ length: numHolderAccounts ?? 0 }, async () => {
-          // delay(random(3, 6))
           const account = await ctx.client.fundWallet(null, fundingOptions)
           return account.wallet
         })

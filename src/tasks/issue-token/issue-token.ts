@@ -3,12 +3,16 @@ import { delay, Listr } from "listr2"
 import path from "path"
 import { Client, Wallet } from "xrpl"
 import { Ticket } from "xrpl/dist/npm/models/ledger"
-import { isUndefined } from "../../helpers"
 import { submitMethod } from "../../methods"
 import { submitTxnAndWait } from "../../transactions"
-import { canCreateTicketsForIssuer } from "../helpers"
+import { canIssuerCreateTickets, countIssuerSettings, hasIssuerRequireAuth } from "../helpers"
 import { IssueTokenContext, IssueTokenProps } from "./issue-token.types"
-import { configureIssuerTasks, createWallets } from "./sub-tasks"
+import {
+  createIssuerConfigurationTasks,
+  createTrustlinesTasks,
+  createWalletsTasks,
+} from "./sub-tasks"
+import { authorizeTrustlinesTasks } from "./sub-tasks/authorize-trustlines"
 
 /**
  * Tasks to issue a token and create several wallets.
@@ -42,7 +46,7 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
   tasks.add({
     title: "Creating wallets",
     task: async (ctx, task) => {
-      const walletsTasks = createWallets(props)
+      const walletsTasks = createWalletsTasks(props)
       const subtasks = task.newListr<IssueTokenContext>(walletsTasks, {
         concurrent: true,
         rendererOptions: { collapseSubtasks: false },
@@ -55,9 +59,9 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
 
   tasks.add({
     title: "Creating tickets for the issuer",
-    enabled: canCreateTicketsForIssuer(props.issuerSettings),
+    enabled: canIssuerCreateTickets(props.issuerSettings),
     task: async (ctx, task) => {
-      const numOfTicketsToCreate = calculateIssuerSettings(props.issuerSettings)
+      const numOfTicketsToCreate = countIssuerSettings(props.issuerSettings)
 
       if (numOfTicketsToCreate === 0) return
 
@@ -93,11 +97,46 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
 
   tasks.add({
     title: "Configuring the issuer",
-    task: async (ctx, task) => {
-      const issuerTasks = configureIssuerTasks(props.issuerSettings)
+    task: async (_, task) => {
+      const issuerTasks = createIssuerConfigurationTasks(props.issuerSettings)
 
       const subtasks = task.newListr<IssueTokenContext>(issuerTasks, {
-        concurrent: canCreateTicketsForIssuer(props.issuerSettings),
+        concurrent: canIssuerCreateTickets(props.issuerSettings),
+        rendererOptions: { collapseSubtasks: false },
+      })
+
+      return subtasks
+    },
+  })
+
+  tasks.add({
+    title: "Creating trustlines to the issuer",
+    task: async (ctx, task) => {
+      // The wallets that will create trustlines to the issuer
+      const accounts = [...ctx.operationals, ...ctx.holders]
+
+      // The subtasks to create trustlines
+      const trustlineSubtasks = createTrustlinesTasks(props.trustSetParams, accounts)
+      const subtasks = task.newListr<IssueTokenContext>(trustlineSubtasks, {
+        concurrent: true,
+        rendererOptions: { collapseSubtasks: false },
+      })
+
+      return subtasks
+    },
+  })
+
+  tasks.add({
+    title: "Authorizing the holders to hold the token",
+    enabled: hasIssuerRequireAuth(props.issuerSettings),
+    task: async (ctx, task) => {
+      // The wallets that will create trustlines to the issuer
+      const accounts = [...ctx.operationals, ...ctx.holders]
+
+      // The subtasks to create trustlines
+      const trustlineSubtasks = authorizeTrustlinesTasks(props.trustSetParams.currency, accounts)
+      const subtasks = task.newListr<IssueTokenContext>(trustlineSubtasks, {
+        concurrent: false,
         rendererOptions: { collapseSubtasks: false },
       })
 
@@ -113,7 +152,7 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
   })
 
   tasks.add({
-    title: "Writing results to a file in the src/tasks/output directory",
+    title: "Writing results to a file in the output directory",
     task: async (ctx) => {
       const time = new Date().toISOString()
       const pathFile = path.join(__dirname, "./output/", `results-${time}.json`)
@@ -128,29 +167,4 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
   })
 
   await tasks.run()
-}
-
-const calculateIssuerSettings = (issuerSettings: IssueTokenProps["issuerSettings"]) => {
-  let totalSettings = 0
-
-  const { Domain, TickSize, TransferRate, setFlags, ClearFlag } = issuerSettings ?? {}
-
-  if (Domain || TickSize || TransferRate) totalSettings++
-
-  if (!isUndefined(issuerSettings?.setFlags)) {
-    const setFlags =
-      !isUndefined(issuerSettings?.setFlags) && Array.isArray(issuerSettings?.setFlags)
-        ? issuerSettings?.setFlags
-        : [issuerSettings?.setFlags]
-    totalSettings = totalSettings + setFlags.length
-  }
-
-  if (!isUndefined(issuerSettings?.ClearFlag)) {
-    const clearFlags = Array.isArray(issuerSettings?.ClearFlag)
-      ? issuerSettings?.ClearFlag
-      : [issuerSettings?.ClearFlag]
-    totalSettings = totalSettings + clearFlags.length
-  }
-
-  return totalSettings
 }

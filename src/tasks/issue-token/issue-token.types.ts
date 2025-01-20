@@ -1,4 +1,12 @@
-import { AccountSet, AccountSetAsfFlags, Client, FundingOptions, Wallet } from "xrpl"
+import {
+  AccountSet,
+  AccountSetAsfFlags,
+  Client,
+  FundingOptions,
+  IssuedCurrencyAmount,
+  TrustSet,
+  Wallet,
+} from "xrpl"
 import { Ticket } from "xrpl/dist/npm/models/ledger"
 
 export type IssueTokenContext = {
@@ -17,4 +25,8 @@ export type IssueTokenProps = {
   issuerSettings?: {
     setFlags?: AccountSetAsfFlags[]
   } & Pick<AccountSet, "Domain" | "TickSize" | "TransferRate" | "ClearFlag">
+  trustSetParams: Pick<TrustSet, "Flags"> & {
+    currency: IssuedCurrencyAmount["currency"]
+    value: IssuedCurrencyAmount["value"]
+  }
 }

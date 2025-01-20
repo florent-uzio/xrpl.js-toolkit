@@ -2,19 +2,25 @@ import { delay, ListrTask } from "listr2"
 import { AccountSet, convertStringToHex } from "xrpl"
 import { isUndefined } from "../../../helpers"
 import { submitTxnAndWait } from "../../../transactions"
-import { canCreateTicketsForIssuer, random } from "../../helpers"
+import { canIssuerCreateTickets, getAccountSetAsfName, random } from "../../helpers"
 import { IssueTokenContext, IssueTokenProps } from "../issue-token.types"
 
-export const configureIssuerTasks = (
+export const createIssuerConfigurationTasks = (
   issuerSettings: IssueTokenProps["issuerSettings"],
 ): ListrTask<IssueTokenContext>[] => {
+  if (!issuerSettings) {
+    return []
+  }
+
+  const settings = Object.keys(issuerSettings)
+  const settingsToDisplay = settings.filter(
+    (setting) => setting !== "setFlags" && setting !== "ClearFlag",
+  )
+
   return [
     {
-      title: "Setting Domain",
-      enabled: () =>
-        !isUndefined(issuerSettings?.Domain) ||
-        !isUndefined(issuerSettings?.TickSize) ||
-        !isUndefined(issuerSettings?.TransferRate),
+      title: `Setting ${settingsToDisplay.join(", ")} in AccountSet`,
+      enabled: () => hasNonFlagIssuerSettings(issuerSettings),
       task: async (ctx) => {
         const txn: AccountSet = {
           Account: ctx.issuer.address,
@@ -24,7 +30,7 @@ export const configureIssuerTasks = (
           TransferRate: issuerSettings?.TransferRate,
         }
 
-        if (canCreateTicketsForIssuer(issuerSettings)) {
+        if (canIssuerCreateTickets(issuerSettings)) {
           const ticket = ctx.issuerTickets.shift()
           if (!ticket) {
             throw new Error("No available tickets for setting Domain")
@@ -53,22 +59,29 @@ export const configureIssuerTasks = (
 
         for (const flag of issuerSettings.setFlags) {
           subtasks.add({
-            title: `Setting flag number: ${flag}`,
+            title: `Setting flag: ${getAccountSetAsfName(flag)}`,
             task: async (ctx) => {
-              // delay(random(1, 4))
-              // const ticket = ctx.issuerTickets.shift()
-              // if (!ticket) {
-              //   throw new Error(`No available tickets for setting AccountSet flags number: ${flag}`)
-              // }
+              delay(random(1, 4))
+
+              const txn: AccountSet = {
+                Account: ctx.issuer.address,
+                TransactionType: "AccountSet",
+                SetFlag: flag,
+              }
+
+              if (canIssuerCreateTickets(issuerSettings)) {
+                const ticket = ctx.issuerTickets.shift()
+                if (!ticket) {
+                  throw new Error(
+                    `No available tickets for setting AccountSet flags number: ${flag}`,
+                  )
+                }
+                txn.TicketSequence = ticket.TicketSequence
+                txn.Sequence = 0
+              }
 
               await submitTxnAndWait({
-                txn: {
-                  Account: ctx.issuer.address,
-                  TransactionType: "AccountSet",
-                  SetFlag: flag,
-                  // TicketSequence: ticket.TicketSequence,
-                  // Sequence: 0,
-                },
+                txn,
                 wallet: ctx.issuer,
                 client: ctx.client,
                 showLogs: false,
@@ -92,19 +105,27 @@ export const configureIssuerTasks = (
         await Promise.all(
           flags.map(async (flag) => {
             delay(random(1, 4))
-            const ticket = ctx.issuerTickets.shift()
-            if (!ticket) {
-              throw new Error(`No available tickets for clearing AccountSet flags number: ${flag}`)
+
+            const txn: AccountSet = {
+              Account: ctx.issuer.address,
+              TransactionType: "AccountSet",
+              ClearFlag: flag,
+            }
+
+            if (canIssuerCreateTickets(issuerSettings)) {
+              const ticket = ctx.issuerTickets.shift()
+              if (!ticket) {
+                throw new Error(
+                  `No available tickets for clearing AccountSet flags number: ${flag}`,
+                )
+              }
+
+              txn.TicketSequence = ticket.TicketSequence
+              txn.Sequence = 0
             }
 
             await submitTxnAndWait({
-              txn: {
-                Account: ctx.issuer.address,
-                TransactionType: "AccountSet",
-                ClearFlag: flag,
-                TicketSequence: ticket.TicketSequence,
-                Sequence: 0,
-              },
+              txn,
               wallet: ctx.issuer,
               client: ctx.client,
               showLogs: false,
@@ -114,4 +135,15 @@ export const configureIssuerTasks = (
       },
     },
   ]
+}
+
+/**
+ * Check if there are any non-flag issuer settings
+ * @param issuerSettings
+ * @returns A boolean indicating if there are any non-flag issuer settings
+ */
+const hasNonFlagIssuerSettings = (issuerSettings: IssueTokenProps["issuerSettings"]) => {
+  const { Domain, TickSize, TransferRate } = issuerSettings ?? {}
+
+  return !isUndefined(Domain) || !isUndefined(TickSize) || !isUndefined(TransferRate)
 }

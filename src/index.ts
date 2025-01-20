@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv"
-import { AccountSetAsfFlags, Client } from "xrpl"
+import { AccountSetAsfFlags, Client, TrustSetFlags } from "xrpl"
 import { networks } from "./networks"
 import { issueTokenTasks } from "./tasks"
 
@@ -18,7 +18,7 @@ const main = async () => {
   await issueTokenTasks({
     network: networks.devnet.ripple,
     numOperationalAccounts: 2,
-    numHolderAccounts: 3,
+    numHolderAccounts: 2,
     fundingOptions: { amount: "75" },
     issuerSettings: {
       Domain: "https://test.flo.com",
@@ -29,6 +29,11 @@ const main = async () => {
         AccountSetAsfFlags.asfDefaultRipple,
         AccountSetAsfFlags.asfDepositAuth,
       ],
+    },
+    trustSetParams: {
+      currency: TOKEN,
+      value: "200000000",
+      Flags: TrustSetFlags.tfSetNoRipple,
     },
   })
 
@@ -44,8 +49,8 @@ const main = async () => {
 
   // await submitMethod({
   //   request: {
-  //     command: "account_info",
-  //     account: "r3UZSQkjJMt5JyZuEZwVRdfHUofPH7bzK8",
+  //     command: "account_objects",
+  //     account: "r9PWipZ2RnksPYQNEmaRdiSfxo7jQDs1hW",
   //   },
   //   client,
   // })

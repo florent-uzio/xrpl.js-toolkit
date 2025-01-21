@@ -40,7 +40,7 @@ export type TokenIssuanceConfig = {
   operationalAccountCount?: number
 
   /** Number of holder accounts to create (optional) */
-  holderAccountCount?: number
+  holderAccountCount: number
 
   /** Options for funding operational and holder accounts */
   fundingOptions?: FundingOptions

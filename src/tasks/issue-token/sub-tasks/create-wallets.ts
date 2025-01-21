@@ -38,10 +38,9 @@ export const createWalletsTasks = ({
       },
       retry: 1,
     },
-
     {
       title: "Creating holder account(s)",
-      enabled: () => !isUndefined(holderAccountCount) && holderAccountCount > 0,
+      enabled: () => holderAccountCount > 0,
       task: async (ctx) => {
         const holderAccounts = Array.from({ length: holderAccountCount ?? 0 }, async () => {
           const account = await ctx.client.fundWallet(null, fundingOptions)

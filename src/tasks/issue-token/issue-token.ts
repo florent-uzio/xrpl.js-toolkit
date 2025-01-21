@@ -23,7 +23,7 @@ import {
 /**
  * Tasks to issue a token and create several wallets.
  */
-export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
+export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
   const tasks = new Listr<TokenIssuanceContext>([], {
     concurrent: false,
     rendererOptions: {
@@ -51,7 +51,7 @@ export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Creating wallets",
-    task: async (ctx, task) => {
+    task: (_, task) => {
       const walletsTasks = createWalletsTasks(props)
       const subtasks = task.newListr<TokenIssuanceContext>(walletsTasks, {
         concurrent: true,
@@ -133,6 +133,7 @@ export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
   tasks.add({
     title: "Creating tickets to then authorize the wallets",
     skip: (ctx) => !hasEnoughHolders(ctx),
+    enabled: hasIssuerRequireAuth(props.issuerSettings),
     task: async (ctx, _) => {
       const numOfTicketsToCreate = ctx.holderAccounts.length + ctx.operationalAccounts.length
 

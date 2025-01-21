@@ -1,7 +1,7 @@
 import { ListrTask } from "listr2"
 import { Payment, Wallet } from "xrpl"
 import { submitTxnAndWait } from "../../../transactions"
-import { canIssuerCreateTicketsToIssueToken } from "../../helpers"
+import { hasEnoughHolders } from "../../helpers"
 import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token.types"
 
 export const paymentTasks = (
@@ -26,7 +26,7 @@ export const paymentTasks = (
           Destination: account.address,
         }
 
-        if (canIssuerCreateTicketsToIssueToken(ctx)) {
+        if (hasEnoughHolders(ctx)) {
           const ticket = ctx.issuerTickets.shift()
           if (!ticket) {
             throw new Error(`No available tickets to send a token to: ${account.address}`)

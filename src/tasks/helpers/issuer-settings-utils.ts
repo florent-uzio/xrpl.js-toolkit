@@ -31,6 +31,6 @@ export const hasIssuerRequireAuth = (issuerSettings: TokenIssuanceConfig["issuer
  * Function to check if the issuer can create tickets to issue a token to the operational and holder accounts.
  * @returns A boolean
  */
-export const canIssuerCreateTicketsToIssueToken = (ctx: TokenIssuanceContext) => {
+export const hasEnoughHolders = (ctx: TokenIssuanceContext) => {
   return ctx.holderAccounts.length + ctx.operationalAccounts.length > 2
 }

@@ -19,8 +19,8 @@ const main = async () => {
 
   await issueTokenTasks({
     network: networks.devnet.ripple,
-    operationalAccountCount: 1,
-    holderAccountCount: 3,
+    operationalAccountCount: 2,
+    holderAccountCount: 2,
     fundingOptions: { amount: "50" },
     issuerSettings: {
       // Domain: "https://test.flo.com",

@@ -5,7 +5,12 @@ import { Client, Wallet } from "xrpl"
 import { Ticket } from "xrpl/dist/npm/models/ledger"
 import { submitMethod } from "../../methods"
 import { submitTxnAndWait } from "../../transactions"
-import { canIssuerCreateTickets, countIssuerSettings, hasIssuerRequireAuth } from "../helpers"
+import {
+  canIssuerCreateTicketsForAccountSet,
+  canIssuerCreateTicketsToIssueToken,
+  countIssuerSettings,
+  hasIssuerRequireAuth,
+} from "../helpers"
 import { TokenIssuanceConfig, TokenIssuanceContext } from "./issue-token.types"
 import {
   createIssuerConfigurationTasks,
@@ -60,7 +65,7 @@ export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Creating tickets for the issuer settings",
-    enabled: canIssuerCreateTickets(props.issuerSettings),
+    enabled: canIssuerCreateTicketsForAccountSet(props.issuerSettings),
     task: async (ctx, _) => {
       const numOfTicketsToCreate = countIssuerSettings(props.issuerSettings)
 
@@ -100,7 +105,7 @@ export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
       const issuerTasks = createIssuerConfigurationTasks(props.issuerSettings)
 
       const subtasks = task.newListr<TokenIssuanceContext>(issuerTasks, {
-        concurrent: canIssuerCreateTickets(props.issuerSettings),
+        concurrent: canIssuerCreateTicketsForAccountSet(props.issuerSettings),
         rendererOptions: { collapseSubtasks: false },
       })
 
@@ -144,15 +149,50 @@ export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
   })
 
   tasks.add({
-    title: "Issuing the token",
+    title: "Creating tickets to send the token",
+    skip: (ctx) => !canIssuerCreateTicketsToIssueToken(ctx),
+    task: async (ctx, _) => {
+      const numOfTicketsToCreate = ctx.holderAccounts.length + ctx.operationalAccounts.length
+
+      await submitTxnAndWait({
+        txn: {
+          Account: ctx.issuer.address,
+          TransactionType: "TicketCreate",
+          TicketCount: numOfTicketsToCreate,
+        },
+        wallet: ctx.issuer,
+        client: ctx.client,
+        showLogs: false,
+      })
+
+      delay(1000)
+
+      // Retrieve the ticket objects
+      const tickets = await submitMethod({
+        request: {
+          command: "account_objects",
+          type: "ticket",
+          account: ctx.issuer.address,
+        },
+        client: ctx.client,
+        showLogs: false,
+      })
+
+      ctx.issuerTickets = tickets.result.account_objects as Ticket[]
+    },
+  })
+
+  tasks.add({
+    title: "Issuing the token to the operational and holder wallets",
     task: async (ctx) => {
       // The wallets that will receive the token
       const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]
+      const { currency, value } = props.trustLineParams
 
       // The subtasks to send payments
-      const paymentSubtasks = paymentTasks(props.trustLineParams.currency, accounts)
+      const paymentSubtasks = paymentTasks(currency, value, accounts)
       const subtasks = new Listr<TokenIssuanceContext>(paymentSubtasks, {
-        concurrent: false,
+        concurrent: canIssuerCreateTicketsToIssueToken(ctx),
         rendererOptions: { collapseSubtasks: false },
       })
 

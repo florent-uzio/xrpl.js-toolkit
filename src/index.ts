@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv"
-import { Client } from "xrpl"
+import { AccountSetAsfFlags, Client, TrustSetFlags } from "xrpl"
 import { networks } from "./networks"
+import { issueTokenTasks } from "./tasks"
 // import walletsData from "./tasks/issue-token/output/results-2025-01-21T08:17:56.577Z.json"
 dotenv.config()
 
@@ -16,27 +17,27 @@ const main = async () => {
   // Do not comment
   await client.connect()
 
-  // await issueTokenTasks({
-  //   network: networks.devnet.ripple,
-  //   numOperationalAccounts: 1,
-  //   numHolderAccounts: 2,
-  //   fundingOptions: { amount: "75" },
-  //   issuerSettings: {
-  //     // Domain: "https://test.flo.com",
-  //     // TickSize: 6,
-  //     // TransferRate: 1400000000,
-  //     setFlags: [
-  //       AccountSetAsfFlags.asfRequireAuth,
-  //       AccountSetAsfFlags.asfDefaultRipple,
-  //       // AccountSetAsfFlags.asfDepositAuth,
-  //     ],
-  //   },
-  //   trustSetParams: {
-  //     currency: TOKEN,
-  //     value: "200000000",
-  //     Flags: TrustSetFlags.tfSetNoRipple,
-  //   },
-  // })
+  await issueTokenTasks({
+    network: networks.devnet.ripple,
+    operationalAccountCount: 1,
+    holderAccountCount: 3,
+    fundingOptions: { amount: "50" },
+    issuerSettings: {
+      // Domain: "https://test.flo.com",
+      // TickSize: 6,
+      // TransferRate: 1400000000,
+      setFlags: [
+        AccountSetAsfFlags.asfRequireAuth,
+        AccountSetAsfFlags.asfDefaultRipple,
+        // AccountSetAsfFlags.asfDepositAuth,
+      ],
+    },
+    trustLineParams: {
+      currency: TOKEN,
+      value: "200000000",
+      Flags: TrustSetFlags.tfSetNoRipple,
+    },
+  })
 
   // await submitTxnAndWait({
   //   txn: {

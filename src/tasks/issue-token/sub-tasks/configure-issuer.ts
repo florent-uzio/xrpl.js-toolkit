@@ -2,7 +2,7 @@ import { delay, ListrTask } from "listr2"
 import { AccountSet, convertStringToHex } from "xrpl"
 import { isUndefined } from "../../../helpers"
 import { submitTxnAndWait } from "../../../transactions"
-import { canIssuerCreateTickets, getAccountSetAsfName, random } from "../../helpers"
+import { canIssuerCreateTicketsForAccountSet, getAccountSetAsfName, random } from "../../helpers"
 import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token.types"
 
 export const createIssuerConfigurationTasks = (
@@ -30,7 +30,7 @@ export const createIssuerConfigurationTasks = (
           TransferRate: issuerSettings?.TransferRate,
         }
 
-        if (canIssuerCreateTickets(issuerSettings)) {
+        if (canIssuerCreateTicketsForAccountSet(issuerSettings)) {
           const ticket = ctx.issuerTickets.shift()
           if (!ticket) {
             throw new Error("No available tickets for setting Domain")
@@ -69,7 +69,7 @@ export const createIssuerConfigurationTasks = (
                 SetFlag: flag,
               }
 
-              if (canIssuerCreateTickets(issuerSettings)) {
+              if (canIssuerCreateTicketsForAccountSet(issuerSettings)) {
                 const ticket = ctx.issuerTickets.shift()
                 if (!ticket) {
                   throw new Error(

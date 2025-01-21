@@ -1,8 +1,10 @@
 import { AccountSetAsfFlags } from "xrpl"
 import { isUndefined } from "../../helpers"
-import { TokenIssuanceConfig } from "../issue-token/issue-token.types"
+import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token/issue-token.types"
 
-export const canIssuerCreateTickets = (issuerSettings: TokenIssuanceConfig["issuerSettings"]) => {
+export const canIssuerCreateTicketsForAccountSet = (
+  issuerSettings: TokenIssuanceConfig["issuerSettings"],
+) => {
   return !issuerSettings?.setFlags?.includes(AccountSetAsfFlags.asfRequireAuth)
 }
 
@@ -23,4 +25,12 @@ export const countIssuerSettings = (issuerSettings: TokenIssuanceConfig["issuerS
 
 export const hasIssuerRequireAuth = (issuerSettings: TokenIssuanceConfig["issuerSettings"]) => {
   return issuerSettings?.setFlags?.includes(AccountSetAsfFlags.asfRequireAuth)
+}
+
+/**
+ * Function to check if the issuer can create tickets to issue a token to the operational and holder accounts.
+ * @returns A boolean
+ */
+export const canIssuerCreateTicketsToIssueToken = (ctx: TokenIssuanceContext) => {
+  return ctx.holderAccounts.length + ctx.operationalAccounts.length > 2
 }

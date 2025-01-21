@@ -8,7 +8,9 @@ import { submitTxnAndWait } from "../../transactions"
 import {
   canIssuerCreateTicketsForAccountSet,
   countIssuerSettings,
-  hasEnoughHolders,
+  hasEnoughOperational,
+  hasEnoughOperationalAndHolders,
+  hasIssuerDepositAuth,
   hasIssuerRequireAuth,
 } from "../helpers"
 import { TokenIssuanceConfig, TokenIssuanceContext } from "./issue-token.types"
@@ -17,6 +19,7 @@ import {
   createIssuerConfigurationTasks,
   createTrustlinesTasks,
   createWalletsTasks,
+  depositPreAuthTasks,
   paymentTasks,
 } from "./sub-tasks"
 
@@ -82,8 +85,6 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
         showLogs: false,
       })
 
-      delay(1000)
-
       // Retrieve the ticket objects
       const tickets = await submitMethod({
         request: {
@@ -101,7 +102,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Configuring the issuer",
-    task: async (_, task) => {
+    task: (_, task) => {
       const issuerTasks = createIssuerConfigurationTasks(props.issuerSettings)
 
       const subtasks = task.newListr<TokenIssuanceContext>(issuerTasks, {
@@ -115,7 +116,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Creating trustlines to the issuer",
-    task: async (ctx, task) => {
+    task: (ctx, task) => {
       // The wallets that will create trustlines to the issuer
       const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]
 
@@ -132,7 +133,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Creating tickets to then authorize the wallets",
-    skip: (ctx) => !hasEnoughHolders(ctx),
+    skip: (ctx) => !hasEnoughOperationalAndHolders(ctx),
     enabled: hasIssuerRequireAuth(props.issuerSettings),
     task: async (ctx, _) => {
       const numOfTicketsToCreate = ctx.holderAccounts.length + ctx.operationalAccounts.length
@@ -166,14 +167,61 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
   tasks.add({
     title: "Authorizing the wallets to hold the token",
     enabled: hasIssuerRequireAuth(props.issuerSettings),
-    task: async (ctx, task) => {
-      // The wallets that will create trustlines to the issuer
+    task: (ctx, task) => {
       const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]
 
-      // The subtasks to create trustlines
       const trustlineSubtasks = authorizeTrustlinesTasks(props.trustLineParams.currency, accounts)
       const subtasks = task.newListr<TokenIssuanceContext>(trustlineSubtasks, {
-        concurrent: hasEnoughHolders(ctx),
+        concurrent: hasEnoughOperationalAndHolders(ctx),
+        rendererOptions: { collapseSubtasks: false },
+      })
+
+      return subtasks
+    },
+  })
+
+  tasks.add({
+    title: "Creating tickets to authorize deposit for operational wallets",
+    skip: (ctx) => !hasEnoughOperational(ctx),
+    enabled: hasIssuerDepositAuth(props.issuerSettings),
+    task: async (ctx, _) => {
+      const numOfTicketsToCreate = ctx.operationalAccounts.length
+
+      await submitTxnAndWait({
+        txn: {
+          Account: ctx.issuer.address,
+          TransactionType: "TicketCreate",
+          TicketCount: numOfTicketsToCreate,
+        },
+        wallet: ctx.issuer,
+        client: ctx.client,
+        showLogs: false,
+      })
+
+      delay(1000)
+
+      // Retrieve the ticket objects
+      const tickets = await submitMethod({
+        request: {
+          command: "account_objects",
+          type: "ticket",
+          account: ctx.issuer.address,
+        },
+        client: ctx.client,
+        showLogs: false,
+      })
+
+      ctx.issuerTickets = tickets.result.account_objects as Ticket[]
+    },
+  })
+
+  tasks.add({
+    title: "Authorizing the operational wallets to send tokens to the issuer",
+    enabled: hasIssuerDepositAuth(props.issuerSettings),
+    task: (ctx) => {
+      const depositPreAuthSubtasks = depositPreAuthTasks(ctx.operationalAccounts)
+      const subtasks = new Listr<TokenIssuanceContext>(depositPreAuthSubtasks, {
+        concurrent: hasEnoughOperational(ctx),
         rendererOptions: { collapseSubtasks: false },
       })
 
@@ -183,7 +231,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Creating tickets to send the token",
-    skip: (ctx) => !hasEnoughHolders(ctx),
+    skip: (ctx) => !hasEnoughOperationalAndHolders(ctx),
     task: async (ctx, _) => {
       const numOfTicketsToCreate = ctx.holderAccounts.length + ctx.operationalAccounts.length
 
@@ -223,7 +271,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
       // The subtasks to send payments
       const paymentSubtasks = paymentTasks(currency, value, accounts)
       const subtasks = new Listr<TokenIssuanceContext>(paymentSubtasks, {
-        concurrent: hasEnoughHolders(ctx),
+        concurrent: hasEnoughOperationalAndHolders(ctx),
         rendererOptions: { collapseSubtasks: false },
       })
 

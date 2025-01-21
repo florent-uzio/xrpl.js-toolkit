@@ -50,9 +50,28 @@ export const hasIssuerRequireAuth = (issuerSettings: TokenIssuanceConfig["issuer
 }
 
 /**
- * Function to check if the issuer can create tickets to issue a token to the operational and holder accounts.
+ * Function to check if the there are enough operational and holder accounts to then do a task.
  * @returns A boolean
  */
-export const hasEnoughHolders = (ctx: TokenIssuanceContext) => {
+export const hasEnoughOperationalAndHolders = (ctx: TokenIssuanceContext) => {
   return ctx.holderAccounts.length + ctx.operationalAccounts.length > 2
+}
+
+/**
+ * Function to check if there are enough operational accounts to then do a task.
+ * @returns A boolean
+ */
+export const hasEnoughOperational = (ctx: TokenIssuanceContext) => {
+  return ctx.operationalAccounts.length > 2
+}
+
+/**
+ * Checks whether the issuer settings has the asfDepositAuth flag enabled.
+ * This flag indicates that the issuer requires deposit authorization.
+ *
+ * @param issuerSettings - The settings of the issuer account.
+ * @returns A boolean indicating whether the `asfDepositAuth` flag is set.
+ */
+export const hasIssuerDepositAuth = (issuerSettings: TokenIssuanceConfig["issuerSettings"]) => {
+  return issuerSettings?.setFlags?.includes(AccountSetAsfFlags.asfDepositAuth)
 }

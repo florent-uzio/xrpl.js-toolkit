@@ -1,7 +1,7 @@
 import { ListrTask } from "listr2"
 import { TrustSet, TrustSetFlags, Wallet } from "xrpl"
 import { submitTxnAndWait } from "../../../transactions"
-import { hasEnoughHolders } from "../../helpers"
+import { hasEnoughOperationalAndHolders } from "../../helpers"
 import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token.types"
 
 export const authorizeTrustlinesTasks = (
@@ -25,7 +25,7 @@ export const authorizeTrustlinesTasks = (
           Flags: TrustSetFlags.tfSetfAuth,
         }
 
-        if (hasEnoughHolders(ctx)) {
+        if (hasEnoughOperationalAndHolders(ctx)) {
           const ticket = ctx.issuerTickets.shift()
           if (!ticket) {
             throw new Error(`No available tickets to authorize trustline for: ${account.address}`)

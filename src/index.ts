@@ -17,17 +17,17 @@ const main = async () => {
 
   await issueTokenTasks({
     network: networks.devnet.ripple,
-    numOperationalAccounts: 2,
+    numOperationalAccounts: 1,
     numHolderAccounts: 2,
     fundingOptions: { amount: "75" },
     issuerSettings: {
-      Domain: "https://test.flo.com",
-      TickSize: 6,
-      TransferRate: 1400000000,
+      // Domain: "https://test.flo.com",
+      // TickSize: 6,
+      // TransferRate: 1400000000,
       setFlags: [
         AccountSetAsfFlags.asfRequireAuth,
         AccountSetAsfFlags.asfDefaultRipple,
-        AccountSetAsfFlags.asfDepositAuth,
+        // AccountSetAsfFlags.asfDepositAuth,
       ],
     },
     trustSetParams: {
@@ -49,8 +49,9 @@ const main = async () => {
 
   // await submitMethod({
   //   request: {
-  //     command: "account_objects",
+  //     command: "account_info",
   //     account: "r9PWipZ2RnksPYQNEmaRdiSfxo7jQDs1hW",
+  //     api_version: 2,
   //   },
   //   client,
   // })

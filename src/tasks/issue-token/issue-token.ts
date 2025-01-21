@@ -11,6 +11,7 @@ import {
   createIssuerConfigurationTasks,
   createTrustlinesTasks,
   createWalletsTasks,
+  paymentTasks,
 } from "./sub-tasks"
 import { authorizeTrustlinesTasks } from "./sub-tasks/authorize-trustlines"
 
@@ -136,6 +137,23 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
       // The subtasks to create trustlines
       const trustlineSubtasks = authorizeTrustlinesTasks(props.trustSetParams.currency, accounts)
       const subtasks = task.newListr<IssueTokenContext>(trustlineSubtasks, {
+        concurrent: false,
+        rendererOptions: { collapseSubtasks: false },
+      })
+
+      return subtasks
+    },
+  })
+
+  tasks.add({
+    title: "Issuing the token",
+    task: async (ctx) => {
+      // The wallets that will receive the token
+      const accounts = [...ctx.operationals, ...ctx.holders]
+
+      // The subtasks to send payments
+      const paymentSubtasks = paymentTasks(props.trustSetParams.currency, accounts)
+      const subtasks = new Listr<IssueTokenContext>(paymentSubtasks, {
         concurrent: false,
         rendererOptions: { collapseSubtasks: false },
       })

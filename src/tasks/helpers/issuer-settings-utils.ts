@@ -9,18 +9,13 @@ export const canIssuerCreateTickets = (issuerSettings: TokenIssuanceConfig["issu
 export const countIssuerSettings = (issuerSettings: TokenIssuanceConfig["issuerSettings"]) => {
   let totalSettings = 0
 
-  const { Domain, TickSize, TransferRate, setFlags, ClearFlag } = issuerSettings ?? {}
+  const { Domain, TickSize, TransferRate, setFlags } = issuerSettings ?? {}
 
   if (Domain || TickSize || TransferRate) totalSettings++
 
   if (!isUndefined(setFlags)) {
     const setFlagsArr = !isUndefined(setFlags) && Array.isArray(setFlags) ? setFlags : [setFlags]
     totalSettings = totalSettings + setFlagsArr.length
-  }
-
-  if (!isUndefined(ClearFlag)) {
-    const clearFlagsArr = Array.isArray(ClearFlag) ? ClearFlag : [ClearFlag]
-    totalSettings = totalSettings + clearFlagsArr.length
   }
 
   return totalSettings

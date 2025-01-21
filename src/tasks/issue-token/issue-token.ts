@@ -91,8 +91,6 @@ export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
       })
 
       ctx.issuerTickets = tickets.result.account_objects as Ticket[]
-
-      task.output = `Created ${numOfTicketsToCreate} tickets for the issuer`
     },
   })
 

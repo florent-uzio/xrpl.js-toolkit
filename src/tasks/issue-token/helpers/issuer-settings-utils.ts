@@ -1,6 +1,6 @@
 import { AccountSetAsfFlags } from "xrpl"
-import { isUndefined } from "../../helpers"
-import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token/issue-token.types"
+import { isUndefined } from "../../../helpers"
+import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token.types"
 
 export const canIssuerCreateTicketsForAccountSet = (
   issuerSettings: TokenIssuanceConfig["issuerSettings"],

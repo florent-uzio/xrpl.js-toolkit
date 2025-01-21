@@ -13,12 +13,12 @@ import {
 } from "../helpers"
 import { TokenIssuanceConfig, TokenIssuanceContext } from "./issue-token.types"
 import {
+  authorizeTrustlinesTasks,
   createIssuerConfigurationTasks,
   createTrustlinesTasks,
   createWalletsTasks,
   paymentTasks,
 } from "./sub-tasks"
-import { authorizeTrustlinesTasks } from "./sub-tasks/authorize-trustlines"
 
 /**
  * Tasks to issue a token and create several wallets.

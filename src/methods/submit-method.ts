@@ -37,7 +37,7 @@ export const submitMethod = async <T extends Request>({
 const hexToStringCurrency: ReplacementFn = (key, value) => {
   if (Array.isArray(value)) {
     const newValues = value.map((val) => convertHexCurrencyCodeToString(val))
-    console.log(newValues)
+    // console.log(newValues)
     return { [key]: newValues }
   }
   return { [key]: convertHexCurrencyCodeToString(value) }

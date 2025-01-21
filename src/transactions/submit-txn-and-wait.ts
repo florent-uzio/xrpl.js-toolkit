@@ -14,8 +14,10 @@ export const submitTxnAndWait = async <T extends SubmittableTransaction>(
   } else {
     const { wallet, client, txn, showLogs = true } = props
 
-    console.log(`LET'S SEND: ${txn.TransactionType}`)
-    console.log()
+    if (showLogs) {
+      console.log(`LET'S SEND: ${txn.TransactionType}`)
+      console.log()
+    }
 
     // Make sure the originating transaction address is the same as the wallet public address
     if (props.txn.Account !== wallet.address) {

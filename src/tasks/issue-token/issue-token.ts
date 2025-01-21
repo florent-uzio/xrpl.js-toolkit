@@ -29,11 +29,11 @@ export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
   tasks.add({
     title: "Initializing the context",
     task: async (ctx) => {
-      ;(ctx.client = new Client(props.network)),
-        (ctx.issuer = Wallet.generate()),
-        (ctx.operationalAccounts = []),
-        (ctx.holderAccounts = []),
-        (ctx.issuerTickets = [])
+      ctx.client = new Client(props.network)
+      ctx.issuer = Wallet.generate()
+      ctx.operationalAccounts = []
+      ctx.holderAccounts = []
+      ctx.issuerTickets = []
     },
   })
 

@@ -51,7 +51,7 @@ export type TokenIssuanceConfig = {
     setFlags?: AccountSetAsfFlags[]
 
     /** Optional issuer-specific settings */
-  } & Pick<AccountSet, "Domain" | "TickSize" | "TransferRate" | "ClearFlag">
+  } & Pick<AccountSet, "Domain" | "TickSize" | "TransferRate">
 
   /** Parameters for creating trust lines */
   trustLineParams: Pick<TrustSet, "Flags"> & {

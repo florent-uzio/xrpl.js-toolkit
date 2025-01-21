@@ -93,47 +93,6 @@ export const createIssuerConfigurationTasks = (
         return subtasks
       },
     },
-
-    {
-      title: "Clearing AccountSet flags",
-      enabled: () => !isUndefined(issuerSettings?.ClearFlag),
-      task: async (ctx) => {
-        const flags = Array.isArray(issuerSettings?.ClearFlag)
-          ? issuerSettings?.ClearFlag
-          : [issuerSettings?.ClearFlag]
-
-        await Promise.all(
-          flags.map(async (flag) => {
-            delay(random(1, 4))
-
-            const txn: AccountSet = {
-              Account: ctx.issuer.address,
-              TransactionType: "AccountSet",
-              ClearFlag: flag,
-            }
-
-            if (canIssuerCreateTickets(issuerSettings)) {
-              const ticket = ctx.issuerTickets.shift()
-              if (!ticket) {
-                throw new Error(
-                  `No available tickets for clearing AccountSet flags number: ${flag}`,
-                )
-              }
-
-              txn.TicketSequence = ticket.TicketSequence
-              txn.Sequence = 0
-            }
-
-            await submitTxnAndWait({
-              txn,
-              wallet: ctx.issuer,
-              client: ctx.client,
-              showLogs: false,
-            })
-          }),
-        )
-      },
-    },
   ]
 }
 

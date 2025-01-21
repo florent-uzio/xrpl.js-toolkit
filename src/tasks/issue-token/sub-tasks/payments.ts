@@ -1,13 +1,13 @@
 import { ListrTask } from "listr2"
 import { Wallet } from "xrpl"
 import { submitTxnAndWait } from "../../../transactions"
-import { IssueTokenContext, IssueTokenProps } from "../issue-token.types"
+import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token.types"
 
 export const paymentTasks = (
-  currency: IssueTokenProps["trustSetParams"]["currency"],
+  currency: TokenIssuanceConfig["trustLineParams"]["currency"],
   accounts: Wallet[],
-): ListrTask<IssueTokenContext>[] => {
-  const subtasks: ListrTask<IssueTokenContext>[] = []
+): ListrTask<TokenIssuanceContext>[] => {
+  const subtasks: ListrTask<TokenIssuanceContext>[] = []
 
   for (const account of accounts) {
     subtasks.push({

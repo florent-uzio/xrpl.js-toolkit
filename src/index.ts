@@ -1,8 +1,7 @@
 import * as dotenv from "dotenv"
-import { AccountSetAsfFlags, Client, Wallet } from "xrpl"
+import { Client } from "xrpl"
 import { networks } from "./networks"
-import walletsData from "./tasks/issue-token/output/results-2025-01-21T08:17:56.577Z.json"
-import { submitTxnAndWait } from "./transactions"
+// import walletsData from "./tasks/issue-token/output/results-2025-01-21T08:17:56.577Z.json"
 dotenv.config()
 
 // Issued Currency that you want to use in your TrustSet or Payment transactions for example.
@@ -12,7 +11,7 @@ const TOKEN = process.env.TOKEN ?? "TEST_TOKEN"
 const main = async () => {
   const client = new Client(networks.devnet.ripple)
 
-  const issuer = Wallet.fromSeed(walletsData.issuer.seed)
+  // const issuer = Wallet.fromSeed(walletsData.issuer.seed)
 
   // Do not comment
   await client.connect()
@@ -39,15 +38,15 @@ const main = async () => {
   //   },
   // })
 
-  await submitTxnAndWait({
-    txn: {
-      Account: issuer.address,
-      TransactionType: "AccountSet",
-      ClearFlag: AccountSetAsfFlags.asfRequireAuth,
-    },
-    client,
-    wallet: issuer,
-  })
+  // await submitTxnAndWait({
+  //   txn: {
+  //     Account: issuer.address,
+  //     TransactionType: "AccountSet",
+  //     ClearFlag: AccountSetAsfFlags.asfRequireAuth,
+  //   },
+  //   client,
+  //   wallet: issuer,
+  // })
 
   // await submitMethod({
   //   request: {

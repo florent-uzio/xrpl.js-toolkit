@@ -3,11 +3,11 @@ import { AccountSet, convertStringToHex } from "xrpl"
 import { isUndefined } from "../../../helpers"
 import { submitTxnAndWait } from "../../../transactions"
 import { canIssuerCreateTickets, getAccountSetAsfName, random } from "../../helpers"
-import { IssueTokenContext, IssueTokenProps } from "../issue-token.types"
+import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token.types"
 
 export const createIssuerConfigurationTasks = (
-  issuerSettings: IssueTokenProps["issuerSettings"],
-): ListrTask<IssueTokenContext>[] => {
+  issuerSettings: TokenIssuanceConfig["issuerSettings"],
+): ListrTask<TokenIssuanceContext>[] => {
   if (!issuerSettings) {
     return []
   }
@@ -55,7 +55,7 @@ export const createIssuerConfigurationTasks = (
       task: async (_, task) => {
         if (!issuerSettings?.setFlags) return
 
-        const subtasks = task.newListr<IssueTokenContext>([], { concurrent: false })
+        const subtasks = task.newListr<TokenIssuanceContext>([], { concurrent: false })
 
         for (const flag of issuerSettings.setFlags) {
           subtasks.add({
@@ -142,7 +142,7 @@ export const createIssuerConfigurationTasks = (
  * @param issuerSettings
  * @returns A boolean indicating if there are any non-flag issuer settings
  */
-const hasNonFlagIssuerSettings = (issuerSettings: IssueTokenProps["issuerSettings"]) => {
+const hasNonFlagIssuerSettings = (issuerSettings: TokenIssuanceConfig["issuerSettings"]) => {
   const { Domain, TickSize, TransferRate } = issuerSettings ?? {}
 
   return !isUndefined(Domain) || !isUndefined(TickSize) || !isUndefined(TransferRate)

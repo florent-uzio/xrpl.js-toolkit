@@ -6,7 +6,7 @@ import { Ticket } from "xrpl/dist/npm/models/ledger"
 import { submitMethod } from "../../methods"
 import { submitTxnAndWait } from "../../transactions"
 import { canIssuerCreateTickets, countIssuerSettings, hasIssuerRequireAuth } from "../helpers"
-import { IssueTokenContext, IssueTokenProps } from "./issue-token.types"
+import { TokenIssuanceConfig, TokenIssuanceContext } from "./issue-token.types"
 import {
   createIssuerConfigurationTasks,
   createTrustlinesTasks,
@@ -18,8 +18,8 @@ import { authorizeTrustlinesTasks } from "./sub-tasks/authorize-trustlines"
 /**
  * Tasks to issue a token and create several wallets.
  */
-export const issueTokenTasks = async (props: IssueTokenProps) => {
-  const tasks = new Listr<IssueTokenContext>([], {
+export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
+  const tasks = new Listr<TokenIssuanceContext>([], {
     concurrent: false,
     rendererOptions: {
       collapseSubtasks: false,
@@ -31,8 +31,8 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
     task: async (ctx) => {
       ;(ctx.client = new Client(props.network)),
         (ctx.issuer = Wallet.generate()),
-        (ctx.operationals = []),
-        (ctx.holders = []),
+        (ctx.operationalAccounts = []),
+        (ctx.holderAccounts = []),
         (ctx.issuerTickets = [])
     },
   })
@@ -48,7 +48,7 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
     title: "Creating wallets",
     task: async (ctx, task) => {
       const walletsTasks = createWalletsTasks(props)
-      const subtasks = task.newListr<IssueTokenContext>(walletsTasks, {
+      const subtasks = task.newListr<TokenIssuanceContext>(walletsTasks, {
         concurrent: true,
         rendererOptions: { collapseSubtasks: false },
         exitOnError: false,
@@ -101,7 +101,7 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
     task: async (_, task) => {
       const issuerTasks = createIssuerConfigurationTasks(props.issuerSettings)
 
-      const subtasks = task.newListr<IssueTokenContext>(issuerTasks, {
+      const subtasks = task.newListr<TokenIssuanceContext>(issuerTasks, {
         concurrent: canIssuerCreateTickets(props.issuerSettings),
         rendererOptions: { collapseSubtasks: false },
       })
@@ -114,11 +114,11 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
     title: "Creating trustlines to the issuer",
     task: async (ctx, task) => {
       // The wallets that will create trustlines to the issuer
-      const accounts = [...ctx.operationals, ...ctx.holders]
+      const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]
 
       // The subtasks to create trustlines
-      const trustlineSubtasks = createTrustlinesTasks(props.trustSetParams, accounts)
-      const subtasks = task.newListr<IssueTokenContext>(trustlineSubtasks, {
+      const trustlineSubtasks = createTrustlinesTasks(props.trustLineParams, accounts)
+      const subtasks = task.newListr<TokenIssuanceContext>(trustlineSubtasks, {
         concurrent: true,
         rendererOptions: { collapseSubtasks: false },
       })
@@ -132,11 +132,11 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
     enabled: hasIssuerRequireAuth(props.issuerSettings),
     task: async (ctx, task) => {
       // The wallets that will create trustlines to the issuer
-      const accounts = [...ctx.operationals, ...ctx.holders]
+      const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]
 
       // The subtasks to create trustlines
-      const trustlineSubtasks = authorizeTrustlinesTasks(props.trustSetParams.currency, accounts)
-      const subtasks = task.newListr<IssueTokenContext>(trustlineSubtasks, {
+      const trustlineSubtasks = authorizeTrustlinesTasks(props.trustLineParams.currency, accounts)
+      const subtasks = task.newListr<TokenIssuanceContext>(trustlineSubtasks, {
         concurrent: false,
         rendererOptions: { collapseSubtasks: false },
       })
@@ -149,11 +149,11 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
     title: "Issuing the token",
     task: async (ctx) => {
       // The wallets that will receive the token
-      const accounts = [...ctx.operationals, ...ctx.holders]
+      const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]
 
       // The subtasks to send payments
-      const paymentSubtasks = paymentTasks(props.trustSetParams.currency, accounts)
-      const subtasks = new Listr<IssueTokenContext>(paymentSubtasks, {
+      const paymentSubtasks = paymentTasks(props.trustLineParams.currency, accounts)
+      const subtasks = new Listr<TokenIssuanceContext>(paymentSubtasks, {
         concurrent: false,
         rendererOptions: { collapseSubtasks: false },
       })
@@ -177,8 +177,8 @@ export const issueTokenTasks = async (props: IssueTokenProps) => {
       const result = {
         network: props.network,
         issuer: ctx.issuer,
-        operationals: ctx.operationals,
-        holders: ctx.holders,
+        operationals: ctx.operationalAccounts,
+        holders: ctx.holderAccounts,
       }
       writeFileSync(pathFile, JSON.stringify(result, null, 2))
     },

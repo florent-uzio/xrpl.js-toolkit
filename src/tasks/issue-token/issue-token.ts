@@ -59,9 +59,9 @@ export const issueTokenTasks = async (props: TokenIssuanceConfig) => {
   })
 
   tasks.add({
-    title: "Creating tickets for the issuer",
+    title: "Creating tickets for the issuer settings",
     enabled: canIssuerCreateTickets(props.issuerSettings),
-    task: async (ctx, task) => {
+    task: async (ctx, _) => {
       const numOfTicketsToCreate = countIssuerSettings(props.issuerSettings)
 
       if (numOfTicketsToCreate === 0) return

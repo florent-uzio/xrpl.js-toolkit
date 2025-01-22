@@ -1,4 +1,4 @@
-import { SubmittableTransaction } from "xrpl"
+import { SubmittableTransaction, TxResponse } from "xrpl"
 import { convertCurrencyCodeToHex, deepReplace, multiSignAndSubmit } from "../helpers"
 import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../models"
 
@@ -6,16 +6,30 @@ type SubmitTxnAndWaitProps<T extends SubmittableTransaction> =
   | TransactionPropsForMultiSign
   | TransactionPropsForSingleSign<T>
 
-export const submitTxnAndWait = async <T extends SubmittableTransaction>(
-  props: SubmitTxnAndWaitProps<T>,
-) => {
+export async function submitTxnAndWait<T extends SubmittableTransaction>(
+  props: SubmitTxnAndWaitProps<T> & { run: false },
+): Promise<undefined>
+export async function submitTxnAndWait<T extends SubmittableTransaction>(
+  props: SubmitTxnAndWaitProps<T> & { run?: true },
+): Promise<TxResponse<T>>
+export async function submitTxnAndWait<T extends SubmittableTransaction>({
+  run = true,
+  ...props
+}: SubmitTxnAndWaitProps<T>) {
+  if (!run) {
+    if (!props.showLogs) {
+      console.log("Transaction submission skipped as 'run' is set to false")
+    }
+    return
+  }
+
   if (props.isMultisign) {
     await multiSignAndSubmit(props.signatures, props.client)
   } else {
     const { wallet, client, txn, showLogs = true } = props
 
     if (showLogs) {
-      console.log(`LET'S SEND: ${txn.TransactionType}`)
+      console.log(`Submitting: ${txn.TransactionType}`)
       console.log()
     }
 

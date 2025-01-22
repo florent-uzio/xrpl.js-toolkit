@@ -8,7 +8,7 @@ import {
   Wallet,
 } from "xrpl"
 
-export type TxnCommons = { client: Client; showLogs?: boolean } & (
+export type TxnCommons = { client: Client; showLogs?: boolean; run?: boolean } & (
   | { isMultisign?: true; signatures: string[] }
   | { isMultisign?: false; signatures?: never }
 )
@@ -26,24 +26,24 @@ export type TransactionPropsForSingleSign<T extends SubmittableTransaction> = Tx
           | { Flags?: undefined; Owner: string }
         )
     : T extends EscrowCreate
-    ? T &
-        (
-          | ({ CancelAfter: number } & (
-              | { FinishAfter: number; Condition?: string }
-              | { FinishAfter?: number; Condition: string }
-            ))
-          | ({ FinishAfter: number } & (
-              | { CancelAfter: number; Condition?: string }
-              | { CancelAfter?: number; Condition: string }
-            ))
-        )
-    : T extends DIDSet
-    ? T &
-        // One of the three props below must be present in a DIDSet
-        (| { Data: string; DIDDocument?: string; URI?: string }
-          | { Data?: string; DIDDocument: string; URI?: string }
-          | { Data?: string; DIDDocument?: string; URI: string }
-        )
-    : T
+      ? T &
+          (
+            | ({ CancelAfter: number } & (
+                | { FinishAfter: number; Condition?: string }
+                | { FinishAfter?: number; Condition: string }
+              ))
+            | ({ FinishAfter: number } & (
+                | { CancelAfter: number; Condition?: string }
+                | { CancelAfter?: number; Condition: string }
+              ))
+          )
+      : T extends DIDSet
+        ? T &
+            // One of the three props below must be present in a DIDSet
+            (| { Data: string; DIDDocument?: string; URI?: string }
+              | { Data?: string; DIDDocument: string; URI?: string }
+              | { Data?: string; DIDDocument?: string; URI: string }
+            )
+        : T
   wallet: Wallet
 }

@@ -1,7 +1,7 @@
 import { writeFileSync } from "fs"
 import { delay, Listr } from "listr2"
 import path from "path"
-import { Client, Wallet } from "xrpl"
+import { AccountSetAsfFlags, Client, Wallet } from "xrpl"
 import { Ticket } from "xrpl/dist/npm/models/ledger"
 import { submitMethod } from "../../methods"
 import { submitTxnAndWait } from "../../transactions"
@@ -10,8 +10,7 @@ import {
   countIssuerSettings,
   hasEnoughOperational,
   hasEnoughOperationalAndHolders,
-  hasIssuerDepositAuth,
-  hasIssuerRequireAuth,
+  issuerHasAnyFlags,
 } from "../helpers"
 import { TokenIssuanceConfig, TokenIssuanceContext } from "./issue-token.types"
 import {
@@ -116,6 +115,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Creating trustlines to the issuer",
+    skip: (ctx) => !hasEnoughOperationalAndHolders(ctx, 1),
     task: (ctx, task) => {
       // The wallets that will create trustlines to the issuer
       const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]
@@ -134,7 +134,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
   tasks.add({
     title: "Creating tickets to then authorize the wallets",
     skip: (ctx) => !hasEnoughOperationalAndHolders(ctx),
-    enabled: hasIssuerRequireAuth(props.issuerSettings),
+    enabled: issuerHasAnyFlags(props.issuerSettings, [AccountSetAsfFlags.asfRequireAuth]),
     task: async (ctx, _) => {
       const numOfTicketsToCreate = ctx.holderAccounts.length + ctx.operationalAccounts.length
 
@@ -166,7 +166,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Authorizing the wallets to hold the token",
-    enabled: hasIssuerRequireAuth(props.issuerSettings),
+    enabled: issuerHasAnyFlags(props.issuerSettings, [AccountSetAsfFlags.asfRequireAuth]),
     task: (ctx, task) => {
       const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]
 
@@ -183,7 +183,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
   tasks.add({
     title: "Creating tickets to authorize deposit for operational wallets",
     skip: (ctx) => !hasEnoughOperational(ctx),
-    enabled: hasIssuerDepositAuth(props.issuerSettings),
+    enabled: issuerHasAnyFlags(props.issuerSettings, [AccountSetAsfFlags.asfDepositAuth]),
     task: async (ctx, _) => {
       const numOfTicketsToCreate = ctx.operationalAccounts.length
 
@@ -217,7 +217,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Authorizing the operational wallets to send tokens to the issuer",
-    enabled: hasIssuerDepositAuth(props.issuerSettings),
+    enabled: issuerHasAnyFlags(props.issuerSettings, [AccountSetAsfFlags.asfDepositAuth]),
     task: (ctx) => {
       const depositPreAuthSubtasks = depositPreAuthTasks(ctx.operationalAccounts)
       const subtasks = new Listr<TokenIssuanceContext>(depositPreAuthSubtasks, {
@@ -263,6 +263,9 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Issuing the token to the operational and holder wallets",
+    skip: (ctx) => {
+      return !hasEnoughOperationalAndHolders(ctx, 1)
+    },
     task: async (ctx) => {
       // The wallets that will receive the token
       const accounts = [...ctx.operationalAccounts, ...ctx.holderAccounts]

@@ -13,7 +13,12 @@ import { TokenIssuanceConfig, TokenIssuanceContext } from "../issue-token.types"
 export const canIssuerCreateTicketsForAccountSet = (
   issuerSettings: TokenIssuanceConfig["issuerSettings"],
 ) => {
-  return !hasIssuerRequireAuth(issuerSettings) && countIssuerSettings(issuerSettings) > 2
+  return (
+    !issuerHasAnyFlags(issuerSettings, [
+      AccountSetAsfFlags.asfRequireAuth,
+      AccountSetAsfFlags.asfAllowTrustLineClawback,
+    ]) && countIssuerSettings(issuerSettings) > 2
+  )
 }
 
 /**
@@ -39,22 +44,14 @@ export const countIssuerSettings = (issuerSettings: TokenIssuanceConfig["issuerS
 }
 
 /**
- * Checks whether the issuer settings has the `asfRequireAuth` flag enabled.
- * This flag indicates that the issuer requires trustline authorization.
- *
- * @param issuerSettings - The settings of the issuer account.
- * @returns A boolean indicating whether the `asfRequireAuth` flag is set.
- */
-export const hasIssuerRequireAuth = (issuerSettings: TokenIssuanceConfig["issuerSettings"]) => {
-  return issuerSettings?.setFlags?.includes(AccountSetAsfFlags.asfRequireAuth)
-}
-
-/**
  * Function to check if the there are enough operational and holder accounts to then do a task.
  * @returns A boolean
  */
-export const hasEnoughOperationalAndHolders = (ctx: TokenIssuanceContext) => {
-  return ctx.holderAccounts.length + ctx.operationalAccounts.length > 2
+export const hasEnoughOperationalAndHolders = (
+  ctx: TokenIssuanceContext,
+  minRequiredAccounts = 3,
+) => {
+  return ctx.holderAccounts.length + ctx.operationalAccounts.length >= minRequiredAccounts
 }
 
 /**
@@ -66,12 +63,14 @@ export const hasEnoughOperational = (ctx: TokenIssuanceContext) => {
 }
 
 /**
- * Checks whether the issuer settings has the asfDepositAuth flag enabled.
- * This flag indicates that the issuer requires deposit authorization.
- *
- * @param issuerSettings - The settings of the issuer account.
- * @returns A boolean indicating whether the `asfDepositAuth` flag is set.
+ * Checks if the initial settings of the issuer account have any of the passed flags.
+ * @param issuerSettings
+ * @param flags
+ * @returns A boolean indicating if the issuer account has any of the passed flags
  */
-export const hasIssuerDepositAuth = (issuerSettings: TokenIssuanceConfig["issuerSettings"]) => {
-  return issuerSettings?.setFlags?.includes(AccountSetAsfFlags.asfDepositAuth)
+export const issuerHasAnyFlags = (
+  issuerSettings: TokenIssuanceConfig["issuerSettings"],
+  flags: AccountSetAsfFlags[],
+) => {
+  return flags.some((flag) => issuerSettings?.setFlags?.includes(flag))
 }

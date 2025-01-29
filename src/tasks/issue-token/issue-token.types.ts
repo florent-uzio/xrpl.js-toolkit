@@ -61,4 +61,7 @@ export type TokenIssuanceConfig = {
     /** The trust line's maximum value */
     value: IssuedCurrencyAmount["value"]
   }
+
+  /** If disabled, the script will not run */
+  run?: boolean
 }

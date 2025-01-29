@@ -26,6 +26,11 @@ import {
  * Tasks to issue a token and create several wallets.
  */
 export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
+  if (!props.run) {
+    console.log("Token issuance script is disabled, set run to 'true'.")
+    return
+  }
+
   const tasks = new Listr<TokenIssuanceContext>([], {
     concurrent: false,
     rendererOptions: {

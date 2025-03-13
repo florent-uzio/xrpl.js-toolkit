@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv"
 import { AccountSetAsfFlags, Client, TrustSetFlags, Wallet } from "xrpl"
+import { submitMethod } from "./methods"
 import { networks } from "./networks"
 import { runTokenIssuanceTasks } from "./tasks"
 import { submitTxnAndWait } from "./transactions"
@@ -38,7 +39,7 @@ const main = async () => {
   const { issuer, holderAccounts } = ctx
 
   console.log()
-  console.log("Creating a third holder wallet that will then be pre-entively deep frozen...")
+  console.log("Creating a third holder wallet that will then be preemptively deep frozen...")
   // Create a third wallet that will be preentively deep frozen
   const { wallet: deepFrozenWallet } = await client.fundWallet()
 
@@ -137,6 +138,17 @@ const main = async () => {
     // @ts-expect-error works fine, there is a result
     `❌ Payment from holder0 to deepFrozenWallet failed as expected: ${usdPayment.result.meta.TransactionResult}, hash: ${usdPayment.result.hash}`,
   )
+
+  console.log()
+  console.log("Issuer account lines:")
+  // show the issuer lines
+  await submitMethod({
+    request: {
+      command: "account_lines",
+      account: issuer.address,
+    },
+    client,
+  })
 
   // Do not comment, disconnect the client
   await client.disconnect()

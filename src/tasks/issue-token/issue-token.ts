@@ -309,5 +309,5 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
     },
   })
 
-  await tasks.run()
+  return tasks.run()
 }

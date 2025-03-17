@@ -71,28 +71,15 @@ type Credential = {
   subject: Recipient["id"]
 } & Pick<CredentialCreate, "CredentialType" | "URI" | "Expiration">
 
-type AccountSettings = {
-  accountSetAsfFlags?: AccountSetAsfFlags[]
-} & Pick<
-  AccountSet,
-  "Domain" | "TickSize" | "TransferRate" | "NFTokenMinter" | "EmailHash" | "MessageKey"
->
-
-type RequireAuthIssuer = {
+// type Issuer = RequireAuthIssuer | NonRequireAuthIssuer
+type Issuer = {
   id: number
   credentials: Credential[]
-  accountSetAsfFlags: (AccountSetAsfFlags.asfRequireAuth | AccountSetAsfFlags)[]
-  trustLineAuthorize: Recipient["id"][]
-} & Omit<AccountSettings, "accountSetAsfFlags">
-
-type NonRequireAuthIssuer = {
-  id: number
-  credentials: Credential[]
-  accountSetAsfFlags?: Exclude<AccountSetAsfFlags, AccountSetAsfFlags.asfRequireAuth>[]
-  trustLineAuthorize?: never
-} & Omit<AccountSettings, "accountSetAsfFlags">
-
-type Issuer = RequireAuthIssuer | NonRequireAuthIssuer
+  accountSetAsfFlags: AccountSetAsfFlags[]
+  authorizeTrustline: {
+    recipientIds: number[]
+  }
+}
 
 type Recipient = {
   id: number
@@ -103,7 +90,7 @@ type Recipient = {
     currency: IssuedCurrencyAmount["currency"]
     value: IssuedCurrencyAmount["value"]
     // reference to the issuer
-    issuerId: Issuer["id"]
+    issuerId: number
   }
 }
 
@@ -147,9 +134,11 @@ const test: TokenIssuanceConfig2 = {
           // Expiration: "2025-01-01"
         },
       ],
-
-      accountSetAsfFlags: [AccountSetAsfFlags.asfRequireAuth, AccountSetAsfFlags.asfDefaultRipple],
-      trustLineAuthorize: [1],
+      accountSetAsfFlags: [AccountSetAsfFlags.asfDefaultRipple, AccountSetAsfFlags.asfRequireAuth],
+      // authorizeTrustline is not allowed here since we don't have asfRequireAuth
+      authorizeTrustline: {
+        recipientIds: [1],
+      },
     },
   ],
   recipients: [

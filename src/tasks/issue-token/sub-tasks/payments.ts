@@ -20,7 +20,7 @@ export const paymentTasks = (
           TransactionType: "Payment",
           Amount: {
             currency,
-            value: (+value / 2).toString(),
+            value: (+value).toString(),
             issuer: account.address,
           },
           Destination: account.address,

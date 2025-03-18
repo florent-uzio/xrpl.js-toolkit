@@ -236,6 +236,7 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
 
   tasks.add({
     title: "Creating tickets to send the token",
+    enabled: props.mintToHolders,
     skip: (ctx) => !hasEnoughOperationalAndHolders(ctx),
     task: async (ctx, _) => {
       const numOfTicketsToCreate = ctx.holderAccounts.length + ctx.operationalAccounts.length
@@ -267,7 +268,8 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
   })
 
   tasks.add({
-    title: "Issuing the token to the operational and holder wallets",
+    title: `Issuing the token ${props.trustLineParams.currency} to the operational and holder wallets`,
+    enabled: props.mintToHolders,
     skip: (ctx) => {
       return !hasEnoughOperationalAndHolders(ctx, 1)
     },
@@ -298,7 +300,11 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
     title: "Writing results to a file in the output directory",
     task: async (ctx) => {
       const time = new Date().toISOString()
-      const pathFile = path.join(__dirname, "./output/", `results-${time}.json`)
+      const pathFile = path.join(
+        __dirname,
+        "./output/",
+        `results-${props.fileNameExtension ? props.fileNameExtension : ""}-${time}.json`,
+      )
       const result = {
         network: props.network,
         issuer: ctx.issuer,
@@ -309,5 +315,5 @@ export const runTokenIssuanceTasks = async (props: TokenIssuanceConfig) => {
     },
   })
 
-  await tasks.run()
+  return tasks.run()
 }

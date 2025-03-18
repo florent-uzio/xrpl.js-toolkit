@@ -45,6 +45,12 @@ export type TokenIssuanceConfig = {
   /** Options for funding operational and holder accounts */
   fundingOptions?: FundingOptions
 
+  /** If true, the script will mint tokens to the holder accounts */
+  mintToHolders?: boolean
+
+  /** Extension for the output file name */
+  fileNameExtension?: string
+
   /** Issuer wallet settings, such as flags and transaction parameters */
   issuerSettings?: {
     /** Set flags for the issuer wallet */

@@ -8,10 +8,12 @@ import {
   Wallet,
 } from "xrpl"
 
-export type TxnCommons = { client: Client; showLogs?: boolean; run?: boolean } & (
-  | { isMultisign?: true; signatures: string[] }
-  | { isMultisign?: false; signatures?: never }
-)
+export type TxnCommons = {
+  client: Client
+  showLogs?: boolean
+  showHash?: boolean
+  run?: boolean
+} & ({ isMultisign?: true; signatures: string[] } | { isMultisign?: false; signatures?: never })
 
 export type TransactionPropsForMultiSign = TxnCommons & {
   isMultisign: true

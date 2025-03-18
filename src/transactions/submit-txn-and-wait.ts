@@ -26,7 +26,7 @@ export async function submitTxnAndWait<T extends SubmittableTransaction>({
   if (props.isMultisign) {
     await multiSignAndSubmit(props.signatures, props.client)
   } else {
-    const { wallet, client, txn, showLogs = true } = props
+    const { wallet, client, txn, showLogs = true, showHash = true } = props
 
     if (showLogs) {
       console.log(`Submitting: ${txn.TransactionType}`)
@@ -48,6 +48,13 @@ export async function submitTxnAndWait<T extends SubmittableTransaction>({
 
     if (showLogs) {
       console.log(JSON.stringify(response, null, 2))
+    }
+
+    if (showHash) {
+      console.log(
+        // @ts-expect-error
+        `🌎 Trnsaction Result: ${response.result.meta?.TransactionResult},  Transaction hash: ${response.result.hash}`,
+      )
     }
 
     return response

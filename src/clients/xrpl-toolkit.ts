@@ -31,15 +31,15 @@ export class XRPLToolkit {
     run = true,
     ...props
   }: SubmitTxnAndWaitProps<T>): Promise<TxResponse<T> | undefined> {
-    // Ensure the client is connected
-    await this.connect()
-
     if (!run) {
       if (!props.showLogs) {
         console.log("Transaction submission skipped as 'run' is set to false")
       }
       return
     }
+
+    // Ensure the client is connected
+    await this.connect()
 
     if (props.isMultisign) {
       await multiSignAndSubmit(props.signatures, this.client)

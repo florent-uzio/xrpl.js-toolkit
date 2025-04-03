@@ -31,16 +31,13 @@ export class XRPLToolkit {
     run = true,
     ...props
   }: SubmitTxnAndWaitProps<T>): Promise<TxResponse<T> | undefined> {
-    // Connect to the XRPL client if not already connected
-    if (!this.client.isConnected()) {
-      await this.client.connect()
-    }
+    // Ensure the client is connected
+    await this.connect()
 
     if (!run) {
       if (!props.showLogs) {
         console.log("Transaction submission skipped as 'run' is set to false")
       }
-      await this.client.disconnect()
       return
     }
 
@@ -71,10 +68,6 @@ export class XRPLToolkit {
         console.log(JSON.stringify(response, null, 2))
       }
 
-      if (this.client.isConnected()) {
-        await this.client.disconnect()
-      }
-
       return response
     }
   }
@@ -92,13 +85,11 @@ export class XRPLToolkit {
       if (!showLogs) {
         console.log("Request submission skipped as 'run' is set to false")
       }
-      await this.client.disconnect()
       return
     }
 
-    if (!this.client.isConnected) {
-      await this.client.connect()
-    }
+    // Ensure the client is connected
+    await this.connect()
 
     // Update the currency in case it has more than 3 characters
     const updatedRequest: T = deepReplace(request, "currency", (key, value) => {
@@ -107,19 +98,13 @@ export class XRPLToolkit {
 
     const response = await this.client.request(updatedRequest)
 
-    // Update fields in the console.log only
-    let updatedResponse = deepReplace(response, "send_currencies", this.hexToStringCurrency)
-    updatedResponse = deepReplace(updatedResponse, "receive_currencies", this.hexToStringCurrency)
-    updatedResponse = deepReplace(updatedResponse, "currency", this.hexToStringCurrency)
-
+    // Update fields in console.log only
     if (showLogs) {
+      let updatedResponse = deepReplace(response, "send_currencies", this.hexToStringCurrency)
+      updatedResponse = deepReplace(updatedResponse, "receive_currencies", this.hexToStringCurrency)
+      updatedResponse = deepReplace(updatedResponse, "currency", this.hexToStringCurrency)
+
       console.log(JSON.stringify(updatedResponse, undefined, 2))
-    }
-
-    await this.client.disconnect()
-
-    if (this.client.isConnected()) {
-      await this.client.disconnect()
     }
 
     return response
@@ -134,19 +119,40 @@ export class XRPLToolkit {
     return { [key]: convertHexCurrencyCodeToString(value) }
   }
 
+  /**
+   * Get the XRPL client instance
+   * @returns The XRPL client instance
+   */
   getClient(): Client {
     return this.client
   }
 
+  /**
+   * Get the network of the XRPL client
+   * @returns The network of the XRPL client
+   * @example "wss://s.altnet.rippletest.net:51233"
+   */
   getNetwork(): string {
     return this.network
   }
 
-  connect(): Promise<void> {
-    return this.client.connect()
+  async connect() {
+    if (!this.client.isConnected()) {
+      try {
+        await this.client.connect()
+      } catch (error) {
+        console.error("Failed to connect to XRPL:", error)
+      }
+    }
   }
 
-  disconnect(): Promise<void> {
-    return this.client.disconnect()
+  async disconnect(): Promise<void> {
+    if (this.client.isConnected()) {
+      try {
+        await this.client.disconnect()
+      } catch (error) {
+        console.error("Error while disconnecting from XRPL:", error)
+      }
+    }
   }
 }

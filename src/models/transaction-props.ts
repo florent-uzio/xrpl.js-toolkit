@@ -8,7 +8,7 @@ import {
   Wallet,
 } from "xrpl"
 
-export type TxnCommons = { client: Client; showLogs?: boolean; run?: boolean } & (
+export type TxnCommons = { client?: Client; showLogs?: boolean; run?: boolean } & (
   | { isMultisign?: true; signatures: string[] }
   | { isMultisign?: false; signatures?: never }
 )
@@ -47,3 +47,7 @@ export type TransactionPropsForSingleSign<T extends SubmittableTransaction> = Tx
         : T
   wallet: Wallet
 }
+
+export type SubmitTxnAndWaitProps<T extends SubmittableTransaction> =
+  | TransactionPropsForMultiSign
+  | TransactionPropsForSingleSign<T>

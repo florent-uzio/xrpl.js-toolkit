@@ -26,6 +26,10 @@ export async function submitMethod<T extends Request>({
     return
   }
 
+  if (!client) {
+    throw new Error("XRPL client is not present")
+  }
+
   // Update the currency in case it has more than 3 characters
   const updatedRequest: T = deepReplace(request, "currency", (key, value) => {
     return { [key]: convertCurrencyCodeToHex(value) }

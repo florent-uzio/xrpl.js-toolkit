@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv"
-import { Client } from "xrpl"
+import { XRPLToolkit } from "./clients"
 import { networks } from "./networks"
+import { WALLET_1 } from "./wallets"
 dotenv.config()
 
 // Issued Currency that you want to use in your TrustSet or Payment transactions for example.
@@ -8,15 +9,17 @@ dotenv.config()
 const TOKEN = process.env.TOKEN ?? "TEST_TOKEN"
 
 const main = async () => {
-  const client = new Client(networks.devnet.ripple)
+  const toolkit = new XRPLToolkit(networks.devnet.ripple)
 
-  // Do not comment
-  await client.connect()
-
-  // Write your code here
-
-  // Do not comment, disconnect the client
-  await client.disconnect()
+  await toolkit.submitTxnAndWait({
+    txn: {
+      TransactionType: "AccountSet",
+      Account: WALLET_1.address,
+      Domain: "example.com",
+    },
+    wallet: WALLET_1,
+    run: false,
+  })
 }
 
 // Will run the main function above. Do not comment.

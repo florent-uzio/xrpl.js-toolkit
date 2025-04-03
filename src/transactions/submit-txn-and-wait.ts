@@ -1,10 +1,6 @@
 import { SubmittableTransaction, TxResponse } from "xrpl"
 import { convertCurrencyCodeToHex, deepReplace, multiSignAndSubmit } from "../helpers"
-import { TransactionPropsForMultiSign, TransactionPropsForSingleSign } from "../models"
-
-type SubmitTxnAndWaitProps<T extends SubmittableTransaction> =
-  | TransactionPropsForMultiSign
-  | TransactionPropsForSingleSign<T>
+import { SubmitTxnAndWaitProps } from "../models"
 
 export async function submitTxnAndWait<T extends SubmittableTransaction>(
   props: SubmitTxnAndWaitProps<T> & { run: false },
@@ -21,6 +17,10 @@ export async function submitTxnAndWait<T extends SubmittableTransaction>({
       console.log("Transaction submission skipped as 'run' is set to false")
     }
     return
+  }
+
+  if (!props.client) {
+    throw new Error("XRPL client is not present")
   }
 
   if (props.isMultisign) {

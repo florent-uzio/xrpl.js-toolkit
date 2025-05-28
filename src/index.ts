@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv"
-import { Client, multisign, Payment } from "xrpl"
+import { Client, decode, multisign, Payment } from "xrpl"
 import { hashSignedTx } from "xrpl/dist/npm/utils/hashes"
 import { networks } from "./networks"
 import { submitTxnAndWait } from "./transactions"
@@ -64,7 +64,10 @@ const main = async () => {
   const signed1 = signer1.wallet.sign(preparedPayment, true)
   const signed2 = signer2.wallet.sign(preparedPayment, true)
   const signed3 = signer3.wallet.sign(preparedPayment, true)
-  console.log("Signed Payment 1 (signer1):", signed1)
+  console.log("Signed Payment 1 (signer1):", {
+    ...signed1,
+    tx_json: JSON.stringify(decode(signed1.tx_blob), null, 2),
+  })
   console.log("Signed Payment 2 (signer2):", signed2)
   console.log("Signed Payment 3 (signer3):", signed3)
   console.log("")
